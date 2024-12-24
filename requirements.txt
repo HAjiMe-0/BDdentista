@@ -3,3 +3,4 @@ flask-sqlalchemy
 flask-migrate
 flask-wtf
 wtforms
+psycopg2-binary
