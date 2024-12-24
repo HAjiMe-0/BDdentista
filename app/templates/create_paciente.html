@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Agregar Paciente</title>
+</head>
+<body>
+    <h1>Agregar Paciente</h1>
+    <form method="post">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="date" name="fecha_nacimiento" placeholder="Fecha de Nacimiento" required>
+        <input type="text" name="direccion" placeholder="Dirección">
+        <input type="text" name="telefono" placeholder="Teléfono">
+        <select name="doctor_id" required>
+            {% for doctor in doctores %}
+                <option value="{{ doctor.doctor_id }}">{{ doctor.nombre }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Guardar</button>
+    </form>
+</body>
+</html>
