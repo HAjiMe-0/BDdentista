@@ -16,3 +16,4 @@ class Paciente(db.Model):
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id'), nullable=False)
 
     doctor = db.relationship('Doctor', backref=db.backref('pacientes', lazy=True))
+#soy rolito wazaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
