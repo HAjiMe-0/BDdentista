@@ -4,3 +4,4 @@ flask-migrate
 flask-wtf
 wtforms
 #pg8000
+#rolop wazaza
