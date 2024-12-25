@@ -96,3 +96,33 @@ def delete_entity(entity, id):
         Paciente.query.filter_by(paciente_id=id).delete()
     db.session.commit()
     return redirect(url_for('main.index'))
+
+# Ruta de registro 
+@main_bp.route('/register', methods=['GET', 'POST'])    
+def register():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        especialidad = request.form.get('especialidad')
+        telefono = request.form.get('telefono')
+        email = request.form['email']
+        contraseña = request.form['contraseña']
+
+        # Verifica si el email ya está registrado
+        if Doctor.query.filter_by(email=email).first():
+            flash('El correo electrónico ya está registrado. Intente con otro.', 'error')
+            return redirect(url_for('main.register'))
+
+        # Crea un nuevo doctor
+        nuevo_doctor = Doctor(
+            nombre=nombre,
+            especialidad=especialidad,
+            telefono=telefono,
+            email=email,
+            contraseña=contraseña  # Recuerda encriptar contraseñas en producción
+        )
+        db.session.add(nuevo_doctor)
+        db.session.commit()
+        flash('Registro exitoso. Ahora puedes iniciar sesión.', 'success')
+        return redirect(url_for('main.login'))
+
+    return render_template('register.html')
