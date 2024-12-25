@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Doctores y Pacientes</title>
 </head>
 <body>
+    <h1>Bienvenido, {{ session['doctor_name'] }}</h1>
+    <a href="{{ url_for('main.logout') }}">Cerrar sesión</a>
     <h1>Doctores</h1>
     <ul>
         {% for doctor in doctores %}
