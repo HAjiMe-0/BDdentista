@@ -10,6 +10,7 @@
         <input type="date" name="fecha_nacimiento" placeholder="Fecha de Nacimiento" required>
         <input type="text" name="direccion" placeholder="Dirección">
         <input type="text" name="telefono" placeholder="Teléfono">
+        <input type="text" name="contraseña" placeholder="Contraseña" required>
         <select name="doctor_id" required>
             {% for doctor in doctores %}
                 <option value="{{ doctor.doctor_id }}">{{ doctor.nombre }}</option>
