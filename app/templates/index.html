@@ -8,28 +8,15 @@
 <body>
     <h1>Bienvenido, {{ session['doctor_name'] }}</h1>
     <a href="{{ url_for('main.logout') }}">Cerrar sesión</a>
-    <h1>Doctores</h1>
-    <ul>
-        {% for doctor in doctores %}
-            <li>{{ doctor.nombre }} - {{ doctor.especialidad }}
-                <form action="{{ url_for('main.delete_entity', entity='doctor', id=doctor.doctor_id) }}" method="post" style="display:inline;">
-                    <button type="submit">Eliminar</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('main.create_doctor') }}">Agregar Doctor</a>
-
-    <h1>Pacientes</h1>
+<h2>Pacientes asignados:</h2>
     <ul>
         {% for paciente in pacientes %}
-            <li>{{ paciente.nombre }} - {{ paciente.doctor.nombre }}
+            <li>{{ paciente.nombre }} 
                 <form action="{{ url_for('main.delete_entity', entity='paciente', id=paciente.paciente_id) }}" method="post" style="display:inline;">
                     <button type="submit">Eliminar</button>
                 </form>
             </li>
         {% endfor %}
     </ul>
-    <a href="{{ url_for('main.create_paciente') }}">Agregar Paciente</a>
 </body>
 </html>

@@ -24,9 +24,16 @@ def home():
 @main_bp.route('/index')
 @login_required
 def index():
-    doctores = Doctor.query.all()
-    pacientes = Paciente.query.all()
-    return render_template('index.html', doctores=doctores, pacientes=pacientes)
+    # Obtén el doctor_id desde la sesión
+    doctor_id = session.get('doctor_id')
+    
+    # Filtra los pacientes que pertenecen al doctor que inició sesión
+    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+    
+    # Opcional: También puedes incluir los datos del doctor logueado si lo necesitas
+    doctor = Doctor.query.get(doctor_id)
+    
+    return render_template('index.html', doctor=doctor, pacientes=pacientes)
 
 # Ruta de login
 @main_bp.route('/login', methods=['GET', 'POST'])
