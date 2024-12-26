@@ -77,21 +77,46 @@ def create_doctor():
 @main_bp.route('/paciente/create', methods=['GET', 'POST'])
 @login_required
 def create_paciente():
-    doctores = Doctor.query.all()
     if request.method == 'POST':
+        # Datos del formulario
         nombre = request.form['nombre']
         fecha_nacimiento = request.form['fecha_nacimiento']
         direccion = request.form.get('direccion')
         telefono = request.form.get('telefono')
-        doctor_id = request.form['doctor_id']
+        doctor_id = session.get('doctor_id')  # Obtén el doctor desde la sesión
+
+        # Crear el nuevo paciente
         paciente = Paciente(
-            nombre=nombre, fecha_nacimiento=fecha_nacimiento,
-            direccion=direccion, telefono=telefono, doctor_id=doctor_id
+            nombre=nombre,
+            fecha_nacimiento=fecha_nacimiento,
+            direccion=direccion,
+            telefono=telefono,
+            doctor_id=doctor_id
         )
         db.session.add(paciente)
         db.session.commit()
+        flash('Paciente agregado exitosamente.', 'success')
+
+        # Redirigir a la misma página después de agregar
+        return redirect(url_for('main.create_paciente'))
+
+    return render_template('create_paciente.html')
+
+
+@main_bp.route('/paciente/<int:paciente_id>', methods=['GET'])
+@login_required
+def paciente_detail(paciente_id):
+    # Buscar el paciente por ID
+    paciente = Paciente.query.get_or_404(paciente_id)
+    
+    # Verificar que el paciente pertenezca al doctor logueado
+    if paciente.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para ver este paciente.', 'error')
         return redirect(url_for('main.index'))
-    return render_template('create_paciente.html', doctores=doctores)
+    
+    return render_template('paciente_detail.html', paciente=paciente)
+
+
 
 # Ruta para eliminar un doctor o paciente
 @main_bp.route('/delete/<string:entity>/<int:id>', methods=['POST'])
