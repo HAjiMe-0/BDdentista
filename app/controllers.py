@@ -155,8 +155,12 @@ def edit_doctor(doctor_id):
         if 'email' in request.form:
             doctor.email = request.form['email']
         db.session.commit()
-        flash('Perfil actualizado exitosamente.', 'success')  # Mensaje solo en esta ruta
-        return redirect(url_for('main.edit_doctor', doctor_id=doctor_id))  # Redirigir a la misma página
+
+        # Actualiza el nombre en la sesión después de guardar los cambios
+        session['doctor_name'] = doctor.nombre
+
+        flash('Perfil actualizado exitosamente.', 'success')
+        return redirect(url_for('main.edit_doctor', doctor_id=doctor_id))
     
     return render_template('edit_doctor.html', doctor=doctor)
 
