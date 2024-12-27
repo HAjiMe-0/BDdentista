@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from functools import wraps
 from app.models import db, Doctor, Paciente
+from werkzeug.security import generate_password_hash, check_password_hash
 
 main_bp = Blueprint('main', __name__)
 
@@ -42,12 +43,15 @@ def login():
         email = request.form['email']
         contraseña = request.form['contraseña']
         doctor = Doctor.query.filter_by(email=email).first()
-        if doctor and doctor.contraseña == contraseña:  # Recuerda encriptar contraseñas en producción
+
+        # Verifica si la contraseña ingresada coincide con la almacenada
+        if doctor and check_password_hash(doctor.contraseña, contraseña):
             session['doctor_id'] = doctor.doctor_id
             session['doctor_name'] = doctor.nombre
             return redirect(url_for('main.index'))
         else:
             flash('Correo o contraseña incorrectos', 'error')
+
     return render_template('login.html')
 
 # Ruta de logout
@@ -195,7 +199,7 @@ def delete_entity(entity, id):
     return redirect(url_for('main.index'))
 
 # Ruta de registro 
-@main_bp.route('/register', methods=['GET', 'POST'])    
+@main_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         nombre = request.form['nombre']
@@ -209,13 +213,16 @@ def register():
             flash('El correo electrónico ya está registrado. Intente con otro.', 'error')
             return redirect(url_for('main.register'))
 
+        # Encripta la contraseña antes de guardarla
+        hashed_password = generate_password_hash(contraseña)
+
         # Crea un nuevo doctor
         nuevo_doctor = Doctor(
             nombre=nombre,
             especialidad=especialidad,
             telefono=telefono,
             email=email,
-            contraseña=contraseña  # Recuerda encriptar contraseñas en producción
+            contraseña=hashed_password
         )
         db.session.add(nuevo_doctor)
         db.session.commit()
