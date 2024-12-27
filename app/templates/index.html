@@ -8,7 +8,8 @@
 <body>
     <h1>Bienvenido, {{ session['doctor_name'] }}</h1>
     <a href="{{ url_for('main.logout') }}">Cerrar sesión</a>
-
+    <a href="{{ url_for('main.doctor_detail', doctor_id=doctor.doctor_id) }}">Ver detalles</a>
+    
     <h2>Pacientes asignados:</h2>
     <ul>
         {% for paciente in pacientes %}

@@ -102,7 +102,7 @@ def create_paciente():
 
     return render_template('create_paciente.html')
 
-
+# Ver detalle del paciente
 @main_bp.route('/paciente/<int:paciente_id>', methods=['GET'])
 @login_required
 def paciente_detail(paciente_id):
@@ -116,7 +116,72 @@ def paciente_detail(paciente_id):
     
     return render_template('paciente_detail.html', paciente=paciente)
 
+# Ver detalle del Doctor 
+@main_bp.route('/doctor/<int:doctor_id>', methods=['GET'])
+@login_required
+def doctor_detail(doctor_id):
+    # Obtener el doctor por ID
+    doctor = Doctor.query.get_or_404(doctor_id)
+    
+    # Verificar que el doctor sea el mismo que está logueado
+    if doctor.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para ver este perfil.', 'error')
+        return redirect(url_for('main.index'))
+    
+    return render_template('doctor_detail.html', doctor=doctor)
 
+# Editar Doctor
+@main_bp.route('/doctor/edit/<int:doctor_id>', methods=['GET', 'POST'])
+@login_required
+def edit_doctor(doctor_id):
+    doctor = Doctor.query.get_or_404(doctor_id)
+    
+    # Verificar que el doctor sea el mismo que está logueado
+    if doctor.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para editar este perfil.', 'error')
+        return redirect(url_for('main.index'))
+    
+    if request.method == 'POST':
+        if 'nombre' in request.form:
+            doctor.nombre = request.form['nombre']
+        if 'especialidad' in request.form:
+            doctor.especialidad = request.form['especialidad']
+        if 'telefono' in request.form:
+            doctor.telefono = request.form['telefono']
+        if 'email' in request.form:
+            doctor.email = request.form['email']
+        db.session.commit()
+        flash('Perfil actualizado exitosamente.', 'success')
+        return redirect(url_for('main.doctor_detail', doctor_id=doctor_id))
+    
+    
+    return render_template('edit_doctor.html', doctor=doctor)
+
+# Editar Paciente
+@main_bp.route('/paciente/edit/<int:paciente_id>', methods=['GET', 'POST'])
+@login_required
+def edit_paciente(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    
+    # Verificar que el paciente pertenezca al doctor logueado
+    if paciente.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para editar este paciente.', 'error')
+        return redirect(url_for('main.index'))
+    
+    if request.method == 'POST':
+        if 'nombre' in request.form:
+            paciente.nombre = request.form['nombre']
+        if 'fecha_nacimiento' in request.form:
+            paciente.fecha_nacimiento = request.form['fecha_nacimiento']
+        if 'direccion' in request.form:
+            paciente.direccion = request.form.get('direccion')
+        if 'telefono' in request.form:
+            paciente.telefono = request.form.get('telefono')
+        db.session.commit()
+        flash('Paciente actualizado exitosamente.', 'success')
+        return redirect(url_for('main.paciente_detail', paciente_id=paciente_id))
+    
+    return render_template('edit_paciente.html', paciente=paciente)
 
 # Ruta para eliminar un doctor o paciente
 @main_bp.route('/delete/<string:entity>/<int:id>', methods=['POST'])

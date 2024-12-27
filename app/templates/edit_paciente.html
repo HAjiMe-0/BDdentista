@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Paciente</title>
+</head>
+<body>
+    <h1>Editar Paciente</h1>
+    
+    <form method="post">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ paciente.nombre }}"><br>
+
+        <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+        <input type="text" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ paciente.fecha_nacimiento }}"><br>
+
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" name="direccion" value="{{ paciente.direccion }}"><br>
+
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" value="{{ paciente.telefono }}"><br>
+
+        <button type="submit">Actualizar</button>
+    </form>
+
+    <a href="{{ url_for('main.paciente_detail', paciente_id=paciente.paciente_id) }}">Cancelar</a>
+</body>
+</html>
