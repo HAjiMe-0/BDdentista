@@ -3,6 +3,7 @@
 -- Tabla Doctor con campo de contraseña
 CREATE TABLE doctor (
     doctor_id SERIAL PRIMARY KEY,  -- ID único del doctor
+    ci INT NOT NULL, --ci del doctor
     nombre VARCHAR(100) NOT NULL,  -- Nombre del doctor
     especialidad VARCHAR(100),     -- Especialidad del doctor
     telefono VARCHAR(15),          -- Teléfono de contacto
@@ -13,10 +14,11 @@ CREATE TABLE doctor (
 -- Tabla Paciente con campo de contraseña
 CREATE TABLE paciente (
     paciente_id SERIAL PRIMARY KEY, -- ID único del paciente
+    ci INT NOT NULL, --
     nombre VARCHAR(100) NOT NULL,   -- Nombre del paciente
     fecha_nacimiento DATE NOT NULL, -- Fecha de nacimiento del paciente
     direccion TEXT,                 -- Dirección del paciente
-    telefono VARCHAR(15),           -- Teléfono de contacto
+    telefono VARCHAR(15),           -- Teléfono de contacto 
     doctor_id INT NOT NULL,         -- ID del doctor asignado
 -- Al paciente le quietare la contraseña hasta que hagamos el modulo de pacientes en la App 
 --    contraseña VARCHAR(255) NOT NULL, -- Contraseña del paciente 

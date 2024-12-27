@@ -7,6 +7,8 @@
 </head>
 <body>
     <h1>Editar Perfil del Doctor</h1>
+
+    <!-- Mostrar mensajes flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul>
@@ -19,7 +21,7 @@
 
     <form method="post">
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="{{ doctor.nombre }}"><br>
+        <input type="text" id="nombre" name="nombre" value="{{ doctor.nombre }}" required><br>
 
         <label for="especialidad">Especialidad:</label>
         <input type="text" id="especialidad" name="especialidad" value="{{ doctor.especialidad }}"><br>
@@ -28,7 +30,10 @@
         <input type="text" id="telefono" name="telefono" value="{{ doctor.telefono }}"><br>
 
         <label for="email">Email:</label>
-        <input type="text" id="email" name="email" value="{{ doctor.email }}"><br>
+        <input type="email" id="email" name="email" value="{{ doctor.email }}" required><br>
+
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="contraseña" placeholder="Nueva contraseña (opcional)"><br>
 
         <button type="submit">Actualizar</button>
     </form>

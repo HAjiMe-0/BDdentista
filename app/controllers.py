@@ -67,14 +67,32 @@ def logout():
 def create_doctor():
     if request.method == 'POST':
         nombre = request.form['nombre']
+        paterno = request.form.get('paterno')
+        materno = request.form.get('materno')
         especialidad = request.form.get('especialidad')
         telefono = request.form.get('telefono')
+        fecha_nacimiento = request.form.get('fecha_nacimiento')
         email = request.form.get('email')
-        contraseña = request.form.get('contraseña')  # Agregar campo de contraseña
-        doctor = Doctor(nombre=nombre, especialidad=especialidad, telefono=telefono, email=email, contraseña=contraseña)
+        contraseña = request.form.get('contraseña')
+
+        # Encriptar la contraseña antes de guardarla
+        hashed_password = generate_password_hash(contraseña)
+
+        doctor = Doctor(
+            nombre=nombre,
+            paterno=paterno,
+            materno=materno,
+            especialidad=especialidad,
+            telefono=telefono,
+            fecha_nacimiento=fecha_nacimiento,
+            email=email,
+            contraseña=hashed_password
+        )
         db.session.add(doctor)
         db.session.commit()
+        flash('Doctor creado exitosamente.', 'success')
         return redirect(url_for('main.index'))
+
     return render_template('create_doctor.html')
 
 # Ruta para crear un paciente
@@ -82,26 +100,34 @@ def create_doctor():
 @login_required
 def create_paciente():
     if request.method == 'POST':
-        # Datos del formulario
         nombre = request.form['nombre']
-        fecha_nacimiento = request.form['fecha_nacimiento']
+        paterno = request.form.get('paterno')
+        materno = request.form.get('materno')
+        ci = request.form.get('ci')
+        fecha_nacimiento = request.form.get('fecha_nacimiento')
         direccion = request.form.get('direccion')
         telefono = request.form.get('telefono')
-        doctor_id = session.get('doctor_id')  # Obtén el doctor desde la sesión
+        celular = request.form.get('celular')
+        estado_civil = request.form.get('estado_civil')
+        ocupacion = request.form.get('ocupacion')
+        doctor_id = session.get('doctor_id')
 
-        # Crear el nuevo paciente
         paciente = Paciente(
             nombre=nombre,
+            paterno=paterno,
+            materno=materno,
+            ci=ci,
             fecha_nacimiento=fecha_nacimiento,
             direccion=direccion,
             telefono=telefono,
+            celular=celular,
+            estado_civil=estado_civil,
+            ocupacion=ocupacion,
             doctor_id=doctor_id
         )
         db.session.add(paciente)
         db.session.commit()
-        flash('Paciente agregado exitosamente.', 'success')
-
-        # Redirigir a la misma página después de agregar
+        flash('Paciente creado exitosamente.', 'success')
         return redirect(url_for('main.create_paciente'))
 
     return render_template('create_paciente.html')
@@ -139,29 +165,31 @@ def doctor_detail(doctor_id):
 @login_required
 def edit_doctor(doctor_id):
     doctor = Doctor.query.get_or_404(doctor_id)
-    
-    # Verificar que el doctor sea el mismo que está logueado
+
     if doctor.doctor_id != session.get('doctor_id'):
         flash('No tienes permiso para editar este perfil.', 'error')
         return redirect(url_for('main.index'))
-    
+
     if request.method == 'POST':
         if 'nombre' in request.form:
             doctor.nombre = request.form['nombre']
+        if 'paterno' in request.form:
+            doctor.paterno = request.form['paterno']
+        if 'materno' in request.form:
+            doctor.materno = request.form['materno']
         if 'especialidad' in request.form:
             doctor.especialidad = request.form['especialidad']
         if 'telefono' in request.form:
             doctor.telefono = request.form['telefono']
+        if 'fecha_nacimiento' in request.form:
+            doctor.fecha_nacimiento = request.form['fecha_nacimiento']
         if 'email' in request.form:
             doctor.email = request.form['email']
+
         db.session.commit()
-
-        # Actualiza el nombre en la sesión después de guardar los cambios
-        session['doctor_name'] = doctor.nombre
-
         flash('Perfil actualizado exitosamente.', 'success')
         return redirect(url_for('main.edit_doctor', doctor_id=doctor_id))
-    
+
     return render_template('edit_doctor.html', doctor=doctor)
 
 # Editar Paciente
@@ -169,25 +197,37 @@ def edit_doctor(doctor_id):
 @login_required
 def edit_paciente(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
-    
-    # Verificar que el paciente pertenezca al doctor logueado
+
     if paciente.doctor_id != session.get('doctor_id'):
         flash('No tienes permiso para editar este paciente.', 'error')
         return redirect(url_for('main.index'))
-    
+
     if request.method == 'POST':
         if 'nombre' in request.form:
             paciente.nombre = request.form['nombre']
+        if 'paterno' in request.form:
+            paciente.paterno = request.form['paterno']
+        if 'materno' in request.form:
+            paciente.materno = request.form['materno']
+        if 'ci' in request.form:
+            paciente.ci = request.form['ci']
         if 'fecha_nacimiento' in request.form:
             paciente.fecha_nacimiento = request.form['fecha_nacimiento']
         if 'direccion' in request.form:
             paciente.direccion = request.form['direccion']
         if 'telefono' in request.form:
             paciente.telefono = request.form['telefono']
+        if 'celular' in request.form:
+            paciente.celular = request.form['celular']
+        if 'estado_civil' in request.form:
+            paciente.estado_civil = request.form['estado_civil']
+        if 'ocupacion' in request.form:
+            paciente.ocupacion = request.form['ocupacion']
+
         db.session.commit()
-        flash('Paciente actualizado exitosamente.', 'success')  # Mensaje solo en esta ruta
-        return redirect(url_for('main.edit_paciente', paciente_id=paciente_id))  # Redirigir a la misma página
-    
+        flash('Paciente actualizado exitosamente.', 'success')
+        return redirect(url_for('main.edit_paciente', paciente_id=paciente_id))
+
     return render_template('edit_paciente.html', paciente=paciente)
 
 # Ruta para eliminar un doctor o paciente
@@ -206,8 +246,11 @@ def delete_entity(entity, id):
 def register():
     if request.method == 'POST':
         nombre = request.form['nombre']
+        paterno = request.form.get('paterno')
+        materno = request.form.get('materno')
         especialidad = request.form.get('especialidad')
         telefono = request.form.get('telefono')
+        fecha_nacimiento = request.form.get('fecha_nacimiento')
         email = request.form['email']
         contraseña = request.form['contraseña']
 
@@ -216,14 +259,26 @@ def register():
             flash('El correo electrónico ya está registrado. Intente con otro.', 'error')
             return redirect(url_for('main.register'))
 
-        # Encripta la contraseña antes de guardarla
+        # Encriptar la contraseña antes de guardarla
         hashed_password = generate_password_hash(contraseña)
 
-        # Crea un nuevo doctor
+        # Verificar que la fecha de nacimiento esté presente
+        if not fecha_nacimiento:
+            flash('La fecha de nacimiento es requerida.', 'error')
+            return redirect(url_for('main.register'))
+
+        # Convertir la fecha de nacimiento a un formato adecuado para la base de datos
+        from datetime import datetime
+        fecha_nacimiento = datetime.strptime(fecha_nacimiento, '%Y-%m-%d').date()
+
+        # Crear un nuevo doctor
         nuevo_doctor = Doctor(
             nombre=nombre,
+            paterno=paterno,
+            materno=materno,
             especialidad=especialidad,
             telefono=telefono,
+            fecha_nacimiento=fecha_nacimiento,
             email=email,
             contraseña=hashed_password
         )

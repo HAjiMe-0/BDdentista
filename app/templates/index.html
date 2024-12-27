@@ -8,12 +8,12 @@
 <body>
     <h1>Bienvenido, {{ session['doctor_name'] }}</h1>
     <a href="{{ url_for('main.logout') }}">Cerrar sesión</a>
-    <a href="{{ url_for('main.doctor_detail', doctor_id=doctor.doctor_id) }}">Ver detalles</a>
+    <a href="{{ url_for('main.edit_doctor', doctor_id=session['doctor_id']) }}">Editar Perfil</a>
     
     <h2>Pacientes asignados:</h2>
     <ul>
         {% for paciente in pacientes %}
-
+            <li>
                 {{ paciente.nombre }} - {{ paciente.telefono }}
                 <a href="{{ url_for('main.paciente_detail', paciente_id=paciente.paciente_id) }}">Ver detalles</a>
                 <form action="{{ url_for('main.delete_entity', entity='paciente', id=paciente.paciente_id) }}" method="post" style="display:inline;">
