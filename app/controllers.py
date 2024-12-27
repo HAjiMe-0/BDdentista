@@ -155,9 +155,8 @@ def edit_doctor(doctor_id):
         if 'email' in request.form:
             doctor.email = request.form['email']
         db.session.commit()
-        flash('Perfil actualizado exitosamente.', 'success')
-        return redirect(url_for('main.doctor_detail', doctor_id=doctor_id))
-    
+        flash('Perfil actualizado exitosamente.', 'success')  # Mensaje solo en esta ruta
+        return redirect(url_for('main.edit_doctor', doctor_id=doctor_id))  # Redirigir a la misma página
     
     return render_template('edit_doctor.html', doctor=doctor)
 
@@ -178,12 +177,12 @@ def edit_paciente(paciente_id):
         if 'fecha_nacimiento' in request.form:
             paciente.fecha_nacimiento = request.form['fecha_nacimiento']
         if 'direccion' in request.form:
-            paciente.direccion = request.form.get('direccion')
+            paciente.direccion = request.form['direccion']
         if 'telefono' in request.form:
-            paciente.telefono = request.form.get('telefono')
+            paciente.telefono = request.form['telefono']
         db.session.commit()
-        flash('Paciente actualizado exitosamente.', 'success')
-        return redirect(url_for('main.paciente_detail', paciente_id=paciente_id))
+        flash('Paciente actualizado exitosamente.', 'success')  # Mensaje solo en esta ruta
+        return redirect(url_for('main.edit_paciente', paciente_id=paciente_id))  # Redirigir a la misma página
     
     return render_template('edit_paciente.html', paciente=paciente)
 
