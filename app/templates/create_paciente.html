@@ -20,8 +20,17 @@
     {% endwith %}
 
     <form action="{{ url_for('main.create_paciente') }}" method="post">
+        <label for="ci">Cédula de Identidad (CI):</label>
+        <input type="number" id="ci" name="ci" required>
+
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" required>
+
+        <label for="paterno">Apellido Paterno:</label>
+        <input type="text" id="paterno" name="paterno">
+
+        <label for="materno">Apellido Materno:</label>
+        <input type="text" id="materno" name="materno">
 
         <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
         <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
@@ -31,6 +40,21 @@
 
         <label for="telefono">Teléfono:</label>
         <input type="text" id="telefono" name="telefono">
+
+        <label for="celular">Celular:</label>
+        <input type="text" id="celular" name="celular">
+
+        <label for="estado_civil">Estado Civil:</label>
+        <select id="estado_civil" name="estado_civil">
+            <option value="">Seleccione</option>
+            <option value="Soltero/a">Soltero/a</option>
+            <option value="Casado/a">Casado/a</option>
+            <option value="Divorciado/a">Divorciado/a</option>
+            <option value="Viudo/a">Viudo/a</option>
+        </select>
+
+        <label for="ocupacion">Ocupación:</label>
+        <input type="text" id="ocupacion" name="ocupacion">
 
         <button type="submit">Agregar</button>
     </form>

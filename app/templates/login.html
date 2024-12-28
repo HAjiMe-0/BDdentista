@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Tu propio CSS (opcional) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
 </head>
 <body>
     <div class="login-container">
@@ -28,5 +31,8 @@
         <p>¿No tienes una cuenta? <a href="{{ url_for('main.register') }}">Regístrate aquí</a></p>
         <p>¿Olvidaste tu contraseña? <a href="{{ url_for('main.reset_password') }}">Restablecer contraseña</a></p>
     </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

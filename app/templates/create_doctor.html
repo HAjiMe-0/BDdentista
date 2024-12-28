@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Doctor</title>
 </head>
 <body>
     <h1>Agregar Doctor</h1>
     <form method="post">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="text" name="especialidad" placeholder="Especialidad">
-        <input type="text" name="telefono" placeholder="Teléfono">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="text" name="contraseña" placeholder="Contraseña" required>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+
+        <label for="paterno">Apellido Paterno:</label>
+        <input type="text" id="paterno" name="paterno" placeholder="Apellido Paterno">
+
+        <label for="materno">Apellido Materno:</label>
+        <input type="text" id="materno" name="materno" placeholder="Apellido Materno">
+
+        <label for="especialidad">Especialidad:</label>
+        <input type="text" id="especialidad" name="especialidad" placeholder="Especialidad">
+
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" placeholder="Teléfono">
+
+        <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Email" required>
+
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña" required>
+
         <button type="submit">Guardar</button>
     </form>
 </body>
