@@ -179,6 +179,9 @@ def edit_doctor(doctor_id):
             doctor.fecha_nacimiento = request.form['fecha_nacimiento']
         if 'email' in request.form:
             doctor.email = request.form['email']
+            
+        # Actualiza el nombre en la sesión después de guardar los cambios
+        session['doctor_name'] = doctor.nombre
 
         db.session.commit()
         flash('Perfil actualizado exitosamente.', 'success')
