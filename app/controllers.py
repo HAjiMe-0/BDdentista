@@ -2,8 +2,14 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from functools import wraps
 from app.models import db, Doctor, Paciente
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Message
+from app import mail  # Importar mail desde app
 
 main_bp = Blueprint('main', __name__)
+
+# Configuración de URLSafeTimedSerializer
+s = URLSafeTimedSerializer('Thisisasecret!')
 
 # Decorador para proteger rutas que requieren autenticación
 def login_required(f):
@@ -70,8 +76,9 @@ def create_doctor():
         especialidad = request.form.get('especialidad')
         telefono = request.form.get('telefono')
         email = request.form.get('email')
-        contraseña = request.form.get('contraseña')  # Agregar campo de contraseña
-        doctor = Doctor(nombre=nombre, especialidad=especialidad, telefono=telefono, email=email, contraseña=contraseña)
+        contraseña = request.form.get('contraseña')
+        hashed_password = generate_password_hash(contraseña)  # Encriptar la contraseña
+        doctor = Doctor(nombre=nombre, especialidad=especialidad, telefono=telefono, email=email, contraseña=hashed_password)
         db.session.add(doctor)
         db.session.commit()
         return redirect(url_for('main.index'))
@@ -233,3 +240,39 @@ def register():
         return redirect(url_for('main.login'))
 
     return render_template('register.html')
+
+# Ruta para restablecer contraseña
+@main_bp.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        doctor = Doctor.query.filter_by(email=email).first()
+        if doctor:
+            token = s.dumps(email, salt='email-confirm')
+            msg = Message('Restablecer contraseña', sender='noreply@domain.com', recipients=[email])
+            link = url_for('main.reset_with_token', token=token, _external=True)
+            msg.body = f'Su enlace para restablecer su contraseña es {link}'
+            mail.send(msg)
+            flash('Se ha enviado un correo electrónico con instrucciones para restablecer su contraseña.', 'info')
+        else:
+            flash('El correo electrónico no está registrado.', 'error')
+    return render_template('reset_password.html')
+
+@main_bp.route('/reset/<token>', methods=['GET', 'POST'])
+def reset_with_token(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+    except:
+        flash('El enlace para restablecer la contraseña es inválido o ha expirado.', 'error')
+        return redirect(url_for('main.reset_password'))
+
+    if request.method == 'POST':
+        contraseña = request.form['contraseña']
+        hashed_password = generate_password_hash(contraseña)
+        doctor = Doctor.query.filter_by(email=email).first()
+        doctor.contraseña = hashed_password
+        db.session.commit()
+        flash('Su contraseña ha sido actualizada.', 'success')
+        return redirect(url_for('main.login'))
+
+    return render_template('reset_with_token.html')
