@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DentAPP 1.1{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Tu propio CSS (opcional) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-light">
+    <!-- Barra superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">DentAPP 1.1</a>
+            <div class="d-flex">
+                {% if session.get('doctor_id') %}
+                    <a class="nav-link text-white" href="{{ url_for('main.doctor_detail', doctor_id=session.get('doctor_id')) }}">Mi Perfil</a>
+                    <a class="nav-link text-white" href="{{ url_for('main.logout') }}">Cerrar sesión</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barra lateral -->
+            <div class="col-md-3 col-lg-2 bg-light p-3">
+                <h4>Menú de navegación</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.create_paciente') }}">Pacientes</a>
+                    </li>
+                    <!-- Puedes agregar más enlaces aquí para futuras páginas -->
+                </ul>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="col-md-9 col-lg-10 p-4">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
