@@ -1,27 +1,62 @@
-<form action="{{ url_for('main.register') }}" method="POST">
-  <label for="nombre">Nombre:</label>
-  <input type="text" name="nombre" id="nombre" required><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Tu propio CSS (opcional) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
+            <h1 class="text-center mb-4">Registro de Usuario</h1>
+            
+            <form action="{{ url_for('main.register') }}" method="POST">
+                <div class="mb-3">
+                    <label for="ci" class="form-label">CI:</label>
+                    <input type="text" name="ci" id="ci" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="paterno" class="form-label">Apellido Paterno:</label>
+                    <input type="text" name="paterno" id="paterno" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="materno" class="form-label">Apellido Materno:</label>
+                    <input type="text" name="materno" id="materno" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="especialidad" class="form-label">Especialidad:</label>
+                    <input type="text" name="especialidad" id="especialidad" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="telefono" class="form-label">Teléfono:</label>
+                    <input type="text" name="telefono" id="telefono" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento:</label>
+                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico:</label>
+                    <input type="email" name="email" id="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="contraseña" class="form-label">Contraseña:</label>
+                    <input type="password" name="contraseña" id="contraseña" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+            </form>
+        </div>
+    </div>
 
-  <label for="paterno">Apellido Paterno:</label>
-  <input type="text" name="paterno" id="paterno"><br>
-
-  <label for="materno">Apellido Materno:</label>
-  <input type="text" name="materno" id="materno"><br>
-
-  <label for="especialidad">Especialidad:</label>
-  <input type="text" name="especialidad" id="especialidad"><br>
-
-  <label for="telefono">Teléfono:</label>
-  <input type="text" name="telefono" id="telefono"><br>
-
-  <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-  <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required><br>
-
-  <label for="email">Correo Electrónico:</label>
-  <input type="email" name="email" id="email" required><br>
-
-  <label for="contraseña">Contraseña:</label>
-  <input type="password" name="contraseña" id="contraseña" required><br>
-
-  <button type="submit">Registrarse</button>
-</form>
+    <!-- Bootstrap Bundle JS -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@ from app import db
 
 class Doctor(db.Model):
     doctor_id = db.Column(db.Integer, primary_key=True)  # ID único del doctor
+    ci = db.Column(db.Integer, nullable=False)           # Nombre del doctor
     nombre = db.Column(db.String(100), nullable=False)   # Nombre del doctor
     paterno = db.Column(db.String(100))                  # Apellido paterno
     materno = db.Column(db.String(100))                  # Apellido materno

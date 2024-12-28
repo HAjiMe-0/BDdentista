@@ -245,6 +245,7 @@ def delete_entity(entity, id):
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        ci = request.form['ci']
         nombre = request.form['nombre']
         paterno = request.form.get('paterno')
         materno = request.form.get('materno')
@@ -273,6 +274,7 @@ def register():
 
         # Crear un nuevo doctor
         nuevo_doctor = Doctor(
+            ci=ci,
             nombre=nombre,
             paterno=paterno,
             materno=materno,

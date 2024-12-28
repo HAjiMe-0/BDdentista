@@ -8,7 +8,7 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:123456@localhost:5433/BDDentista'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:123@localhost:5432/BDDentista'
     app.config['SECRET_KEY'] = 'your_secret_key'
 
     db.init_app(app)
