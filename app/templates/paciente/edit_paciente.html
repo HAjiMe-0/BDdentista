@@ -79,6 +79,7 @@
         <!-- Botones -->
         <div class="d-flex justify-content-between">
             <button type="submit" class="btn btn-success">Actualizar</button>
+            <a href="{{ url_for('main.detail_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-secondary">Volver</a>
             <a href="{{ url_for('main.detail_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>

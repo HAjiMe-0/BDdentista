@@ -231,7 +231,7 @@ def edit_paciente(paciente_id):
 
         db.session.commit()
         flash('Paciente actualizado exitosamente.', 'success')
-        return redirect(url_for('main.pacientes_list'))
+        return redirect(url_for('main.edit_paciente', paciente_id=paciente_id))
 
     return render_template('paciente/edit_paciente.html', paciente=paciente)
 
@@ -295,13 +295,6 @@ def register():
         return redirect(url_for('main.login'))
 
     return render_template('register.html')
-#Lista de pacientes
-@main_bp.route('/pacientes', methods=['GET'])
-@login_required
-def pacientes_list():
-    doctor_id = session.get('doctor_id')
-    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
-    return render_template('pacientes_list.html', pacientes=pacientes)
 
 # Ruta para restablecer contraseña
 @main_bp.route('/reset_password', methods=['GET', 'POST'])
