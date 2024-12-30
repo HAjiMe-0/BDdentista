@@ -33,10 +33,13 @@
                         <a class="nav-link" href="{{ url_for('main.index') }}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.create_paciente') }}">Pacientes</a>
+                        <a class="nav-link" href="{{ url_for('main.create_paciente') }}">Crear Paciente</a>
                     </li>
-                    <!-- Puedes agregar más enlaces aquí para futuras páginas -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.pacientes_list') }}">Pacientes</a>
+                    </li>
                 </ul>
+                
             </div>
 
             <!-- Contenido principal -->
