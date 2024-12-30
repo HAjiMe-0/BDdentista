@@ -88,6 +88,14 @@ def create_doctor():
         return redirect(url_for('main.index'))
 
     return render_template('create_doctor.html')
+# Ruta para listar a los pacientes
+@main_bp.route('/list_paciente')
+@login_required
+def list_paciente():
+    doctor_id = session.get('doctor_id')
+    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+    doctor = Doctor.query.get(doctor_id)
+    return render_template('paciente/list_paciente.html', doctor=doctor, pacientes=pacientes)
 
 # Ruta para crear un paciente
 @main_bp.route('/paciente/create', methods=['GET', 'POST'])
@@ -124,12 +132,12 @@ def create_paciente():
         flash('Paciente creado exitosamente.', 'success')
         return redirect(url_for('main.create_paciente'))
 
-    return render_template('create_paciente.html')
+    return render_template('paciente/create_paciente.html')
 
 # Ver detalle del paciente
 @main_bp.route('/paciente/<int:paciente_id>', methods=['GET'])
 @login_required
-def paciente_detail(paciente_id):
+def detail_paciente(paciente_id):
     # Buscar el paciente por ID
     paciente = Paciente.query.get_or_404(paciente_id)
     
@@ -138,12 +146,12 @@ def paciente_detail(paciente_id):
         flash('No tienes permiso para ver este paciente.', 'error')
         return redirect(url_for('main.index'))
     
-    return render_template('paciente_detail.html', paciente=paciente)
+    return render_template('paciente/detail_paciente.html', paciente=paciente)
 
 # Ver detalle del Doctor 
 @main_bp.route('/doctor/<int:doctor_id>', methods=['GET'])
 @login_required
-def doctor_detail(doctor_id):
+def detail_doctor(doctor_id):
     # Obtener el doctor por ID
     doctor = Doctor.query.get_or_404(doctor_id)
     
@@ -152,7 +160,7 @@ def doctor_detail(doctor_id):
         flash('No tienes permiso para ver este perfil.', 'error')
         return redirect(url_for('main.index'))
     
-    return render_template('doctor_detail.html', doctor=doctor)
+    return render_template('doctor/detail_doctor.html', doctor=doctor)
 
 # Editar Doctor
 @main_bp.route('/doctor/edit/<int:doctor_id>', methods=['GET', 'POST'])
@@ -187,7 +195,7 @@ def edit_doctor(doctor_id):
         flash('Perfil actualizado exitosamente.', 'success')
         return redirect(url_for('main.edit_doctor', doctor_id=doctor_id))
 
-    return render_template('edit_doctor.html', doctor=doctor)
+    return render_template('doctor/edit_doctor.html', doctor=doctor)
 
 # Editar Paciente
 @main_bp.route('/paciente/edit/<int:paciente_id>', methods=['GET', 'POST'])
@@ -225,7 +233,7 @@ def edit_paciente(paciente_id):
         flash('Paciente actualizado exitosamente.', 'success')
         return redirect(url_for('main.edit_paciente', paciente_id=paciente_id))
 
-    return render_template('edit_paciente.html', paciente=paciente)
+    return render_template('paciente/edit_paciente.html', paciente=paciente)
 
 # Ruta para eliminar un doctor o paciente
 @main_bp.route('/delete/<string:entity>/<int:id>', methods=['POST'])

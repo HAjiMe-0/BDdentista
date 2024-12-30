@@ -3,22 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DentAPP 1.1 - Gestión de pacientes y doctores.">
+    <meta name="author" content="Tu nombre o equipo">
+    <meta name="keywords" content="dentista, pacientes, doctores, gestión">
     <title>{% block title %}DentAPP 1.1{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Íconos de Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <!-- Tu propio CSS (opcional) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body class="bg-light">
     <!-- Barra superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">DentAPP 1.1</a>
-            <div class="d-flex">
-                {% if session.get('doctor_id') %}
-                    <a class="nav-link text-white" href="{{ url_for('main.doctor_detail', doctor_id=session.get('doctor_id')) }}">Mi Perfil</a>
-                    <a class="nav-link text-white" href="{{ url_for('main.logout') }}">Cerrar sesión</a>
-                {% endif %}
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="bi bi-hospital"></i> DentAPP 1.1
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.get('doctor_id') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.detail_doctor', doctor_id=session.get('doctor_id')) }}">
+                                <i class="bi bi-person-circle"></i> Mi Perfil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.logout') }}">
+                                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
@@ -26,26 +46,44 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Barra lateral -->
-            <div class="col-md-3 col-lg-2 bg-light p-3">
-                <h4>Menú de navegación</h4>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.create_paciente') }}">Pacientes</a>
-                    </li>
-                    <!-- Puedes agregar más enlaces aquí para futuras páginas -->
-                </ul>
-            </div>
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar shadow">
+                <div class="position-sticky">
+                    <h5 class="pt-3 text-center">Menú</h5>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
+                                <i class="bi bi-house"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.list_paciente' %}active{% endif %}" href="{{ url_for('main.list_paciente') }}">
+                                <i class="bi bi-people"></i> Pacientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-calendar"></i> Citas <span class="badge bg-primary">Próximamente</span>
+                            </a>
+                        </li>
+                        <!-- Más enlaces -->
+                    </ul>
+                </div>
+            </nav>
 
             <!-- Contenido principal -->
-            <div class="col-md-9 col-lg-10 p-4">
+            <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4 py-4">
                 {% block content %}
                 {% endblock %}
-            </div>
+            </main>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white text-center">
+        <div class="container">
+            <span>&copy; 2024 DentAPP 1.1. Todos los derechos reservados.</span>
+        </div>
+    </footer>    
 
     <!-- Bootstrap JS -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>

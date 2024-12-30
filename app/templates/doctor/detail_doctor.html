@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Doctor</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <!-- Título -->
+        <h1 class="text-center mb-4">Perfil del Doctor</h1>
+        
+        <!-- Tarjeta con la información del doctor -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-primary">{{ doctor.nombre }}</h3>
+                <p class="card-text"><strong>Especialidad:</strong> {{ doctor.especialidad }}</p>
+                <p class="card-text"><strong>Teléfono:</strong> {{ doctor.telefono }}</p>
+                <p class="card-text"><strong>Email:</strong> {{ doctor.email }}</p>
+            </div>
+            <div class="card-footer text-center">
+                <!-- Botones -->
+                <a href="{{ url_for('main.index') }}" class="btn btn-secondary me-2">Volver al panel principal</a>
+                <a href="{{ url_for('main.edit_doctor', doctor_id=doctor.doctor_id) }}" class="btn btn-primary">Editar Perfil</a>
+                <a href="{{ url_for('main.list_paciente') }}" class="btn btn-success ms-2">Ver Pacientes</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
