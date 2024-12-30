@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Lista de Pacientes</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Cédula</th>
+            <th>Fecha de Nacimiento</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for paciente in pacientes %}
+        <tr>
+            <td>{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</td>
+            <td>{{ paciente.ci if paciente.ci else 'No especificado' }}</td>
+            <td>{{ paciente.fecha_nacimiento.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <a href="{{ url_for('main.edit_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('main.index') }}" class="btn btn-secondary">Volver</a>
+{% endblock %}
