@@ -1,12 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash ,jsonify
 from functools import wraps
-from app.models import db, Doctor, Paciente
+from app.models import db, Doctor, Paciente , Cita
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 from app import mail  # Importar mail desde app
 from app.models import Paciente, FichaDental
 
+from datetime import datetime
 
 main_bp = Blueprint('main', __name__)
 
@@ -421,3 +422,109 @@ def eliminar_ficha(ficha_id):
     return redirect(url_for('main.listar_fichas', paciente_id=paciente_id))
 
 
+
+# Ruta para crear una cita
+@main_bp.route('/cita/create', methods=['GET', 'POST'])
+@login_required
+def create_cita():
+    if request.method == 'POST':
+        paciente_id = request.form['paciente_id']
+        doctor_id = session.get('doctor_id')
+        fecha = request.form['fecha']
+        motivo = request.form['motivo']
+        
+        # Crear la cita
+        nueva_cita = Cita(
+            paciente_id=paciente_id,
+            doctor_id=doctor_id,
+            fecha=fecha,
+            motivo=motivo
+        )
+        
+        db.session.add(nueva_cita)
+        db.session.commit()
+        flash('Cita creada con éxito.', 'success')
+        return redirect(url_for('main.list_cita'))
+    
+    # Obtener lista de pacientes
+    doctor_id = session.get('doctor_id')
+    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+    
+    return render_template('cita/create_cita.html', pacientes=pacientes)
+
+#Ruta para ver detalles
+@main_bp.route('/cita/<int:cita_id>', methods=['GET'])
+@login_required
+def detail_cita(cita_id):
+    cita = Cita.query.get_or_404(cita_id)
+    if cita.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para ver esta cita.', 'error')
+        return redirect(url_for('main.index'))
+    
+    return render_template('cita/detail_cita.html', cita=cita)
+
+#Ruta para editar cita
+@main_bp.route('/cita/edit/<int:cita_id>', methods=['GET', 'POST'])
+@login_required
+def edit_cita(cita_id):
+    cita = Cita.query.get_or_404(cita_id)
+    
+    if cita.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para editar esta cita.', 'error')
+        return redirect(url_for('main.index'))
+    
+    if request.method == 'POST':
+        nueva_fecha = request.form['fecha']
+        nuevo_motivo = request.form['motivo']
+        nuevo_estado = request.form['estado']
+        
+        cita.fecha = nueva_fecha
+        cita.motivo = nuevo_motivo
+        cita.estado = nuevo_estado
+        
+        db.session.commit()
+        flash('Cita actualizada con éxito.', 'success')
+        return redirect(url_for('main.list_cita'))
+    
+    return render_template('cita/edit_cita.html', cita=cita)
+
+# Ruta para listar las citas
+@main_bp.route('/citas', methods=['GET'])
+@login_required
+def list_cita():
+    doctor_id = session.get('doctor_id')
+    citas = Cita.query.filter_by(doctor_id=doctor_id).all()
+    return render_template('cita/list_cita.html', citas=citas)
+
+# Ruta para eliminar una cita
+@main_bp.route('/delete_cita/<int:cita_id>', methods=['POST'])
+@login_required
+def delete_cita(cita_id):
+    cita = Cita.query.get_or_404(cita_id)
+    
+    if cita.doctor_id != session.get('doctor_id'):
+        flash('No tienes permiso para eliminar esta cita.', 'error')
+        return redirect(url_for('main.index'))
+    
+    db.session.delete(cita)
+    db.session.commit()
+    flash('Cita eliminada con éxito.', 'success')
+    return redirect(url_for('main.list_cita'))
+
+
+# Ruta para obtener las citas de un doctor
+@main_bp.route('/citas/<int:year>/<int:month>', methods=['GET'])
+def get_citas_for_month(year, month):
+    # Obtener las citas del mes desde la base de datos
+    citas = Cita.query.filter(db.extract('year', Cita.fecha) == year,
+                              db.extract('month', Cita.fecha) == month).all()
+
+    # Formatear las citas para enviarlas al frontend
+    citas_data = [{
+        'id': cita.cita_id,
+        'fecha': cita.fecha.strftime('%Y-%m-%d'),
+        'motivo': cita.motivo,
+        'paciente': cita.paciente.nombre,  # Asegúrate de acceder correctamente al nombre del paciente
+    } for cita in citas]
+
+    return jsonify(citas_data)
