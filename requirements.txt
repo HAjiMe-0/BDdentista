@@ -3,6 +3,7 @@ flask-sqlalchemy
 flask-migrate
 flask-wtf
 wtforms
-flask_mail
-Flask Flask-SQLAlchemy Flask-Mail itsdangerous Werkzeug
+flask_mail 
+#flask-itsdangerous 
+flask-Werkzeug
 #pg8000
