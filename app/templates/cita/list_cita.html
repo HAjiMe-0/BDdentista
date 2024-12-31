@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-5">
+        <h1>Calendario de Citas</h1>
+        <!-- Botón para Crear Cita -->
+        <a href="{{ url_for('main.create_cita') }}" class="btn btn-success mt-3">Crear Cita</a>
+
+        <!-- Controles para navegar entre meses -->
+        <div class="d-flex justify-content-between">
+            <button id="prev-month" class="btn btn-primary">Anterior</button>
+            <h3 id="month-title">Mes Año</h3>
+            <button id="next-month" class="btn btn-primary">Siguiente</button>
+        </div>
+
+        <!-- Calendario -->
+        <div id="calendar" class="mt-3"></div>
+        <div id="cita-details" class="mt-3"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@3.0.1/main.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentMonth = new Date().getMonth(); // Mes actual
+        let currentYear = new Date().getFullYear(); // Año actual
+
+        // Obtener las citas desde la base de datos
+        function getCitas(year, month) {
+            return $.ajax({
+                url: `/citas/${year}/${month}`,
+                method: 'GET',
+                dataType: 'json'
+            });
+        }
+
+        // Actualizar título del mes
+        function updateMonthTitle() {
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            document.getElementById('month-title').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+        }
+
+        // Crear calendario
+        function crearCalendario() {
+            getCitas(currentYear, currentMonth + 1).then(citas => {
+                const monthDays = document.getElementById('calendar');
+
+                // Obtener el primer día del mes y cuántos días tiene el mes
+                let firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+                let lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+                let daysInMonth = lastDayOfMonth.getDate();
+                let firstDay = firstDayOfMonth.getDay(); // Día de la semana del primer día del mes
+
+                let calendarHTML = '<table class="table table-bordered"><thead><tr>';
+                // Cabecera con los días de la semana
+                ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].forEach(day => {
+                    calendarHTML += `<th>${day}</th>`;
+                });
+                calendarHTML += '</tr></thead><tbody><tr>';
+
+                // Espacios vacíos antes del primer día
+                for (let i = 0; i < firstDay; i++) {
+                    calendarHTML += '<td></td>';
+                }
+
+                // Crear los días del mes
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                    
+                    // Comprobar si hay citas para ese día
+                    let citasDelDia = citas.filter(cita => cita.fecha === dateString);
+                    let dayClass = citasDelDia.length > 0 ? 'day-with-cita' : '';
+
+                    calendarHTML += `<td class="${dayClass}" onclick="showCitas('${dateString}')">
+                                        ${day} ${citasDelDia.length > 0 ? `(${citasDelDia.length})` : ''}
+                                      </td>`;
+
+                    // Cambiar de fila después de sábado
+                    if ((firstDay + day) % 7 === 0) {
+                        calendarHTML += '</tr><tr>';
+                    }
+                }
+
+                calendarHTML += '</tr></tbody></table>';
+                monthDays.innerHTML = calendarHTML;
+            });
+        }
+
+        // Mostrar las citas del día en formato de tabla
+        function showCitas(date) {
+            getCitas(currentYear, currentMonth + 1).then(citas => {
+                const citasDelDia = citas.filter(cita => cita.fecha === date);
+                const detalles = document.getElementById('cita-details');
+                if (citasDelDia.length > 0) {
+                    let citasHTML = `<h3>Citas para el ${date}</h3>
+                                    <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                        <th>Paciente</th>
+                                        <th>Motivo</th>
+                                        <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                    citasDelDia.forEach(cita => {
+                        citasHTML += `<tr>
+                                        <td>${cita.paciente}</td>
+                                        <td>${cita.motivo}</td>
+                                        <td>
+                                            <a href="/cita/${cita.id}" class="btn btn-info btn-sm">Ver detalles</a>
+                                            <form action="/delete_cita/${cita.id}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar esta cita?')">Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>`;
+                    });
+                    citasHTML += `</tbody></table>`;
+                    detalles.innerHTML = citasHTML;
+                } else {
+                    detalles.innerHTML = `<p>No hay citas programadas para el ${date}.</p>`;
+                }
+            });
+        }
+
+
+
+        // Navegar al mes anterior
+        document.getElementById('prev-month').addEventListener('click', function() {
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+            updateMonthTitle();
+            crearCalendario();
+        });
+
+        // Navegar al siguiente mes
+        document.getElementById('next-month').addEventListener('click', function() {
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+            updateMonthTitle();
+            crearCalendario();
+        });
+
+        // Inicializar calendario
+        document.addEventListener('DOMContentLoaded', function () {
+            updateMonthTitle();
+            crearCalendario();
+        });
+    </script>
+{% endblock %}

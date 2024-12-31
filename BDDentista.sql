@@ -33,3 +33,26 @@ CREATE TABLE paciente (
         REFERENCES doctor(doctor_id)
         ON DELETE CASCADE -- Si se elimina un doctor, se eliminan sus pacientes
 );
+
+-- Tabla Cita
+CREATE TABLE cita (
+    cita_id SERIAL PRIMARY KEY,          -- ID único de la cita
+    paciente_id INT NOT NULL,            -- ID del paciente
+    doctor_id INT NOT NULL,              -- ID del doctor
+    fecha TIMESTAMP NOT NULL,            -- Fecha y hora de la cita
+    motivo TEXT,                         -- Motivo de la cita
+    estado VARCHAR(50) DEFAULT 'Pendiente', -- Estado de la cita (Pendiente, Confirmada, etc.)
+
+    CONSTRAINT fk_paciente
+        FOREIGN KEY (paciente_id)
+        REFERENCES paciente(paciente_id)
+        ON DELETE CASCADE, -- Si se elimina un paciente, se eliminan sus citas
+
+    CONSTRAINT fk_doctor
+        FOREIGN KEY (doctor_id)
+        REFERENCES doctor(doctor_id)
+        ON DELETE CASCADE, -- Si se elimina un doctor, se eliminan sus citas
+
+    CONSTRAINT uniq_cita_paciente_doctor
+        UNIQUE (paciente_id, doctor_id, fecha) -- Evitar que un paciente tenga dos citas con el mismo doctor en la misma hora
+);

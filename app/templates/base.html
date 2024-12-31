@@ -61,8 +61,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.list_cita' %}active{% endif %}" href="{{ url_for('main.list_cita') }}">
+                                <i class="bi bi-calendar"></i> Citas
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#">
-                                <i class="bi bi-calendar"></i> Citas <span class="badge bg-primary">Próximamente</span>
+                                <i class="bi bi-calendar"></i> Reportes <span class="badge bg-primary">Próximamente</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-calendar"></i> Configuracion <span class="badge bg-primary">Próximamente</span>
                             </a>
                         </li>
                         <!-- Más enlaces -->
