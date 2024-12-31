@@ -33,3 +33,22 @@ CREATE TABLE paciente (
         REFERENCES doctor(doctor_id)
         ON DELETE CASCADE -- Si se elimina un doctor, se eliminan sus pacientes
 );
+
+-- Tabla Ficha Dental
+CREATE TABLE ficha_dental (
+    ficha_id SERIAL PRIMARY KEY,     -- ID único de la ficha dental
+    paciente_id INT NOT NULL,        -- ID del paciente asociado
+    fecha DATE NOT NULL,             -- Fecha de la ficha
+    pieza_dental VARCHAR(10),        -- Pieza dental afectada
+    diagnostico TEXT,                -- Diagnóstico realizado
+    tratamiento TEXT,                -- Tratamiento sugerido
+    costo DECIMAL(10, 2),            -- Costo del tratamiento
+    al_contado DECIMAL(10, 2),       -- Monto pagado al contado
+    saldo DECIMAL(10, 2),            -- Saldo restante
+    observaciones TEXT,              -- Observaciones adicionales
+
+    CONSTRAINT fk_paciente
+        FOREIGN KEY (paciente_id)
+        REFERENCES paciente(paciente_id)
+        ON DELETE CASCADE
+);

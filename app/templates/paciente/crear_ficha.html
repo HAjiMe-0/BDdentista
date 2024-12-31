@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Ficha Dental{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4 text-primary">Crear Ficha Dental</h1>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="fecha" class="form-label">Fecha</label>
+            <input type="text" class="form-control" id="fecha" name="fecha" placeholder="DD/MM/AAAA" required>
+        </div>
+        <div class="mb-3">
+            <label for="pieza_dental" class="form-label">Pieza Dental</label>
+            <input type="text" class="form-control" id="pieza_dental" name="pieza_dental" required>
+        </div>
+        <div class="mb-3">
+            <label for="diagnostico" class="form-label">Diagnóstico</label>
+            <input type="text" class="form-control" id="diagnostico" name="diagnostico" required>
+        </div>
+        <div class="mb-3">
+            <label for="tratamiento" class="form-label">Tratamiento</label>
+            <input type="text" class="form-control" id="tratamiento" name="tratamiento" required>
+        </div>
+        <div class="mb-3">
+            <label for="costo" class="form-label">Costo</label>
+            <input type="number" class="form-control" id="costo" name="costo" required>
+        </div>
+        <div class="mb-3">
+            <label for="al_contado" class="form-label">Al Contado</label>
+            <input type="number" class="form-control" id="al_contado" name="al_contado" required>
+        </div>
+        <div class="mb-3">
+            <label for="saldo" class="form-label">Saldo</label>
+            <input type="number" class="form-control" id="saldo" name="saldo">
+        </div>
+        <div class="mb-3">
+            <label for="observaciones" class="form-label">Observaciones</label>
+            <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Ficha</button>
+        <a href="{{ url_for('main.listar_fichas', paciente_id=paciente.paciente_id) }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

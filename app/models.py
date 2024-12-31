@@ -28,3 +28,23 @@ class Paciente(db.Model):
     estado_civil = db.Column(db.String(50))               # Estado civil
     ocupacion = db.Column(db.String(100))                 # Ocupación
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id'), nullable=False)  # ID del doctor asignado
+
+
+#Modelo para ficha dental
+class FichaDental(db.Model):
+    __tablename__ = 'ficha_dental'
+
+    ficha_id = db.Column(db.Integer, primary_key=True)
+    paciente_id = db.Column(db.Integer, db.ForeignKey('paciente.paciente_id', ondelete='CASCADE'), nullable=False)
+    fecha = db.Column(db.Date, nullable=False)  # Fecha manualmente ingresada
+    pieza_dental = db.Column(db.String(10), nullable=True)
+    diagnostico = db.Column(db.Text, nullable=True)
+    tratamiento = db.Column(db.Text, nullable=True)
+    costo = db.Column(db.Numeric(10, 2), nullable=True)
+    al_contado = db.Column(db.Numeric(10, 2), nullable=True)
+    saldo = db.Column(db.Numeric(10, 2), nullable=True)
+    observaciones = db.Column(db.Text, nullable=True)  # Asegúrate de que se llame 'observaciones'
+
+    paciente = db.relationship('Paciente', backref=db.backref('fichas_dentales', cascade='all, delete-orphan'))
+
+

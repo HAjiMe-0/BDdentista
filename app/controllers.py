@@ -5,6 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 from app import mail  # Importar mail desde app
+from app.models import Paciente, FichaDental
+
 
 main_bp = Blueprint('main', __name__)
 
@@ -331,3 +333,91 @@ def reset_with_token(token):
         return redirect(url_for('main.login'))
 
     return render_template('reset_with_token.html')
+
+    #rutas para las fichas dentales
+
+# Ruta para listar fichas de un paciente
+@main_bp.route('/paciente/<int:paciente_id>/fichas', methods=['GET'])
+@login_required
+def listar_fichas(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    fichas = FichaDental.query.filter_by(paciente_id=paciente_id).all()
+    return render_template('paciente/listar_fichas.html', paciente=paciente, fichas=fichas)
+
+# Ruta para crear una ficha dental para un paciente
+@main_bp.route('/paciente/<int:paciente_id>/fichas/crear', methods=['GET', 'POST'])
+@login_required
+def crear_ficha(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+
+    if request.method == 'POST':
+        fecha = request.form.get('fecha')
+        pieza_dental = request.form.get('pieza_dental')
+        diagnostico = request.form.get('diagnostico')
+        tratamiento = request.form.get('tratamiento')
+        costo = float(request.form.get('costo'))
+        al_contado = float(request.form.get('al_contado'))
+        saldo = float(request.form.get('saldo', 0))
+        observaciones = request.form.get('observaciones')
+
+        # Crear y guardar la nueva ficha
+        nueva_ficha = FichaDental(
+            fecha=fecha,
+            pieza_dental=pieza_dental,
+            diagnostico=diagnostico,
+            tratamiento=tratamiento,
+            costo=costo,
+            al_contado=al_contado,
+            saldo=saldo,
+            observaciones=observaciones,
+            paciente_id=paciente_id
+        )
+        db.session.add(nueva_ficha)
+        db.session.commit()
+
+        flash('Ficha creada exitosamente.', 'success')
+        return redirect(url_for('main.listar_fichas', paciente_id=paciente_id))
+
+    return render_template('paciente/crear_ficha.html', paciente=paciente)
+
+# Ruta para editar una ficha dental existente
+@main_bp.route('/ficha/<int:ficha_id>/editar', methods=['GET', 'POST'])
+@login_required
+def editar_ficha(ficha_id):
+    ficha = FichaDental.query.get_or_404(ficha_id)
+
+    if request.method == 'POST':
+        # Asignar los valores del formulario a los campos de la ficha dental
+        ficha.fecha = request.form.get('fecha', ficha.fecha)  # Mantener fecha original si no se proporciona nueva
+        ficha.pieza_dental = request.form.get('pieza_dental', ficha.pieza_dental)
+        ficha.diagnostico = request.form.get('diagnostico', ficha.diagnostico)
+        ficha.tratamiento = request.form.get('tratamiento', ficha.tratamiento)
+        
+        # Convertir los valores de costo, al_contado, y saldo a decimal
+        ficha.costo = request.form.get('costo', ficha.costo)
+        ficha.al_contado = request.form.get('al_contado', ficha.al_contado)
+        ficha.saldo = request.form.get('saldo', ficha.saldo)
+        
+        ficha.observaciones = request.form.get('observaciones', ficha.observaciones)
+
+        # Commit de los cambios
+        db.session.commit()
+        flash('Ficha Dental actualizada con éxito.', 'success')
+        return redirect(url_for('main.listar_fichas', paciente_id=ficha.paciente_id))
+
+    # Si el método es GET, simplemente renderiza el formulario con los datos actuales de la ficha
+    return render_template('paciente/editar_ficha.html', ficha=ficha)
+
+
+# Ruta para eliminar una ficha dental
+@main_bp.route('/ficha/<int:ficha_id>/eliminar', methods=['POST'])
+@login_required
+def eliminar_ficha(ficha_id):
+    ficha = FichaDental.query.get_or_404(ficha_id)
+    paciente_id = ficha.paciente_id
+    db.session.delete(ficha)
+    db.session.commit()
+    flash('Ficha Dental eliminada con éxito.', 'success')
+    return redirect(url_for('main.listar_fichas', paciente_id=paciente_id))
+
+

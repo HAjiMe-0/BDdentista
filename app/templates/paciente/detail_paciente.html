@@ -25,10 +25,12 @@
         </div>
     </div>
 
-    <!-- Botones para Volver y Editar -->
+    <!-- Botones para acciones -->
     <div class="text-center">
         <a href="{{ url_for('main.list_paciente') }}" class="btn btn-secondary">Volver</a>
         <a href="{{ url_for('main.edit_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-primary">Editar Perfil</a>
+        <a href="{{ url_for('main.listar_fichas', paciente_id=paciente.paciente_id) }}" class="btn btn-info">Ver Fichas</a>
     </div>
 </div>
 {% endblock %}
+
