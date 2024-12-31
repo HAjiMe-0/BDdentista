@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Médico Completo</title>
+</head>
+<body>
+    <h1>Formulario Médico Completo</h1>
+
+    <form action="/guardar_formulario" method="POST">
+        <!-- Sección 2: Antecedentes Médicos -->
+        <h2>Sección 2: Antecedentes Médicos</h2>
+        <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+
+
+        <!-- Parte A: Preguntas generales sobre enfermedades -->
+        <h3>Parte A: Preguntas generales sobre enfermedades</h3>
+
+        <label>1. ¿Ha tenido alguna operación o enfermedad grave?</label><br>
+        <input type="radio" name="operacion_grave" value="Sí"> Sí<br>
+        <input type="radio" name="operacion_grave" value="No"> No<br>
+        <label>Si la respuesta es Sí: ¿Cuál?</label>
+        <input type="text" name="detalle_operacion_grave"><br><br>
+
+        <label>2. ¿Ha tenido alguna de las siguientes enfermedades?</label><br>
+        <label>a) Fiebre reumática</label>
+        <input type="radio" name="fiebre_reumatica" value="Sí"> Sí
+        <input type="radio" name="fiebre_reumatica" value="No"> No<br>
+
+        <label>b) ¿Sufre alguna cardiopatía?</label>
+        <input type="radio" name="cardiopatia" value="Sí"> Sí
+        <input type="radio" name="cardiopatia" value="No"> No<br>
+        <label>Si la respuesta es Sí: ¿Cuál?</label>
+        <input type="text" name="detalle_cardiopatia"><br>
+
+        <label>c) Enfermedades respiratorias</label>
+        <input type="radio" name="enfermedades_respiratorias" value="Sí"> Sí
+        <input type="radio" name="enfermedades_respiratorias" value="No"> No<br>
+        <label>Si la respuesta es Sí: ¿Cuál?</label>
+        <input type="text" name="detalle_enfermedades_respiratorias"><br>
+
+        <label>d) Enfermedades renales</label>
+        <input type="radio" name="enfermedades_renales" value="Sí"> Sí
+        <input type="radio" name="enfermedades_renales" value="No"> No<br>
+
+        <label>e) Asma</label>
+        <input type="radio" name="asma" value="Sí"> Sí
+        <input type="radio" name="asma" value="No"> No<br>
+
+        <label>f) Mareos</label>
+        <input type="radio" name="mareos" value="Sí"> Sí
+        <input type="radio" name="mareos" value="No"> No<br>
+
+        <label>g) Diabetes</label>
+        <input type="radio" name="diabetes" value="Sí"> Sí
+        <input type="radio" name="diabetes" value="No"> No<br>
+
+        <label>h) Artritis</label>
+        <input type="radio" name="artritis" value="Sí"> Sí
+        <input type="radio" name="artritis" value="No"> No<br>
+
+        <label>i) Úlcera gástrica</label>
+        <input type="radio" name="ulcera_gastrica" value="Sí"> Sí
+        <input type="radio" name="ulcera_gastrica" value="No"> No<br>
+
+        <label>j) Tuberculosis</label>
+        <input type="radio" name="tuberculosis" value="Sí"> Sí
+        <input type="radio" name="tuberculosis" value="No"> No<br>
+
+        <label>k) Enfermedades venéreas</label>
+        <input type="radio" name="enfermedades_venereas" value="Sí"> Sí
+        <input type="radio" name="enfermedades_venereas" value="No"> No<br>
+
+        <label>l) Presión alta</label>
+        <input type="radio" name="presion_alta" value="Sí"> Sí
+        <input type="radio" name="presion_alta" value="No"> No<br>
+
+        <label>m) Presión baja</label>
+        <input type="radio" name="presion_baja" value="Sí"> Sí
+        <input type="radio" name="presion_baja" value="No"> No<br>
+
+        <label>n) Hepatitis</label>
+        <input type="radio" name="hepatitis" value="Sí"> Sí
+        <input type="radio" name="hepatitis" value="No"> No<br>
+
+        <label>o) Sinusitis</label>
+        <input type="radio" name="sinusitis" value="Sí"> Sí
+        <input type="radio" name="sinusitis" value="No"> No<br>
+
+        <label>p) VIH (SIDA)</label>
+        <input type="radio" name="vih" value="Sí"> Sí
+        <input type="radio" name="vih" value="No"> No<br>
+
+        <label>q) Alergias</label>
+        <input type="radio" name="alergias" value="Sí"> Sí
+        <input type="radio" name="alergias" value="No"> No<br>
+        <label>Si la respuesta es Sí: ¿A qué es alérgico?</label>
+        <input type="text" name="detalle_alergias"><br>
+
+        <!-- Preguntas adicionales -->
+
+        <label>3. ¿Siente dolor en el tórax después de hacer ejercicio?</label><br>
+        <input type="radio" name="dolor_torax" value="Sí"> Sí
+        <input type="radio" name="dolor_torax" value="No"> No<br>
+
+        <label>4. ¿Le falta aire después del ejercicio?</label><br>
+        <input type="radio" name="falta_aire" value="Sí"> Sí
+        <input type="radio" name="falta_aire" value="No"> No<br>
+
+        <label>5. ¿Ha sangrado de forma anormal después de una extracción?</label><br>
+        <input type="radio" name="sangrado_anormal" value="Sí"> Sí
+        <input type="radio" name="sangrado_anormal" value="No"> No<br>
+
+        <label>6. ¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?</label><br>
+        <input type="radio" name="problema_odontologico" value="Sí"> Sí
+        <input type="radio" name="problema_odontologico" value="No"> No<br>
+
+        <label>7. ¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?</label><br>
+        <input type="radio" name="problema_no_odontologico" value="Sí"> Sí
+        <input type="radio" name="problema_no_odontologico" value="No"> No<br>
+
+        <label>8. ¿Está tomando algún tipo de medicamento o fármaco?</label><br>
+        <input type="radio" name="medicamentos" value="Sí"> Sí
+        <input type="radio" name="medicamentos" value="No"> No<br>
+
+        <label>9. ¿Ha tenido reacciones adversas a medicamentos?</label><br>
+        <input type="radio" name="reaccion_medicamentos" value="Sí"> Sí
+        <input type="radio" name="reaccion_medicamentos" value="No"> No<br>
+        <label>Si la respuesta es Sí: ¿Cuál?</label>
+        <input type="text" name="detalle_reaccion_medicamentos"><br>
+
+        <!-- Preguntas con múltiples respuestas -->
+
+        <label>10. Acostumbra:</label><br>
+        <input type="checkbox" name="acostumbra[]" value="fumar"> Fumar<br>
+        <input type="checkbox" name="acostumbra[]" value="beber"> Beber<br>
+        <input type="checkbox" name="acostumbra[]" value="rechinar_dientes"> Rechinar los dientes<br>
+        <input type="checkbox" name="acostumbra[]" value="roncar"> Roncar<br>
+        <input type="checkbox" name="acostumbra[]" value="respirar_boca"> Respirar por la boca<br>
+        <input type="checkbox" name="acostumbra[]" value="morder_labios"> Morderse los labios o la lengua<br>
+        <input type="checkbox" name="acostumbra[]" value="chuparse_dedo"> Chuparse el dedo<br>
+
+        <label>11. Tiene algún problema con:</label><br>
+        <input type="checkbox" name="problema_con[]" value="rinones"> Riñones<br>
+        <input type="checkbox" name="problema_con[]" value="pulmones"> Pulmones<br>
+        <input type="checkbox" name="problema_con[]" value="higado"> Hígado<br>
+        <input type="checkbox" name="problema_con[]" value="articulaciones"> Articulaciones<br>
+        <input type="checkbox" name="problema_con[]" value="otros"> Otros<br>
+
+        <label>12. ¿Ud. ha tenido en los últimos 14 días:</label><br>
+        <input type="checkbox" name="ultimos_14_dias[]" value="problemas_respiratorios"> Problemas respiratorios (tos)<br>
+        <input type="checkbox" name="ultimos_14_dias[]" value="fiebre"> Fiebre<br>
+        <input type="checkbox" name="ultimos_14_dias[]" value="dolor_muscular"> Dolor muscular<br>
+        <input type="checkbox" name="ultimos_14_dias[]" value="contacto_covid"> Contacto con pacientes COVID-19<br>
+        <input type="checkbox" name="ultimos_14_dias[]" value="viajes_riesgo"> Viajes a países o lugares de riesgo COVID-19<br>
+
+        <!-- Sección exclusiva para mujeres -->
+
+        <h3>Mujeres exclusivamente</h3>
+        <label>13. ¿Está Ud. embarazada?</label><br>
+        <input type="radio" name="embarazo" value="Sí"> Sí
+        <input type="radio" name="embarazo" value="No"> No<br>
+        <label>Si la respuesta es Sí: ¿Cuántas semanas tiene de embarazo?</label>
+        <input type="number" name="semanas_embarazo" min="0"><br>
+
+        <label>14. Observaciones</label><br>
+        <textarea name="observaciones" rows="4" cols="50"></textarea><br>
+
+        <!-- Declaración del paciente -->
+
+        <label>15. Declaración del/de la paciente antes del tratamiento:</label><br>
+
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+</html>

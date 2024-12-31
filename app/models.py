@@ -66,3 +66,45 @@ class Cita(db.Model):
     __table_args__ = (
         db.UniqueConstraint('paciente_id', 'doctor_id', 'fecha', name='_unique_cita_paciente_doctor_fecha'),
     )
+    
+
+class FormularioMedico(db.Model):
+    __tablename__ = 'formulario_medico'
+
+    formulario_id = db.Column(db.Integer, primary_key=True)  # ID único del formulario
+    paciente_id = db.Column(db.Integer, db.ForeignKey('paciente.paciente_id', ondelete='CASCADE'), nullable=False)  # Relación con Paciente
+    fecha = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)  # Fecha de creación
+    operacion_grave = db.Column(db.Boolean, default=False)  # Si tuvo una operación grave
+    detalle_operacion_grave = db.Column(db.Text)            # Detalle de operación grave
+    fiebre_reumatica = db.Column(db.Boolean, default=False)  # Fiebre reumática
+    cardiopatia = db.Column(db.Boolean, default=False)      # Cardiopatía
+    detalle_cardiopatia = db.Column(db.Text)                # Detalle de la cardiopatía
+    enfermedades_respiratorias = db.Column(db.Boolean, default=False)  # Enfermedades respiratorias
+    detalle_enfermedades_respiratorias = db.Column(db.Text) # Detalle de enfermedades respiratorias
+    enfermedades_renales = db.Column(db.Boolean, default=False)  # Enfermedades renales
+    asma = db.Column(db.Boolean, default=False)             # Asma
+    mareos = db.Column(db.Boolean, default=False)           # Mareos
+    diabetes = db.Column(db.Boolean, default=False)         # Diabetes
+    artritis = db.Column(db.Boolean, default=False)         # Artritis
+    ulcera_gastrica = db.Column(db.Boolean, default=False)  # Úlcera gástrica
+    tuberculosis = db.Column(db.Boolean, default=False)     # Tuberculosis
+    enfermedades_venereas = db.Column(db.Boolean, default=False)  # Enfermedades venéreas
+    presion_alta = db.Column(db.Boolean, default=False)     # Presión alta
+    presion_baja = db.Column(db.Boolean, default=False)     # Presión baja
+    hepatitis = db.Column(db.Boolean, default=False)        # Hepatitis
+    sinusitis = db.Column(db.Boolean, default=False)        # Sinusitis
+    vih = db.Column(db.Boolean, default=False)              # VIH
+    alergias = db.Column(db.Boolean, default=False)         # Alergias
+    detalle_alergias = db.Column(db.Text)                   # Detalle de alergias
+    dolor_torax = db.Column(db.Boolean, default=False)      # Dolor en el tórax tras ejercicio
+    falta_aire = db.Column(db.Boolean, default=False)       # Falta de aire tras ejercicio
+    sangrado_anormal = db.Column(db.Boolean, default=False) # Sangrado anormal tras extracción
+    problema_odontologico = db.Column(db.Boolean, default=False)  # Problema odontológico grave
+    problema_no_odontologico = db.Column(db.Boolean, default=False)  # Problema no odontológico grave
+    medicamentos = db.Column(db.Boolean, default=False)     # Si toma medicamentos
+    reaccion_medicamentos = db.Column(db.Boolean, default=False)  # Reacción adversa a medicamentos
+    detalle_reaccion_medicamentos = db.Column(db.Text)      # Detalle de reacción a medicamentos
+    observaciones = db.Column(db.Text)                      # Observaciones adicionales
+
+    # Relación con el paciente
+    paciente = db.relationship('Paciente', backref=db.backref('formularios_medicos', cascade='all, delete-orphan'))

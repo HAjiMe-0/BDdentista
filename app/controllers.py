@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 from app import mail  # Importar mail desde app
-from app.models import Paciente, FichaDental
+from app.models import Paciente, FichaDental, FormularioMedico
 
 from datetime import datetime
 
@@ -528,3 +528,74 @@ def get_citas_for_month(year, month):
     } for cita in citas]
 
     return jsonify(citas_data)
+
+
+#ruta para el formulario
+@main_bp.route('/paciente/<int:paciente_id>/formulario_medico', methods=['GET'])
+@login_required
+def formulario_medico(paciente_id):
+    """
+    Mostrar el formulario médico para un paciente específico.
+    """
+    paciente = Paciente.query.get_or_404(paciente_id)
+    return render_template('formulario_medico.html', paciente=paciente)
+
+@main_bp.route('/guardar_formulario', methods=['POST'])
+def guardar_formulario():
+    try:
+        # Convertir a entero y manejar valores nulos
+        paciente_id = int(request.form.get('paciente_id', 0))
+        if paciente_id == 0:
+            raise ValueError("Paciente ID no válido.")
+
+        # Captura los datos enviados desde el formulario
+        nuevo_formulario = FormularioMedico(
+            paciente_id=paciente_id,
+            fecha=request.form.get('fecha'),
+            operacion_grave=request.form.get('operacion_grave') == 'on',
+            detalle_operacion_grave=request.form.get('detalle_operacion_grave'),
+            fiebre_reumatica=request.form.get('fiebre_reumatica') == 'on',
+            cardiopatia=request.form.get('cardiopatia') == 'on',
+            detalle_cardiopatia=request.form.get('detalle_cardiopatia'),
+            enfermedades_respiratorias=request.form.get('enfermedades_respiratorias') == 'on',
+            detalle_enfermedades_respiratorias=request.form.get('detalle_enfermedades_respiratorias'),
+            enfermedades_renales=request.form.get('enfermedades_renales') == 'on',
+            asma=request.form.get('asma') == 'on',
+            mareos=request.form.get('mareos') == 'on',
+            diabetes=request.form.get('diabetes') == 'on',
+            artritis=request.form.get('artritis') == 'on',
+            ulcera_gastrica=request.form.get('ulcera_gastrica') == 'on',
+            tuberculosis=request.form.get('tuberculosis') == 'on',
+            enfermedades_venereas=request.form.get('enfermedades_venereas') == 'on',
+            presion_alta=request.form.get('presion_alta') == 'on',
+            presion_baja=request.form.get('presion_baja') == 'on',
+            hepatitis=request.form.get('hepatitis') == 'on',
+            sinusitis=request.form.get('sinusitis') == 'on',
+            vih=request.form.get('vih') == 'on',
+            alergias=request.form.get('alergias') == 'on',
+            detalle_alergias=request.form.get('detalle_alergias'),
+            dolor_torax=request.form.get('dolor_torax') == 'on',
+            falta_aire=request.form.get('falta_aire') == 'on',
+            sangrado_anormal=request.form.get('sangrado_anormal') == 'on',
+            problema_odontologico=request.form.get('problema_odontologico') == 'on',
+            problema_no_odontologico=request.form.get('problema_no_odontologico') == 'on',
+            medicamentos=request.form.get('medicamentos') == 'on',
+            reaccion_medicamentos=request.form.get('reaccion_medicamentos') == 'on',
+            detalle_reaccion_medicamentos=request.form.get('detalle_reaccion_medicamentos'),
+            observaciones=request.form.get('observaciones')
+        )
+
+        # Guardar el formulario en la base de datos
+        db.session.add(nuevo_formulario)
+        db.session.commit()
+        flash('Formulario guardado exitosamente.', 'success')
+        return redirect(url_for('main.index'))
+
+    except ValueError as e:
+        flash(f"Error en los datos del formulario: {e}", 'danger')
+        return redirect(request.referrer)
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error al guardar el formulario: {e}", 'danger')
+        return redirect(request.referrer)

@@ -30,10 +30,12 @@
                     <td>
                         <a href="{{ url_for('main.detail_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-info btn-sm">Ver</a>
                         <a href="{{ url_for('main.edit_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ url_for('main.formulario_medico', paciente_id=paciente.paciente_id) }}" class="btn btn-success btn-sm">Formulario Médico</a>
                         <form action="{{ url_for('main.delete_entity', entity='paciente', id=paciente.paciente_id) }}" method="POST" style="display:inline-block;">
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este paciente?');">Eliminar</button>
                         </form>
                     </td>
+                    
                 </tr>
                 {% else %}
                 <tr>
