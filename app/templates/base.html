@@ -50,31 +50,32 @@
                 <div class="position-sticky">
                     <h5 class="pt-3 text-center">Menú</h5>
                     <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
-                                <i class="bi bi-house"></i> Inicio
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'main.list_paciente' %}active{% endif %}" href="{{ url_for('main.list_paciente') }}">
-                                <i class="bi bi-people"></i> Pacientes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'main.list_cita' %}active{% endif %}" href="{{ url_for('main.list_cita') }}">
-                                <i class="bi bi-calendar"></i> Citas
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-calendar"></i> Reportes <span class="badge bg-primary">Próximamente</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-calendar"></i> Configuracion <span class="badge bg-primary">Próximamente</span>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
+                                    <i class="bi bi-house-door"></i> Inicio
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.endpoint == 'main.list_paciente' %}active{% endif %}" href="{{ url_for('main.list_paciente') }}">
+                                    <i class="bi bi-person-lines-fill"></i> Pacientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.endpoint == 'main.list_cita' %}active{% endif %}" href="{{ url_for('main.list_cita') }}">
+                                    <i class="bi bi-calendar-check"></i> Citas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="bi bi-bar-chart"></i> Reportes <span class="badge bg-primary">Próximamente</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="bi bi-gear"></i> Configuración <span class="badge bg-primary">Próximamente</span>
+                                </a>
+                            </li>
+                        
                         <!-- Más enlaces -->
                     </ul>
                 </div>
