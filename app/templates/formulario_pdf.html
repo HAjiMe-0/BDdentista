@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        table th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulario de Historial Clínico</h1>
+    <h2>Paciente: {{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</h2>
+
+    <h3>Información Básica</h3>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <th>Valor</th>
+        </tr>
+        <tr>
+            <td>Cédula de Identidad</td>
+            <td>{{ paciente.ci }}</td>
+        </tr>
+        <tr>
+            <td>Fecha de Nacimiento</td>
+            <td>{{ paciente.fecha_nacimiento }}</td>
+        </tr>
+        <tr>
+            <td>Estado Civil</td>
+            <td>{{ paciente.estado_civil }}</td>
+        </tr>
+        <tr>
+            <td>Ocupación</td>
+            <td>{{ paciente.ocupacion }}</td>
+        </tr>
+        <tr>
+            <td>Dirección</td>
+            <td>{{ paciente.direccion }}</td>
+        </tr>
+        <tr>
+            <td>Teléfono</td>
+            <td>{{ paciente.telefono }}</td>
+        </tr>
+        <tr>
+            <td>Celular</td>
+            <td>{{ paciente.celular }}</td>
+        </tr>
+    </table>
+
+    <h3>Antecedentes Médicos</h3>
+    <ul>
+        {% for pregunta, respuesta in formulario.pregunta_respuesta.items() %}
+        <li><strong>{{ pregunta }}:</strong> {{ respuesta }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

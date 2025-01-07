@@ -1,4 +1,6 @@
 from app import db
+from datetime import datetime
+
 
 class Doctor(db.Model):
     doctor_id = db.Column(db.Integer, primary_key=True)  # ID único del doctor
@@ -28,6 +30,7 @@ class Paciente(db.Model):
     estado_civil = db.Column(db.String(50))               # Estado civil
     ocupacion = db.Column(db.String(100))                 # Ocupación
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id'), nullable=False)  # ID del doctor asignado
+    formularios_medicos = db.relationship('FormularioMedico', backref='paciente', lazy=True)
 
 
 #Modelo para ficha dental
@@ -69,42 +72,7 @@ class Cita(db.Model):
     
 
 class FormularioMedico(db.Model):
-    __tablename__ = 'formulario_medico'
-
-    formulario_id = db.Column(db.Integer, primary_key=True)  # ID único del formulario
-    paciente_id = db.Column(db.Integer, db.ForeignKey('paciente.paciente_id', ondelete='CASCADE'), nullable=False)  # Relación con Paciente
-    fecha = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)  # Fecha de creación
-    operacion_grave = db.Column(db.Boolean, default=False)  # Si tuvo una operación grave
-    detalle_operacion_grave = db.Column(db.Text)            # Detalle de operación grave
-    fiebre_reumatica = db.Column(db.Boolean, default=False)  # Fiebre reumática
-    cardiopatia = db.Column(db.Boolean, default=False)      # Cardiopatía
-    detalle_cardiopatia = db.Column(db.Text)                # Detalle de la cardiopatía
-    enfermedades_respiratorias = db.Column(db.Boolean, default=False)  # Enfermedades respiratorias
-    detalle_enfermedades_respiratorias = db.Column(db.Text) # Detalle de enfermedades respiratorias
-    enfermedades_renales = db.Column(db.Boolean, default=False)  # Enfermedades renales
-    asma = db.Column(db.Boolean, default=False)             # Asma
-    mareos = db.Column(db.Boolean, default=False)           # Mareos
-    diabetes = db.Column(db.Boolean, default=False)         # Diabetes
-    artritis = db.Column(db.Boolean, default=False)         # Artritis
-    ulcera_gastrica = db.Column(db.Boolean, default=False)  # Úlcera gástrica
-    tuberculosis = db.Column(db.Boolean, default=False)     # Tuberculosis
-    enfermedades_venereas = db.Column(db.Boolean, default=False)  # Enfermedades venéreas
-    presion_alta = db.Column(db.Boolean, default=False)     # Presión alta
-    presion_baja = db.Column(db.Boolean, default=False)     # Presión baja
-    hepatitis = db.Column(db.Boolean, default=False)        # Hepatitis
-    sinusitis = db.Column(db.Boolean, default=False)        # Sinusitis
-    vih = db.Column(db.Boolean, default=False)              # VIH
-    alergias = db.Column(db.Boolean, default=False)         # Alergias
-    detalle_alergias = db.Column(db.Text)                   # Detalle de alergias
-    dolor_torax = db.Column(db.Boolean, default=False)      # Dolor en el tórax tras ejercicio
-    falta_aire = db.Column(db.Boolean, default=False)       # Falta de aire tras ejercicio
-    sangrado_anormal = db.Column(db.Boolean, default=False) # Sangrado anormal tras extracción
-    problema_odontologico = db.Column(db.Boolean, default=False)  # Problema odontológico grave
-    problema_no_odontologico = db.Column(db.Boolean, default=False)  # Problema no odontológico grave
-    medicamentos = db.Column(db.Boolean, default=False)     # Si toma medicamentos
-    reaccion_medicamentos = db.Column(db.Boolean, default=False)  # Reacción adversa a medicamentos
-    detalle_reaccion_medicamentos = db.Column(db.Text)      # Detalle de reacción a medicamentos
-    observaciones = db.Column(db.Text)                      # Observaciones adicionales
-
-    # Relación con el paciente
-    paciente = db.relationship('Paciente', backref=db.backref('formularios_medicos', cascade='all, delete-orphan'))
+    historial_id = db.Column(db.Integer, primary_key=True)
+    paciente_id = db.Column(db.Integer, db.ForeignKey('paciente.paciente_id'), nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    pregunta_respuesta = db.Column(db.JSON, nullable=False)

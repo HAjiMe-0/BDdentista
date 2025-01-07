@@ -1,11 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash ,jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash ,jsonify, Response, send_file
 from functools import wraps
 from app.models import db, Doctor, Paciente , Cita
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 from app import mail  # Importar mail desde app
+from app import db
+from .models import Paciente, FormularioMedico
 from app.models import Paciente, FichaDental, FormularioMedico
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
 
 from datetime import datetime
 
@@ -530,72 +535,81 @@ def get_citas_for_month(year, month):
     return jsonify(citas_data)
 
 
-#ruta para el formulario
-@main_bp.route('/paciente/<int:paciente_id>/formulario_medico', methods=['GET'])
-@login_required
-def formulario_medico(paciente_id):
-    """
-    Mostrar el formulario médico para un paciente específico.
-    """
+# Ruta para mostrar el formulario con datos del paciente
+@main_bp.route('/formulario/<int:paciente_id>', methods=['GET'])
+def mostrar_formulario(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
-    return render_template('formulario_medico.html', paciente=paciente)
+    return render_template('formulario.html', paciente=paciente)
 
-@main_bp.route('/guardar_formulario', methods=['POST'])
-def guardar_formulario():
+@main_bp.route('/guardar_historial', methods=['POST'])
+def guardar_historial():
     try:
-        # Convertir a entero y manejar valores nulos
-        paciente_id = int(request.form.get('paciente_id', 0))
-        if paciente_id == 0:
-            raise ValueError("Paciente ID no válido.")
+        data = request.get_json()
+        paciente_id = data.get('paciente_id')
+        pregunta_respuesta = data.get('pregunta_respuesta')
 
-        # Captura los datos enviados desde el formulario
-        nuevo_formulario = FormularioMedico(
+        # Validaciones
+        if not paciente_id:
+            return jsonify({"message": "ID de paciente no recibido"}), 400
+        if not pregunta_respuesta:
+            return jsonify({"message": "No se recibieron respuestas"}), 400
+
+        paciente = Paciente.query.get(paciente_id)
+        if not paciente:
+            return jsonify({"message": "Paciente no encontrado"}), 404
+
+        # Crear el historial médico
+        nuevo_historial = FormularioMedico(
             paciente_id=paciente_id,
-            fecha=request.form.get('fecha'),
-            operacion_grave=request.form.get('operacion_grave') == 'on',
-            detalle_operacion_grave=request.form.get('detalle_operacion_grave'),
-            fiebre_reumatica=request.form.get('fiebre_reumatica') == 'on',
-            cardiopatia=request.form.get('cardiopatia') == 'on',
-            detalle_cardiopatia=request.form.get('detalle_cardiopatia'),
-            enfermedades_respiratorias=request.form.get('enfermedades_respiratorias') == 'on',
-            detalle_enfermedades_respiratorias=request.form.get('detalle_enfermedades_respiratorias'),
-            enfermedades_renales=request.form.get('enfermedades_renales') == 'on',
-            asma=request.form.get('asma') == 'on',
-            mareos=request.form.get('mareos') == 'on',
-            diabetes=request.form.get('diabetes') == 'on',
-            artritis=request.form.get('artritis') == 'on',
-            ulcera_gastrica=request.form.get('ulcera_gastrica') == 'on',
-            tuberculosis=request.form.get('tuberculosis') == 'on',
-            enfermedades_venereas=request.form.get('enfermedades_venereas') == 'on',
-            presion_alta=request.form.get('presion_alta') == 'on',
-            presion_baja=request.form.get('presion_baja') == 'on',
-            hepatitis=request.form.get('hepatitis') == 'on',
-            sinusitis=request.form.get('sinusitis') == 'on',
-            vih=request.form.get('vih') == 'on',
-            alergias=request.form.get('alergias') == 'on',
-            detalle_alergias=request.form.get('detalle_alergias'),
-            dolor_torax=request.form.get('dolor_torax') == 'on',
-            falta_aire=request.form.get('falta_aire') == 'on',
-            sangrado_anormal=request.form.get('sangrado_anormal') == 'on',
-            problema_odontologico=request.form.get('problema_odontologico') == 'on',
-            problema_no_odontologico=request.form.get('problema_no_odontologico') == 'on',
-            medicamentos=request.form.get('medicamentos') == 'on',
-            reaccion_medicamentos=request.form.get('reaccion_medicamentos') == 'on',
-            detalle_reaccion_medicamentos=request.form.get('detalle_reaccion_medicamentos'),
-            observaciones=request.form.get('observaciones')
+            pregunta_respuesta=pregunta_respuesta
         )
-
-        # Guardar el formulario en la base de datos
-        db.session.add(nuevo_formulario)
+        db.session.add(nuevo_historial)
         db.session.commit()
-        flash('Formulario guardado exitosamente.', 'success')
-        return redirect(url_for('main.index'))
-
-    except ValueError as e:
-        flash(f"Error en los datos del formulario: {e}", 'danger')
-        return redirect(request.referrer)
-
+        print("Datos recibidos:", data)
+        print("Paciente ID:", paciente_id)
+        print("Pregunta Respuesta:", pregunta_respuesta)
+        return jsonify({"message": "Historial clínico guardado exitosamente"}), 200
     except Exception as e:
         db.session.rollback()
-        flash(f"Error al guardar el formulario: {e}", 'danger')
-        return redirect(request.referrer)
+        return jsonify({"message": f"Error al guardar: {str(e)}"}), 500
+    
+# ruta para geneerar el pdf del formulario
+@main_bp.route('/generar_pdf/<int:paciente_id>', methods=['GET'])
+def generar_pdf(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    formulario = FormularioMedico.query.filter_by(paciente_id=paciente_id).first()
+
+    if not formulario:
+        return jsonify({"message": "No se encontró el formulario médico para este paciente"}), 404
+
+    # Crear el archivo PDF en memoria
+    pdf_output = BytesIO()
+    c = canvas.Canvas(pdf_output, pagesize=letter)
+
+    # Agregar título
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(200, 750, "Formulario Médico")
+
+    # Datos del paciente
+    c.setFont("Helvetica", 12)
+    c.drawString(50, 720, f"Nombre completo: {paciente.nombre} {paciente.paterno} {paciente.materno}")
+    c.drawString(50, 705, f"Cédula de Identidad: {paciente.ci}")
+    c.drawString(50, 690, f"Fecha de nacimiento: {paciente.fecha_nacimiento}")
+    c.drawString(50, 675, f"Estado Civil: {paciente.estado_civil}")
+    c.drawString(50, 660, f"Ocupación: {paciente.ocupacion}")
+    c.drawString(50, 645, f"Teléfono: {paciente.telefono}")
+    c.drawString(50, 630, f"Celular: {paciente.celular}")
+
+    # Antecedentes médicos
+    y_position = 600
+    for pregunta, respuesta in formulario.pregunta_respuesta.items():
+        c.drawString(50, y_position, f"{pregunta}: {respuesta}")
+        y_position -= 15  # Espacio entre cada línea
+
+    # Finalizar el PDF
+    c.showPage()
+    c.save()
+
+    # Retornar el PDF como archivo descargable
+    pdf_output.seek(0)
+    return send_file(pdf_output, as_attachment=True, download_name=f"formulario_paciente_{paciente_id}.pdf", mimetype="application/pdf")

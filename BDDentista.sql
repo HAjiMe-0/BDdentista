@@ -77,45 +77,10 @@ CREATE TABLE cita (
 );
 
 
--- Tabla Formulario Médico
 CREATE TABLE formulario_medico (
-    formulario_id SERIAL PRIMARY KEY,      -- ID único del formulario médico
-    paciente_id INT NOT NULL,             -- ID del paciente asociado
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha en que se completó el formulario
-    operacion_grave BOOLEAN,              -- Si tuvo una operación grave (Sí/No)
-    detalle_operacion_grave TEXT,         -- Detalle de la operación grave
-    fiebre_reumatica BOOLEAN,             -- Fiebre reumática (Sí/No)
-    cardiopatia BOOLEAN,                  -- Si tiene cardiopatía (Sí/No)
-    detalle_cardiopatia TEXT,             -- Detalle de la cardiopatía
-    enfermedades_respiratorias BOOLEAN,   -- Enfermedades respiratorias (Sí/No)
-    detalle_enfermedades_respiratorias TEXT, -- Detalle de las enfermedades respiratorias
-    enfermedades_renales BOOLEAN,         -- Enfermedades renales (Sí/No)
-    asma BOOLEAN,                         -- Asma (Sí/No)
-    mareos BOOLEAN,                       -- Mareos (Sí/No)
-    diabetes BOOLEAN,                     -- Diabetes (Sí/No)
-    artritis BOOLEAN,                     -- Artritis (Sí/No)
-    ulcera_gastrica BOOLEAN,              -- Úlcera gástrica (Sí/No)
-    tuberculosis BOOLEAN,                 -- Tuberculosis (Sí/No)
-    enfermedades_venereas BOOLEAN,        -- Enfermedades venéreas (Sí/No)
-    presion_alta BOOLEAN,                 -- Presión alta (Sí/No)
-    presion_baja BOOLEAN,                 -- Presión baja (Sí/No)
-    hepatitis BOOLEAN,                    -- Hepatitis (Sí/No)
-    sinusitis BOOLEAN,                    -- Sinusitis (Sí/No)
-    vih BOOLEAN,                          -- VIH (Sí/No)
-    alergias BOOLEAN,                     -- Alergias (Sí/No)
-    detalle_alergias TEXT,                -- Detalle de alergias
-    dolor_torax BOOLEAN,                  -- Dolor en el tórax tras ejercicio (Sí/No)
-    falta_aire BOOLEAN,                   -- Falta de aire tras ejercicio (Sí/No)
-    sangrado_anormal BOOLEAN,             -- Sangrado anormal tras extracción (Sí/No)
-    problema_odontologico BOOLEAN,        -- Problema odontológico grave (Sí/No)
-    problema_no_odontologico BOOLEAN,     -- Problema no relacionado con odontología (Sí/No)
-    medicamentos BOOLEAN,                 -- Si toma medicamentos (Sí/No)
-    reaccion_medicamentos BOOLEAN,        -- Reacción adversa a medicamentos (Sí/No)
-    detalle_reaccion_medicamentos TEXT,   -- Detalle de la reacción a medicamentos
-    observaciones TEXT,                   -- Observaciones adicionales
-
-    CONSTRAINT fk_paciente
-        FOREIGN KEY (paciente_id)
-        REFERENCES paciente(paciente_id)
-        ON DELETE CASCADE -- Si se elimina el paciente, se eliminan sus formularios médicos
+    historial_id SERIAL PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    pregunta_respuesta JSON NOT NULL,
+    FOREIGN KEY (paciente_id) REFERENCES paciente(paciente_id) ON DELETE CASCADE
 );
