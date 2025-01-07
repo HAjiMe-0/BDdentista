@@ -36,7 +36,7 @@
                     <form action="{{ url_for('main.eliminar_ficha', ficha_id=ficha.ficha_id) }}" method="POST" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar esta ficha?')">Eliminar</button>
                     </form>
-                    
+                    <a href="{{ url_for('main.generar_pdfficha', ficha_id=ficha.ficha_id) }}" class="btn btn-info btn-sm">Generar PDF</a>
                 </td>
             </tr>
             {% endfor %}
