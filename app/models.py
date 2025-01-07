@@ -1,4 +1,6 @@
 from app import db
+from datetime import datetime
+
 
 class Doctor(db.Model):
     doctor_id = db.Column(db.Integer, primary_key=True)  # ID único del doctor
@@ -28,6 +30,7 @@ class Paciente(db.Model):
     estado_civil = db.Column(db.String(50))               # Estado civil
     ocupacion = db.Column(db.String(100))                 # Ocupación
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id'), nullable=False)  # ID del doctor asignado
+    formularios_medicos = db.relationship('FormularioMedico', backref='paciente', lazy=True)
 
 
 #Modelo para ficha dental
@@ -66,3 +69,10 @@ class Cita(db.Model):
     __table_args__ = (
         db.UniqueConstraint('paciente_id', 'doctor_id', 'fecha', name='_unique_cita_paciente_doctor_fecha'),
     )
+    
+
+class FormularioMedico(db.Model):
+    historial_id = db.Column(db.Integer, primary_key=True)
+    paciente_id = db.Column(db.Integer, db.ForeignKey('paciente.paciente_id'), nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    pregunta_respuesta = db.Column(db.JSON, nullable=False)

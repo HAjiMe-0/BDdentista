@@ -75,3 +75,12 @@ CREATE TABLE cita (
     CONSTRAINT uniq_cita_paciente_doctor
         UNIQUE (paciente_id, doctor_id, fecha) -- Evitar que un paciente tenga dos citas con el mismo doctor en la misma hora
 );
+
+
+CREATE TABLE formulario_medico (
+    historial_id SERIAL PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    pregunta_respuesta JSON NOT NULL,
+    FOREIGN KEY (paciente_id) REFERENCES paciente(paciente_id) ON DELETE CASCADE
+);
