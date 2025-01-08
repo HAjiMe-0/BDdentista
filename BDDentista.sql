@@ -84,5 +84,4 @@ CREATE TABLE formulario_medico (
     pregunta_respuesta JSON NOT NULL,
     FOREIGN KEY (paciente_id) REFERENCES paciente(paciente_id) ON DELETE CASCADE
 );
-
-//ALTER TABLE formulario_medico ALTER COLUMN pregunta_respuesta TYPE JSONB;
+ALTER TABLE formulario_medico ALTER COLUMN pregunta_respuesta TYPE JSONB;
