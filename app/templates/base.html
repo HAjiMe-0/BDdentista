@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <!-- Tu propio CSS (opcional) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Tema personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
 </head>
 <body class="bg-light">
     <!-- Barra superior -->
@@ -26,16 +28,49 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
+                            <i class="bi bi-house-door"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.list_paciente' %}active{% endif %}" href="{{ url_for('main.list_paciente') }}">
+                            <i class="bi bi-person-lines-fill"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.list_cita' %}active{% endif %}" href="{{ url_for('main.list_cita') }}">
+                            <i class="bi bi-calendar-check"></i> Citas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-bar-chart"></i> Reportes <span class="badge bg-primary">Próximamente</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-gear"></i> Configuración <span class="badge bg-primary">Próximamente</span>
+                        </a>
+                    </li>
                     {% if session.get('doctor_id') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.detail_doctor', doctor_id=session.get('doctor_id')) }}">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle"></i> Mi Perfil
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.logout') }}">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('main.detail_doctor', doctor_id=session.get('doctor_id')) }}">
+                                        Ver perfil
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('main.logout') }}">
+                                        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     {% endif %}
                 </ul>
@@ -45,44 +80,32 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Barra lateral -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar shadow">
-                <div class="position-sticky">
-                    <h5 class="pt-3 text-center">Menú</h5>
-                    <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
-                                    <i class="bi bi-house-door"></i> Inicio
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'main.list_paciente' %}active{% endif %}" href="{{ url_for('main.list_paciente') }}">
-                                    <i class="bi bi-person-lines-fill"></i> Pacientes
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.endpoint == 'main.list_cita' %}active{% endif %}" href="{{ url_for('main.list_cita') }}">
-                                    <i class="bi bi-calendar-check"></i> Citas
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <i class="bi bi-bar-chart"></i> Reportes <span class="badge bg-primary">Próximamente</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <i class="bi bi-gear"></i> Configuración <span class="badge bg-primary">Próximamente</span>
-                                </a>
-                            </li>
-                        
-                        <!-- Más enlaces -->
-                    </ul>
-                </div>
-            </nav>
-
             <!-- Contenido principal -->
-            <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4 py-4">
+            <main class="col-12 ms-sm-auto px-md-4 py-4">
+                <!-- Alertas -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-container">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const alerts = document.querySelectorAll(".alert-dismissible");
+                                alerts.forEach((alert) => {
+                                    setTimeout(() => {
+                                        alert.classList.remove("show");
+                                        alert.addEventListener("transitionend", () => alert.remove());
+                                    }, 5000); // Oculta después de 5 segundos
+                                });
+                            });
+                        </script>
+                    {% endif %}
+                {% endwith %}
                 {% block content %}
                 {% endblock %}
             </main>
@@ -98,5 +121,7 @@
 
     <!-- Bootstrap JS -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Script de configuración -->
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script> 
 </body>
 </html>

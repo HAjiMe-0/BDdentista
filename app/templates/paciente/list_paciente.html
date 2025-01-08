@@ -3,49 +3,56 @@
 {% block title %}Lista de Pacientes{% endblock %}
 
 {% block content %}
-        <div class="container mt-5">
-        <h1 class="text-center">Pacientes del Dr. {{ doctor.nombre }}</h1>
-        <div class="text-end my-3">
-            <a href="{{ url_for('main.create_paciente') }}" class="btn btn-primary">Añadir Nuevo Paciente</a>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Nombre Completo</th>
-                    <th>CI</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Teléfono</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for paciente in pacientes %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</td>
-                    <td>{{ paciente.ci }}</td>
-                    <td>{{ paciente.fecha_nacimiento }}</td>
-                    <td>{{ paciente.telefono }}</td>
-                    <td>
-                        <a href="{{ url_for('main.detail_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-info btn-sm">Ver</a>
-                        <a href="{{ url_for('main.edit_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{{ url_for('main.mostrar_formulario', paciente_id=paciente.paciente_id) }}" class="btn btn-success btn-sm">Formulario Médico</a>
-                        <form action="{{ url_for('main.generar_pdf', paciente_id=paciente.paciente_id) }}" method="get">
-                            <button type="submit" class="btn btn-primary">Generar PDF</button>
-                        </form>                        
-                        <form action="{{ url_for('main.delete_entity', entity='paciente', id=paciente.paciente_id) }}" method="POST" style="display:inline-block;">
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este paciente?');">Eliminar</button>
-                        </form>
-                    </td>
-                    
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="6" class="text-center">No hay pacientes registrados.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="container mt-5">
+    <h1 class="text-center">Pacientes del Dr. {{ doctor.nombre }}</h1>
+    <div class="text-end my-3">
+        <a href="{{ url_for('main.create_paciente') }}" class="btn btn-primary">Añadir Nuevo Paciente</a>
     </div>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Nombre Completo</th>
+                <th>CI</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</td>
+                <td>{{ paciente.ci }}</td>
+                <td>{{ paciente.telefono }}</td>
+                <td class="d-flex justify-content-start">
+                    <a href="{{ url_for('main.detail_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-info btn-sm me-2" title="Ver">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ url_for('main.edit_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-warning btn-sm me-2" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ url_for('main.mostrar_formulario', paciente_id=paciente.paciente_id) }}" class="btn btn-success btn-sm me-2" title="Formulario Médico">
+                        <i class="bi bi-file-earmark-medical"></i>
+                    </a>
+                    <form action="{{ url_for('main.generar_pdf', paciente_id=paciente.paciente_id) }}" method="get" style="display:inline-block;">
+                        <button type="submit" class="btn btn-primary btn-sm me-2" title="Generar PDF">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </button>
+                    </form>
+                    <form action="{{ url_for('main.delete_entity', entity='paciente', id=paciente.paciente_id) }}" method="POST" style="display:inline-block;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este paciente?');" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No hay pacientes registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

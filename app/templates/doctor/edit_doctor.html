@@ -1,65 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil del Doctor</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-</head>
-<body class="bg-light">
-    <div class="container py-5">
-        <h1 class="text-center mb-4 text-primary">Editar Perfil del Doctor</h1>
+{% extends 'base.html' %}
 
-        <!-- Mostrar mensajes flash -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="alert-container">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+{% block title %}Dashboard - Bienvenido {% endblock %}
 
-        <!-- Formulario -->
-        <form method="post" class="shadow-sm p-4 bg-white rounded">
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" class="form-control" value="{{ doctor.nombre }}" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="especialidad" class="form-label">Especialidad:</label>
-                <input type="text" id="especialidad" name="especialidad" class="form-control" value="{{ doctor.especialidad }}">
-            </div>
-            
-            <div class="mb-3">
-                <label for="telefono" class="form-label">Teléfono:</label>
-                <input type="text" id="telefono" name="telefono" class="form-control" value="{{ doctor.telefono }}">
-            </div>
-            
-            <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ doctor.email }}" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="contraseña" class="form-label">Contraseña:</label>
-                <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Nueva contraseña (opcional)">
-            </div>
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4 text-primary">Editar Perfil del Doctor</h1>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Actualizar</button>
-                <a href="{{ url_for('main.detail_doctor', doctor_id=doctor.doctor_id) }}" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
-    </div>
+    <!-- Formulario -->
+    <form method="post" class="shadow-sm p-4 bg-white rounded">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ doctor.nombre }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="especialidad" class="form-label">Especialidad:</label>
+            <input type="text" id="especialidad" name="especialidad" class="form-control" value="{{ doctor.especialidad }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="telefono" class="form-label">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" class="form-control" value="{{ doctor.telefono }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" value="{{ doctor.email }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="contraseña" class="form-label">Contraseña:</label>
+            <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Nueva contraseña (opcional)">
+        </div>
 
-    <!-- Bootstrap JS -->
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-</body>
-</html>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            <a href="{{ url_for('main.detail_doctor', doctor_id=doctor.doctor_id) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
