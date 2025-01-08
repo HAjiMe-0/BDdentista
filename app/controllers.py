@@ -11,6 +11,8 @@ from app.models import Paciente, FichaDental, FormularioMedico
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
+from flask import make_response
+from flask import flash, redirect, url_for
 
 from datetime import datetime
 
@@ -425,6 +427,52 @@ def eliminar_ficha(ficha_id):
     db.session.commit()
     flash('Ficha Dental eliminada con éxito.', 'success')
     return redirect(url_for('main.listar_fichas', paciente_id=paciente_id))
+
+
+# Ruta para generar un PDF de una ficha dental
+@main_bp.route('/ficha/<int:ficha_id>/pdf', methods=['GET'])
+@login_required
+def generar_pdfficha(ficha_id):
+    # Obtener la ficha de la base de datos
+    ficha = FichaDental.query.get_or_404(ficha_id)
+
+    # Crear un buffer de memoria para generar el PDF
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    pdf.setTitle("Ficha Dental")
+
+    # Dimensiones de la página
+    page_width, page_height = letter
+
+    # Título del PDF centrado
+    title = "Ficha Dental"
+    pdf.setFont("Helvetica-Bold", 16)
+    title_width = pdf.stringWidth(title, "Helvetica-Bold", 16)
+    title_x = (page_width - title_width) / 2  # Calcular la posición X para centrar
+    pdf.drawString(title_x, 750, title)
+
+    # Información de la ficha
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(50, 700, f"Paciente: {ficha.paciente.nombre} {ficha.paciente.paterno} {ficha.paciente.materno}")
+    pdf.drawString(50, 680, f"Fecha: {ficha.fecha}")
+    pdf.drawString(50, 660, f"Pieza Dental: {ficha.pieza_dental or 'N/A'}")
+    pdf.drawString(50, 640, f"Diagnóstico: {ficha.diagnostico or 'N/A'}")
+    pdf.drawString(50, 620, f"Tratamiento: {ficha.tratamiento or 'N/A'}")
+    pdf.drawString(50, 600, f"Costo: {ficha.costo or '0.00'}")
+    pdf.drawString(50, 580, f"Al Contado: {ficha.al_contado or '0.00'}")
+    pdf.drawString(50, 560, f"Saldo: {ficha.saldo or '0.00'}")
+    pdf.drawString(50, 540, f"Observaciones: {ficha.observaciones or 'N/A'}")
+
+    # Finalizar el PDF
+    pdf.save()
+
+    # Preparar la respuesta para descargar el archivo
+    buffer.seek(0)
+    response = make_response(buffer.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename="Ficha Dental.pdf"'
+
+    return response
 
 
 
