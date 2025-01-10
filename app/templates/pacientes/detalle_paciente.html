@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle del Paciente{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Detalle del Paciente</h1>
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h3>Información Personal</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+            <p><strong>Apellido Paterno:</strong> {{ paciente.paterno }}</p>
+            <p><strong>Apellido Materno:</strong> {{ paciente.materno }}</p>
+            <p><strong>Cédula:</strong> {{ paciente.ci }}</p>
+            <p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
+            <p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+            <p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
+            <p><strong>Celular:</strong> {{ paciente.celular }}</p>
+            <p><strong>Estado Civil:</strong> {{ paciente.estado_civil }}</p>
+            <p><strong>Ocupación:</strong> {{ paciente.ocupacion }}</p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h3>Tratamientos</h3>
+        {% if tratamientos %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Costo Total</th>
+                        <th>Monto Pagado</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tratamiento in tratamientos %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ tratamiento.nombre }}</td>
+                        <td>{{ tratamiento.costo_total }}</td>
+                        <td>{{ tratamiento.monto_pagado }}</td>
+                        <td>{{ tratamiento.fecha_inicio }}</td>
+                        <td>{{ tratamiento.fecha_fin or 'En Progreso' }}</td>
+                        <td>{{ tratamiento.estado }}</td>
+                        <td>
+                            <a href="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="{{ url_for('main.eliminar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este tratamiento?')">Eliminar</button>
+                            </form>
+                            <form action="{{ url_for('main.agregar_pago_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline">
+                                <input type="number" name="monto_pago" class="form-control form-control-sm d-inline-block" placeholder="Monto" required>
+                                <button type="submit" class="btn btn-info btn-sm">Agregar Pago</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center">No hay tratamientos registrados.</p>
+        {% endif %}
+        <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" class="btn btn-success">Agregar Tratamiento</a>
+    </div>
+    <div class="mt-4">
+        <h3>Citas</h3>
+        {% if citas %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ cita.fecha }}</td>
+                        <td>{{ cita.motivo }}</td>
+                        <td>{{ cita.estado }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center">No hay citas registradas.</p>
+        {% endif %}
+        <a href="{{ url_for('main.crear_cita', paciente_id=paciente.paciente_id) }}" class="btn btn-success">Agregar Cita</a>
+    </div>
+
+    <div class="mt-4">
+        <h3>Formulario Médico</h3>
+        {% if formulario_medico %}
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                Formulario Médico más reciente
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for pregunta, respuesta in formulario_medico.pregunta_respuesta.items() %}
+                    <li class="list-group-item">
+                        <strong>{{ pregunta }}:</strong> {{ respuesta }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" class="btn btn-primary mt-3">Exportar a PDF</a>
+        {% else %}
+        <p class="text-center">No hay formulario médico registrado.</p>
+        {% endif %}
+        <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" class="btn btn-success mt-3">Crear Nuevo Formulario Médico</a>
+    </div>
+</div>
+{% endblock %}

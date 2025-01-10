@@ -10,16 +10,17 @@
     <!-- Tarjeta con la información del doctor -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <h3 class="card-title text-primary">{{ doctor.nombre }}</h3>
+            <h3 class="card-title text-primary">{{ doctor.nombre }} {{ doctor.paterno }} {{ doctor.materno }}</h3>
+            <p class="card-text"><strong>CI:</strong> {{ doctor.ci }}</p>
             <p class="card-text"><strong>Especialidad:</strong> {{ doctor.especialidad }}</p>
             <p class="card-text"><strong>Teléfono:</strong> {{ doctor.telefono }}</p>
             <p class="card-text"><strong>Email:</strong> {{ doctor.email }}</p>
         </div>
         <div class="card-footer text-center">
             <!-- Botones -->
-            <a href="{{ url_for('main.index') }}" class="btn btn-secondary me-2">Volver al panel principal</a>
-            <a href="{{ url_for('main.edit_doctor', doctor_id=doctor.doctor_id) }}" class="btn btn-primary">Editar Perfil</a>
-            <a href="{{ url_for('main.list_paciente') }}" class="btn btn-success ms-2">Ver Pacientes</a>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary me-2">Volver al panel principal</a>
+            <a href="{{ url_for('main.editar_doctor', doctor_id=doctor.doctor_id) }}" class="btn btn-primary me-2">Editar Doctor</a>
+            <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-success ms-2">Ver Pacientes</a>
         </div>
     </div>
 </div>

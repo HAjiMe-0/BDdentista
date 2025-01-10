@@ -1,663 +1,531 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash ,jsonify, Response, send_file
+from flask import (Blueprint, render_template, request, redirect, url_for, session,
+                   flash, jsonify, make_response, send_file)
+from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
-from app.models import db, Doctor, Paciente , Cita
+from app.models import db, Doctor, Paciente, Cita, Tratamiento, FormularioMedico
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
-from app import mail  # Importar mail desde app
-from app import db
-from .models import Paciente, FormularioMedico
-from app.models import Paciente, FichaDental, FormularioMedico
+from app import mail
+from datetime import datetime
+from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from io import BytesIO
-from flask import make_response
-from flask import flash, redirect, url_for
-
-from datetime import datetime
+import json
 
 main_bp = Blueprint('main', __name__)
+s = URLSafeTimedSerializer('clave_secreta')
 
-# Configuración de URLSafeTimedSerializer
-s = URLSafeTimedSerializer('Thisisasecret!')
-
-# Decorador para proteger rutas que requieren autenticación
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
+# Decorador para rutas que requieren autenticación
+def login_requerido(funcion):
+    @wraps(funcion)
+    def decorador(*args, **kwargs):
         if 'doctor_id' not in session:
-            return redirect(url_for('main.login'))
-        return f(*args, **kwargs)
-    return decorated_function
+            return redirect(url_for('main.  '))
+        return funcion(*args, **kwargs)
+    return decorador
 
 # Ruta de inicio
 @main_bp.route('/')
-def home():
+def inicio():
     if 'doctor_id' in session:
-        return redirect(url_for('main.index'))
-    return redirect(url_for('main.login'))
+        return redirect(url_for('main.dashboard'))
+    return redirect(url_for('main.iniciar_sesion'))
 
-# Ruta principal después de login
-@main_bp.route('/index')
-@login_required
-def index():
-    # Obtén el doctor_id desde la sesión
-    doctor_id = session.get('doctor_id')
-    
-    # Filtra los pacientes que pertenecen al doctor que inició sesión
-    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
-    
-    # Opcional: También puedes incluir los datos del doctor logueado si lo necesitas
-    doctor = Doctor.query.get(doctor_id)
-    
-    return render_template('index.html', doctor=doctor, pacientes=pacientes)
-
-# Ruta de login
-@main_bp.route('/login', methods=['GET', 'POST'])
-def login():
+# Pantalla de inicio de sesión
+@main_bp.route('/iniciar-sesion', methods=['GET', 'POST'])
+def iniciar_sesion():
     if request.method == 'POST':
         email = request.form['email']
         contraseña = request.form['contraseña']
         doctor = Doctor.query.filter_by(email=email).first()
 
-        # Verifica si la contraseña ingresada coincide con la almacenada
         if doctor and check_password_hash(doctor.contraseña, contraseña):
             session['doctor_id'] = doctor.doctor_id
-            session['doctor_name'] = doctor.nombre
-            return redirect(url_for('main.index'))
+            session['doctor_nombre'] = doctor.nombre
+            return redirect(url_for('main.dashboard'))
         else:
-            flash('Correo o contraseña incorrectos', 'error')
+            flash('Correo o contraseña incorrectos.', 'error')
+    return render_template('autenticacion/iniciar_sesion.html')
 
-    return render_template('login.html')
-
-# Ruta de logout
-@main_bp.route('/logout')
-def logout():
-    session.pop('doctor_id', None)
-    session.pop('doctor_name', None)
-    return redirect(url_for('main.login'))
-
-# Ruta para crear un doctor
-@main_bp.route('/doctor/create', methods=['GET', 'POST'])
-@login_required
-def create_doctor():
+# Ruta de registro
+@main_bp.route('/registrarse', methods=['GET', 'POST'])
+def registrarse():
     if request.method == 'POST':
-        nombre = request.form['nombre']
-        paterno = request.form.get('paterno')
-        materno = request.form.get('materno')
-        especialidad = request.form.get('especialidad')
-        telefono = request.form.get('telefono')
-        fecha_nacimiento = request.form.get('fecha_nacimiento')
-        email = request.form.get('email')
-        contraseña = request.form.get('contraseña')
-        hashed_password = generate_password_hash(contraseña)  # Encriptar la contraseña
-        doctor = Doctor(nombre=nombre, especialidad=especialidad, telefono=telefono, email=email, contraseña=hashed_password)
-        db.session.add(doctor)
-        db.session.commit()
-        flash('Doctor creado exitosamente.', 'success')
-        return redirect(url_for('main.index'))
+        datos = {
+            'ci': request.form['ci'],
+            'nombre': request.form['nombre'],
+            'paterno': request.form.get('paterno'),
+            'materno': request.form.get('materno'),
+            'especialidad': request.form.get('especialidad'),
+            'telefono': request.form.get('telefono'),
+            'fecha_nacimiento': request.form.get('fecha_nacimiento'),
+            'email': request.form['email'],
+            'contraseña': generate_password_hash(request.form['contraseña'])
+        }
 
-    return render_template('create_doctor.html')
-# Ruta para listar a los pacientes
-@main_bp.route('/list_paciente')
-@login_required
-def list_paciente():
-    doctor_id = session.get('doctor_id')
-    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+        if Doctor.query.filter_by(email=datos['email']).first():
+            flash('El correo electrónico ya está registrado.', 'error')
+            return redirect(url_for('main.registrarse'))
+
+        try:
+            nuevo_doctor = Doctor(**datos)
+            db.session.add(nuevo_doctor)
+            db.session.commit()
+            flash('Registro exitoso. Ahora puedes iniciar sesión.', 'success')
+            return redirect(url_for('main.iniciar_sesion'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f'Error al registrarse: {str(e)}', 'error')
+    return render_template('autenticacion/registrarse.html')
+
+# Ruta para cerrar sesión
+@main_bp.route('/cerrar-sesion')
+def cerrar_sesion():
+    session.clear()
+    return redirect(url_for('main.iniciar_sesion'))
+
+# Dashboard principal
+@main_bp.route('/dashboard')
+@login_requerido
+def dashboard():
+    doctor_id = session['doctor_id']
     doctor = Doctor.query.get(doctor_id)
-    return render_template('paciente/list_paciente.html', doctor=doctor, pacientes=pacientes)
+    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+    citas_pendientes = Cita.query.filter_by(doctor_id=doctor_id, estado='Pendiente').all()
+    tratamientos_activos = Tratamiento.query.filter_by(paciente_id=doctor_id, estado='En Progreso').all()
 
-# Ruta para crear un paciente
-@main_bp.route('/paciente/create', methods=['GET', 'POST'])
-@login_required
-def create_paciente():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        paterno = request.form.get('paterno')
-        materno = request.form.get('materno')
-        ci = request.form.get('ci')
-        fecha_nacimiento = request.form.get('fecha_nacimiento')
-        direccion = request.form.get('direccion')
-        telefono = request.form.get('telefono')
-        celular = request.form.get('celular')
-        estado_civil = request.form.get('estado_civil')
-        ocupacion = request.form.get('ocupacion')
-        doctor_id = session.get('doctor_id')
-
-        paciente = Paciente(
-            nombre=nombre,
-            paterno=paterno,
-            materno=materno,
-            ci=ci,
-            fecha_nacimiento=fecha_nacimiento,
-            direccion=direccion,
-            telefono=telefono,
-            celular=celular,
-            estado_civil=estado_civil,
-            ocupacion=ocupacion,
-            doctor_id=doctor_id
-        )
-        db.session.add(paciente)
-        db.session.commit()
-        flash('Paciente creado exitosamente.', 'success')
-        return redirect(url_for('main.create_paciente'))
-
-    return render_template('paciente/create_paciente.html')
-
-# Ver detalle del paciente
-@main_bp.route('/paciente/<int:paciente_id>', methods=['GET'])
-@login_required
-def detail_paciente(paciente_id):
-    # Buscar el paciente por ID
-    paciente = Paciente.query.get_or_404(paciente_id)
-    
-    # Verificar que el paciente pertenezca al doctor logueado
-    if paciente.doctor_id != session.get('doctor_id'):
-        flash('No tienes permiso para ver este paciente.', 'error')
-        return redirect(url_for('main.index'))
-    
-    return render_template('paciente/detail_paciente.html', paciente=paciente)
-
-# Ver detalle del Doctor 
+    return render_template('dashboard.html', doctor=doctor, pacientes=pacientes, citas=citas_pendientes, tratamientos=tratamientos_activos)
+# Gestión de doctor
 @main_bp.route('/doctor/<int:doctor_id>', methods=['GET'])
-@login_required
-def detail_doctor(doctor_id):
-    # Obtener el doctor por ID
+@login_requerido
+def detalle_doctor(doctor_id):
     doctor = Doctor.query.get_or_404(doctor_id)
-    
-    # Verificar que el doctor sea el mismo que está logueado
     if doctor.doctor_id != session.get('doctor_id'):
         flash('No tienes permiso para ver este perfil.', 'error')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
+    return render_template('doctor/detalle_doctor.html', doctor=doctor)
     
-    return render_template('doctor/detail_doctor.html', doctor=doctor)
-
-# Editar Doctor
-@main_bp.route('/doctor/edit/<int:doctor_id>', methods=['GET', 'POST'])
-@login_required
-def edit_doctor(doctor_id):
+@main_bp.route('/doctor/<int:doctor_id>/editar', methods=['GET', 'POST'])
+@login_requerido
+def editar_doctor(doctor_id):
     doctor = Doctor.query.get_or_404(doctor_id)
-
     if doctor.doctor_id != session.get('doctor_id'):
         flash('No tienes permiso para editar este perfil.', 'error')
-        return redirect(url_for('main.index'))
-
+        return redirect(url_for('main.dashboard'))
     if request.method == 'POST':
-        if 'nombre' in request.form:
-            doctor.nombre = request.form['nombre']
-        if 'paterno' in request.form:
-            doctor.paterno = request.form['paterno']
-        if 'materno' in request.form:
-            doctor.materno = request.form['materno']
-        if 'especialidad' in request.form:
-            doctor.especialidad = request.form['especialidad']
-        if 'telefono' in request.form:
-            doctor.telefono = request.form['telefono']
-        if 'fecha_nacimiento' in request.form:
-            doctor.fecha_nacimiento = request.form['fecha_nacimiento']
-        if 'email' in request.form:
-            doctor.email = request.form['email']
-            
-        # Actualiza el nombre en la sesión después de guardar los cambios
-        session['doctor_name'] = doctor.nombre
-
+        doctor.nombre = request.form['nombre']
+        doctor.paterno = request.form.get('paterno')
+        doctor.materno = request.form.get('materno')
+        doctor.ci = request.form.get('ci')
+        doctor.fecha_nacimiento = request.form.get('fecha_nacimiento')
+        doctor.especialidad = request.form.get('especialidad')
+        doctor.telefono = request.form.get('telefono')
         db.session.commit()
         flash('Perfil actualizado exitosamente.', 'success')
-        return redirect(url_for('main.edit_doctor', doctor_id=doctor_id))
+        return redirect(url_for('main.detalle_doctor', doctor_id=doctor_id))
+    
+    return render_template('doctor/editar_doctor.html', doctor=doctor)
 
-    return render_template('doctor/edit_doctor.html', doctor=doctor)
 
-# Editar Paciente
-@main_bp.route('/paciente/edit/<int:paciente_id>', methods=['GET', 'POST'])
-@login_required
-def edit_paciente(paciente_id):
+# Gestión de pacientes
+@main_bp.route('/pacientes')
+@login_requerido
+def listar_pacientes():
+    doctor_id = session.get('doctor_id')  # Usar `get` para evitar errores si no existe la clave
+    if not doctor_id:
+        # Manejo del caso en que `doctor_id` no está en la sesión
+        return redirect('/login')  # O la página que corresponda
+    
+    # Obtener al doctor desde la base de datos
+    doctor = Doctor.query.get(doctor_id)
+    if not doctor:
+        # Manejo del caso en que el doctor no existe
+        return "Doctor no encontrado", 404
+
+    # Obtener los pacientes asociados al doctor
+    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+
+    # Pasar el doctor y los pacientes al template
+    return render_template(
+        'pacientes/listar_pacientes.html', 
+        pacientes=pacientes, 
+        doctor=doctor
+    )
+
+
+@main_bp.route('/paciente/crear', methods=['GET', 'POST'])
+@login_requerido
+def crear_paciente():
+    if request.method == 'POST':
+        datos = {
+            'nombre': request.form['nombre'],
+            'paterno': request.form.get('paterno'),
+            'materno': request.form.get('materno'),
+            'ci': request.form.get('ci'),
+            'fecha_nacimiento': request.form.get('fecha_nacimiento'),
+            'direccion': request.form.get('direccion'),
+            'telefono': request.form.get('telefono'),
+            'celular': request.form.get('celular'),
+            'estado_civil': request.form.get('estado_civil'),
+            'ocupacion': request.form.get('ocupacion'),
+            'doctor_id': session['doctor_id']
+        }
+        nuevo_paciente = Paciente(**datos)
+        db.session.add(nuevo_paciente)
+        db.session.commit()
+        flash('Paciente creado exitosamente.', 'success')
+        return redirect(url_for('main.listar_pacientes'))
+    return render_template('pacientes/crear_paciente.html')
+
+@main_bp.route('/paciente/<int:paciente_id>')
+@login_requerido
+def detalle_paciente(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para ver este paciente.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
 
-    if paciente.doctor_id != session.get('doctor_id'):
+    tratamientos = Tratamiento.query.filter_by(paciente_id=paciente_id).all()
+    citas = Cita.query.filter_by(paciente_id=paciente_id).all()
+    formulario_medico = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
+    return render_template('pacientes/detalle_paciente.html', paciente=paciente, tratamientos=tratamientos, citas=citas, formulario_medico=formulario_medico)
+
+@main_bp.route('/paciente/<int:paciente_id>/editar', methods=['GET', 'POST'])
+@login_requerido
+def editar_paciente(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    if paciente.doctor_id != session['doctor_id']:
         flash('No tienes permiso para editar este paciente.', 'error')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.listar_pacientes'))
 
     if request.method == 'POST':
-        if 'nombre' in request.form:
-            paciente.nombre = request.form['nombre']
-        if 'paterno' in request.form:
-            paciente.paterno = request.form['paterno']
-        if 'materno' in request.form:
-            paciente.materno = request.form['materno']
-        if 'ci' in request.form:
-            paciente.ci = request.form['ci']
-        if 'fecha_nacimiento' in request.form:
-            paciente.fecha_nacimiento = request.form['fecha_nacimiento']
-        if 'direccion' in request.form:
-            paciente.direccion = request.form['direccion']
-        if 'telefono' in request.form:
-            paciente.telefono = request.form['telefono']
-        if 'celular' in request.form:
-            paciente.celular = request.form['celular']
-        if 'estado_civil' in request.form:
-            paciente.estado_civil = request.form['estado_civil']
-        if 'ocupacion' in request.form:
-            paciente.ocupacion = request.form['ocupacion']
-
+        paciente.nombre = request.form['nombre']
+        paciente.paterno = request.form.get('paterno')
+        paciente.materno = request.form.get('materno')
+        paciente.ci = request.form.get('ci')
+        paciente.fecha_nacimiento = request.form.get('fecha_nacimiento')
+        paciente.direccion = request.form.get('direccion')
+        paciente.telefono = request.form.get('telefono')
+        paciente.celular = request.form.get('celular')
+        paciente.estado_civil = request.form.get('estado_civil')
+        paciente.ocupacion = request.form.get('ocupacion')
         db.session.commit()
         flash('Paciente actualizado exitosamente.', 'success')
-        return redirect(url_for('main.edit_paciente', paciente_id=paciente_id))
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
-    return render_template('paciente/edit_paciente.html', paciente=paciente)
+    return render_template('pacientes/editar_paciente.html', paciente=paciente)
 
-# Ruta para eliminar un doctor o paciente
-@main_bp.route('/delete/<string:entity>/<int:id>', methods=['POST'])
-@login_required
-def delete_entity(entity, id):
-    if entity == "doctor":
-        Doctor.query.filter_by(doctor_id=id).delete()
-    elif entity == "paciente":
-        Paciente.query.filter_by(paciente_id=id).delete()
-    db.session.commit()
-    return redirect(url_for('main.index'))
-
-# Ruta de registro 
-@main_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        ci = request.form['ci']
-        nombre = request.form['nombre']
-        paterno = request.form.get('paterno')
-        materno = request.form.get('materno')
-        especialidad = request.form.get('especialidad')
-        telefono = request.form.get('telefono')
-        fecha_nacimiento = request.form.get('fecha_nacimiento')
-        email = request.form['email']
-        contraseña = request.form['contraseña']
-
-        # Verifica si el email ya está registrado
-        if Doctor.query.filter_by(email=email).first():
-            flash('El correo electrónico ya está registrado. Intente con otro.', 'error')
-            return redirect(url_for('main.register'))
-
-        # Encriptar la contraseña antes de guardarla
-        hashed_password = generate_password_hash(contraseña)
-
-        # Verificar que la fecha de nacimiento esté presente
-        if not fecha_nacimiento:
-            flash('La fecha de nacimiento es requerida.', 'error')
-            return redirect(url_for('main.register'))
-
-        # Convertir la fecha de nacimiento a un formato adecuado para la base de datos
-        from datetime import datetime
-        fecha_nacimiento = datetime.strptime(fecha_nacimiento, '%Y-%m-%d').date()
-
-        # Crear un nuevo doctor
-        nuevo_doctor = Doctor(
-            ci=ci,
-            nombre=nombre,
-            paterno=paterno,
-            materno=materno,
-            especialidad=especialidad,
-            telefono=telefono,
-            fecha_nacimiento=fecha_nacimiento,
-            email=email,
-            contraseña=hashed_password
-        )
-        db.session.add(nuevo_doctor)
-        db.session.commit()
-        flash('Registro exitoso. Ahora puedes iniciar sesión.', 'success')
-        return redirect(url_for('main.login'))
-
-    return render_template('register.html')
-
-# Ruta para restablecer contraseña
-@main_bp.route('/reset_password', methods=['GET', 'POST'])
-def reset_password():
-    if request.method == 'POST':
-        email = request.form['email']
-        doctor = Doctor.query.filter_by(email=email).first()
-        if doctor:
-            token = s.dumps(email, salt='email-confirm')
-            msg = Message('Restablecer contraseña', sender='noreply@domain.com', recipients=[email])
-            link = url_for('main.reset_with_token', token=token, _external=True)
-            msg.body = f'Su enlace para restablecer su contraseña es {link}'
-            mail.send(msg)
-            flash('Se ha enviado un correo electrónico con instrucciones para restablecer su contraseña.', 'info')
-        else:
-            flash('El correo electrónico no está registrado.', 'error')
-    return render_template('reset_password.html')
-
-@main_bp.route('/reset/<token>', methods=['GET', 'POST'])
-def reset_with_token(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except:
-        flash('El enlace para restablecer la contraseña es inválido o ha expirado.', 'error')
-        return redirect(url_for('main.reset_password'))
-
-    if request.method == 'POST':
-        contraseña = request.form['contraseña']
-        hashed_password = generate_password_hash(contraseña)
-        doctor = Doctor.query.filter_by(email=email).first()
-        doctor.contraseña = hashed_password
-        db.session.commit()
-        flash('Su contraseña ha sido actualizada.', 'success')
-        return redirect(url_for('main.login'))
-
-    return render_template('reset_with_token.html')
-
-    #rutas para las fichas dentales
-
-# Ruta para listar fichas de un paciente
-@main_bp.route('/paciente/<int:paciente_id>/fichas', methods=['GET'])
-@login_required
-def listar_fichas(paciente_id):
+@main_bp.route('/paciente/<int:paciente_id>/eliminar', methods=['POST'])
+@login_requerido
+def eliminar_paciente(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
-    fichas = FichaDental.query.filter_by(paciente_id=paciente_id).all()
-    return render_template('paciente/listar_fichas.html', paciente=paciente, fichas=fichas)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para eliminar este paciente.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
 
-# Ruta para crear una ficha dental para un paciente
-@main_bp.route('/paciente/<int:paciente_id>/fichas/crear', methods=['GET', 'POST'])
-@login_required
-def crear_ficha(paciente_id):
-    paciente = Paciente.query.get_or_404(paciente_id)
-
-    if request.method == 'POST':
-        fecha = request.form.get('fecha')
-        pieza_dental = request.form.get('pieza_dental')
-        diagnostico = request.form.get('diagnostico')
-        tratamiento = request.form.get('tratamiento')
-        costo = float(request.form.get('costo'))
-        al_contado = float(request.form.get('al_contado'))
-        saldo = float(request.form.get('saldo', 0))
-        observaciones = request.form.get('observaciones')
-
-        # Crear y guardar la nueva ficha
-        nueva_ficha = FichaDental(
-            fecha=fecha,
-            pieza_dental=pieza_dental,
-            diagnostico=diagnostico,
-            tratamiento=tratamiento,
-            costo=costo,
-            al_contado=al_contado,
-            saldo=saldo,
-            observaciones=observaciones,
-            paciente_id=paciente_id
-        )
-        db.session.add(nueva_ficha)
-        db.session.commit()
-
-        flash('Ficha creada exitosamente.', 'success')
-        return redirect(url_for('main.listar_fichas', paciente_id=paciente_id))
-
-    return render_template('paciente/crear_ficha.html', paciente=paciente)
-
-# Ruta para editar una ficha dental existente
-@main_bp.route('/ficha/<int:ficha_id>/editar', methods=['GET', 'POST'])
-@login_required
-def editar_ficha(ficha_id):
-    ficha = FichaDental.query.get_or_404(ficha_id)
-
-    if request.method == 'POST':
-        # Asignar los valores del formulario a los campos de la ficha dental
-        ficha.fecha = request.form.get('fecha', ficha.fecha)  # Mantener fecha original si no se proporciona nueva
-        ficha.pieza_dental = request.form.get('pieza_dental', ficha.pieza_dental)
-        ficha.diagnostico = request.form.get('diagnostico', ficha.diagnostico)
-        ficha.tratamiento = request.form.get('tratamiento', ficha.tratamiento)
-        
-        # Convertir los valores de costo, al_contado, y saldo a decimal
-        ficha.costo = request.form.get('costo', ficha.costo)
-        ficha.al_contado = request.form.get('al_contado', ficha.al_contado)
-        ficha.saldo = request.form.get('saldo', ficha.saldo)
-        
-        ficha.observaciones = request.form.get('observaciones', ficha.observaciones)
-
-        # Commit de los cambios
-        db.session.commit()
-        flash('Ficha Dental actualizada con éxito.', 'success')
-        return redirect(url_for('main.listar_fichas', paciente_id=ficha.paciente_id))
-
-    # Si el método es GET, simplemente renderiza el formulario con los datos actuales de la ficha
-    return render_template('paciente/editar_ficha.html', ficha=ficha)
-
-
-# Ruta para eliminar una ficha dental
-@main_bp.route('/ficha/<int:ficha_id>/eliminar', methods=['POST'])
-@login_required
-def eliminar_ficha(ficha_id):
-    ficha = FichaDental.query.get_or_404(ficha_id)
-    paciente_id = ficha.paciente_id
-    db.session.delete(ficha)
+    db.session.delete(paciente)
     db.session.commit()
-    flash('Ficha Dental eliminada con éxito.', 'success')
-    return redirect(url_for('main.listar_fichas', paciente_id=paciente_id))
+    flash('Paciente eliminado exitosamente.', 'success')
+    return redirect(url_for('main.listar_pacientes'))
 
+# Gestión de citas
+@main_bp.route('/citas')
+@login_requerido
+def listar_citas():
+    doctor_id = session['doctor_id']
+    citas = Cita.query.filter_by(doctor_id=doctor_id).order_by(Cita.fecha.asc()).all()
+    return render_template('citas/listar_citas.html', citas=citas)
 
-# Ruta para generar un PDF de una ficha dental
-@main_bp.route('/ficha/<int:ficha_id>/pdf', methods=['GET'])
-@login_required
-def generar_pdfficha(ficha_id):
-    # Obtener la ficha de la base de datos
-    ficha = FichaDental.query.get_or_404(ficha_id)
-
-    # Crear un buffer de memoria para generar el PDF
-    buffer = BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-    pdf.setTitle("Ficha Dental")
-
-    # Dimensiones de la página
-    page_width, page_height = letter
-
-    # Título del PDF centrado
-    title = "Ficha Dental"
-    pdf.setFont("Helvetica-Bold", 16)
-    title_width = pdf.stringWidth(title, "Helvetica-Bold", 16)
-    title_x = (page_width - title_width) / 2  # Calcular la posición X para centrar
-    pdf.drawString(title_x, 750, title)
-
-    # Información de la ficha
-    pdf.setFont("Helvetica", 12)
-    pdf.drawString(50, 700, f"Paciente: {ficha.paciente.nombre} {ficha.paciente.paterno} {ficha.paciente.materno}")
-    pdf.drawString(50, 680, f"Fecha: {ficha.fecha}")
-    pdf.drawString(50, 660, f"Pieza Dental: {ficha.pieza_dental or 'N/A'}")
-    pdf.drawString(50, 640, f"Diagnóstico: {ficha.diagnostico or 'N/A'}")
-    pdf.drawString(50, 620, f"Tratamiento: {ficha.tratamiento or 'N/A'}")
-    pdf.drawString(50, 600, f"Costo: {ficha.costo or '0.00'}")
-    pdf.drawString(50, 580, f"Al Contado: {ficha.al_contado or '0.00'}")
-    pdf.drawString(50, 560, f"Saldo: {ficha.saldo or '0.00'}")
-    pdf.drawString(50, 540, f"Observaciones: {ficha.observaciones or 'N/A'}")
-
-    # Finalizar el PDF
-    pdf.save()
-
-    # Preparar la respuesta para descargar el archivo
-    buffer.seek(0)
-    response = make_response(buffer.getvalue())
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'attachment; filename="Ficha Dental.pdf"'
-
-    return response
-
-
-
-# Ruta para crear una cita
-@main_bp.route('/cita/create', methods=['GET', 'POST'])
-@login_required
-def create_cita():
+@main_bp.route('/cita/crear', methods=['GET', 'POST'])
+@login_requerido
+def crear_cita():
     if request.method == 'POST':
-        paciente_id = request.form['paciente_id']
-        doctor_id = session.get('doctor_id')
-        fecha = request.form['fecha']
-        motivo = request.form['motivo']
-        
-        # Crear la cita
-        nueva_cita = Cita(
-            paciente_id=paciente_id,
-            doctor_id=doctor_id,
-            fecha=fecha,
-            motivo=motivo
-        )
-        
+        datos = {
+            'paciente_id': request.form['paciente_id'],
+            'doctor_id': session['doctor_id'],
+            'fecha': datetime.strptime(request.form['fecha'], '%Y-%m-%dT%H:%M'),
+            'motivo': request.form['motivo'],
+            'estado': 'Pendiente'
+        }
+        nueva_cita = Cita(**datos)
         db.session.add(nueva_cita)
         db.session.commit()
-        flash('Cita creada con éxito.', 'success')
-        return redirect(url_for('main.list_cita'))
-    
-    # Obtener lista de pacientes
-    doctor_id = session.get('doctor_id')
-    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
-    
-    return render_template('cita/create_cita.html', pacientes=pacientes)
+        flash('Cita creada exitosamente.', 'success')
+        return redirect(url_for('main.listar_citas'))
 
-#Ruta para ver detalles
-@main_bp.route('/cita/<int:cita_id>', methods=['GET'])
-@login_required
-def detail_cita(cita_id):
-    cita = Cita.query.get_or_404(cita_id)
-    if cita.doctor_id != session.get('doctor_id'):
-        flash('No tienes permiso para ver esta cita.', 'error')
-        return redirect(url_for('main.index'))
-    
-    return render_template('cita/detail_cita.html', cita=cita)
+    pacientes = Paciente.query.filter_by(doctor_id=session['doctor_id']).all()
+    return render_template('citas/crear_cita.html', pacientes=pacientes)
 
-#Ruta para editar cita
-@main_bp.route('/cita/edit/<int:cita_id>', methods=['GET', 'POST'])
-@login_required
-def edit_cita(cita_id):
+@main_bp.route('/cita/<int:cita_id>/editar', methods=['GET', 'POST'])
+@login_requerido
+def editar_cita(cita_id):
     cita = Cita.query.get_or_404(cita_id)
-    
-    if cita.doctor_id != session.get('doctor_id'):
+    if cita.doctor_id != session['doctor_id']:
         flash('No tienes permiso para editar esta cita.', 'error')
-        return redirect(url_for('main.index'))
-    
-    if request.method == 'POST':
-        nueva_fecha = request.form['fecha']
-        nuevo_motivo = request.form['motivo']
-        nuevo_estado = request.form['estado']
-        
-        cita.fecha = nueva_fecha
-        cita.motivo = nuevo_motivo
-        cita.estado = nuevo_estado
-        
-        db.session.commit()
-        flash('Cita actualizada con éxito.', 'success')
-        return redirect(url_for('main.list_cita'))
-    
-    return render_template('cita/edit_cita.html', cita=cita)
+        return redirect(url_for('main.listar_citas'))
 
-# Ruta para listar las citas
-@main_bp.route('/citas', methods=['GET'])
-@login_required
-def list_cita():
-    doctor_id = session.get('doctor_id')
-    citas = Cita.query.filter_by(doctor_id=doctor_id).all()
-    return render_template('cita/list_cita.html', citas=citas)
+    if request.method == 'POST':
+        cita.fecha = datetime.strptime(request.form['fecha'], '%Y-%m-%dT%H:%M')
+        cita.motivo = request.form['motivo']
+        cita.estado = request.form['estado']
+        db.session.commit()
+        flash('Cita actualizada exitosamente.', 'success')
+        return redirect(url_for('main.listar_citas'))
+
+    return render_template('citas/editar_cita.html', cita=cita)
+
+@main_bp.route('/cita/<int:cita_id>/eliminar', methods=['POST'])
+@login_requerido
+def eliminar_cita(cita_id):
+    cita = Cita.query.get_or_404(cita_id)
+    if cita.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para eliminar esta cita.', 'error')
+        return redirect(url_for('main.listar_citas'))
+
+    db.session.delete(cita)
+    db.session.commit()
+    flash('Cita eliminada exitosamente.', 'success')
+    return redirect(url_for('main.listar_citas'))
+
+# Ruta para obtener citas de un mes específico
+@main_bp.route('/citas/<int:year>/<int:month>', methods=['GET'])
+@login_requerido
+def obtener_citas(year, month):
+    try:
+        doctor_id = session.get('doctor_id')
+        if not doctor_id:
+            return jsonify({"error": "No autorizado"}), 401
+
+        citas = Cita.query.filter(
+            Cita.doctor_id == doctor_id,
+            Cita.fecha >= datetime(year, month, 1),
+            Cita.fecha < datetime(year, month + 1, 1) if month < 12 else datetime(year + 1, 1, 1)
+        ).all()
+
+        citas_serializadas = [
+            {
+                "id": cita.cita_id,
+                "fecha": cita.fecha.strftime('%Y-%m-%d'),
+                "paciente": f"{cita.paciente.nombre} {cita.paciente.paterno}",
+                "motivo": cita.motivo
+            } for cita in citas
+        ]
+        return jsonify(citas_serializadas)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Ruta para crear una cita (formularios de la pantalla Crear Cita)
+@main_bp.route('/citas/crear', methods=['GET', 'POST'])
+@login_requerido
+def crear_citaPC():
+    if request.method == 'POST':
+        try:
+            datos = {
+                'paciente_id': request.form['paciente_id'],
+                'doctor_id': session['doctor_id'],
+                'fecha': datetime.strptime(request.form['fecha'], '%Y-%m-%dT%H:%M'),
+                'motivo': request.form['motivo'],
+                'estado': 'Pendiente'
+            }
+            nueva_cita = Cita(**datos)
+            db.session.add(nueva_cita)
+            db.session.commit()
+            return jsonify({"message": "Cita creada exitosamente."}), 201
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    pacientes = Paciente.query.filter_by(doctor_id=session['doctor_id']).all()
+    return render_template('citas/crear_cita.html', pacientes=pacientes)
 
 # Ruta para eliminar una cita
 @main_bp.route('/delete_cita/<int:cita_id>', methods=['POST'])
-@login_required
-def delete_cita(cita_id):
-    cita = Cita.query.get_or_404(cita_id)
-    
-    if cita.doctor_id != session.get('doctor_id'):
-        flash('No tienes permiso para eliminar esta cita.', 'error')
-        return redirect(url_for('main.index'))
-    
-    db.session.delete(cita)
-    db.session.commit()
-    flash('Cita eliminada con éxito.', 'success')
-    return redirect(url_for('main.list_cita'))
+@login_requerido
+def eliminar_citaPC(cita_id):
+    try:
+        cita = Cita.query.get_or_404(cita_id)
+        if cita.doctor_id != session['doctor_id']:
+            return jsonify({"error": "No autorizado"}), 403
 
+        db.session.delete(cita)
+        db.session.commit()
+        return jsonify({"message": "Cita eliminada exitosamente."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-# Ruta para obtener las citas de un doctor
-@main_bp.route('/citas/<int:year>/<int:month>', methods=['GET'])
-def get_citas_for_month(year, month):
-    # Obtener las citas del mes desde la base de datos
-    citas = Cita.query.filter(db.extract('year', Cita.fecha) == year,
-                              db.extract('month', Cita.fecha) == month).all()
-
-    # Formatear las citas para enviarlas al frontend
-    citas_data = [{
-        'id': cita.cita_id,
-        'fecha': cita.fecha.strftime('%Y-%m-%d'),
-        'motivo': cita.motivo,
-        'paciente': cita.paciente.nombre,  # Asegúrate de acceder correctamente al nombre del paciente
-    } for cita in citas]
-
-    return jsonify(citas_data)
-
-
-# Ruta para mostrar el formulario con datos del paciente
-@main_bp.route('/formulario/<int:paciente_id>', methods=['GET'])
-def mostrar_formulario(paciente_id):
+# Gestión de tratamientos
+# Crear tratamiento
+@main_bp.route('/tratamiento/<int:paciente_id>/crear', methods=['GET', 'POST'])
+@login_requerido
+def crear_tratamiento(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
-    return render_template('formulario.html', paciente=paciente)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para agregar tratamientos a este paciente.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
+
+    if request.method == 'POST':
+        datos = {
+            'paciente_id': paciente_id,
+            'nombre': request.form['nombre'],
+            'costo_total': float(request.form['costo_total']),
+            'monto_pagado': 0,
+            'saldo': float(request.form['costo_total']),
+            'fecha_inicio': datetime.strptime(request.form['fecha_inicio'], '%Y-%m-%d'),
+            'estado': 'En Progreso',
+            'pieza_dental': request.form.get('pieza_dental'),
+            'diagnostico': request.form.get('diagnostico'),
+            'tratamiento_descripcion': request.form.get('tratamiento_descripcion'),
+            'observaciones': request.form.get('observaciones')
+        }
+        nuevo_tratamiento = Tratamiento(**datos)
+        db.session.add(nuevo_tratamiento)
+        db.session.commit()
+        flash('Tratamiento creado exitosamente.', 'success')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+    return render_template('tratamientos/crear_tratamiento.html', paciente=paciente)
+
+# Editar tratamiento
+@main_bp.route('/tratamiento/<int:tratamiento_id>/editar', methods=['GET', 'POST'])
+@login_requerido
+def editar_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para editar este tratamiento.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
+
+    if request.method == 'POST':
+        tratamiento.nombre = request.form['nombre']
+        tratamiento.costo_total = float(request.form['costo_total'])
+        tratamiento.monto_pagado = float(request.form.get('monto_pagado', tratamiento.monto_pagado))
+        tratamiento.saldo = tratamiento.costo_total - tratamiento.monto_pagado
+        tratamiento.fecha_inicio = datetime.strptime(request.form['fecha_inicio'], '%Y-%m-%d')
+        tratamiento.fecha_fin = request.form.get('fecha_fin')
+        if tratamiento.fecha_fin:
+            tratamiento.fecha_fin = datetime.strptime(tratamiento.fecha_fin, '%Y-%m-%d')
+        tratamiento.estado = request.form['estado']
+        tratamiento.pieza_dental = request.form.get('pieza_dental')
+        tratamiento.diagnostico = request.form.get('diagnostico')
+        tratamiento.tratamiento_descripcion = request.form.get('tratamiento_descripcion')
+        tratamiento.observaciones = request.form.get('observaciones')
+        db.session.commit()
+        flash('Tratamiento actualizado exitosamente.', 'success')
+        return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+
+    return render_template('tratamientos/editar_tratamiento.html', tratamiento=tratamiento)
+
+# Eliminar tratamiento
+@main_bp.route('/tratamiento/<int:tratamiento_id>/eliminar', methods=['POST'])
+@login_requerido
+def eliminar_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para eliminar este tratamiento.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
+
+    db.session.delete(tratamiento)
+    db.session.commit()
+    flash('Tratamiento eliminado exitosamente.', 'success')
+    return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+
+# Agregar pago al tratamiento (actualizar saldo)
+@main_bp.route('/tratamiento/<int:tratamiento_id>/pago', methods=['POST'])
+@login_requerido
+def agregar_pago_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para agregar pagos a este tratamiento.', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+
+    monto_pago = float(request.form['monto_pago'])
+    tratamiento.monto_pagado += monto_pago
+    tratamiento.saldo = tratamiento.costo_total - tratamiento.monto_pagado
+    db.session.commit()
+    flash('Pago agregado exitosamente.', 'success')
+    return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+
+# Crear formulario médico
+@main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])
+@login_requerido
+def crear_formulario_medico(paciente_id):
+                paciente = Paciente.query.get_or_404(paciente_id)
+                if paciente.doctor_id != session['doctor_id']:
+                    flash('No tienes permiso para crear un formulario médico para este paciente.', 'error')
+                    return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+                if request.method == 'POST':
+                    pregunta_respuesta = {key: value for key, value in request.form.items() if key.startswith('pregunta_')}
+                    pregunta_respuesta_json = json.dumps(pregunta_respuesta)
+                    nuevo_formulario = FormularioMedico(paciente_id=paciente_id, pregunta_respuesta=pregunta_respuesta_json, fecha=datetime.now())
+                    db.session.add(nuevo_formulario)
+                    db.session.commit()
+                    flash('Formulario médico creado exitosamente.', 'success')
+                    return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+                return render_template('formularios/crear_formulario.html', paciente=paciente)
 
 @main_bp.route('/guardar_historial', methods=['POST'])
+@login_requerido
 def guardar_historial():
-    try:
-        data = request.get_json()
-        paciente_id = data.get('paciente_id')
-        pregunta_respuesta = data.get('pregunta_respuesta')
+        try:
+            data = request.get_json()
+            paciente_id = data.get('paciente_id')
+            pregunta_respuesta = data.get('pregunta_respuesta')
 
-        # Validaciones
-        if not paciente_id:
-            return jsonify({"message": "ID de paciente no recibido"}), 400
-        if not pregunta_respuesta:
-            return jsonify({"message": "No se recibieron respuestas"}), 400
+            # Validaciones
+            if not paciente_id:
+                return jsonify({"message": "ID de paciente no recibido"}), 400
+            if not pregunta_respuesta:
+                return jsonify({"message": "No se recibieron respuestas"}), 400
 
-        paciente = Paciente.query.get(paciente_id)
-        if not paciente:
-            return jsonify({"message": "Paciente no encontrado"}), 404
+            paciente = Paciente.query.get(paciente_id)
+            if not paciente:
+                return jsonify({"message": "Paciente no encontrado"}), 404
 
-        # Crear el historial médico
-        nuevo_historial = FormularioMedico(
-            paciente_id=paciente_id,
-            pregunta_respuesta=pregunta_respuesta
-        )
-        db.session.add(nuevo_historial)
-        db.session.commit()
-        print("Datos recibidos:", data)
-        print("Paciente ID:", paciente_id)
-        print("Pregunta Respuesta:", pregunta_respuesta)
-        return jsonify({"message": "Historial clínico guardado exitosamente"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"Error al guardar: {str(e)}"}), 500
-    
-# ruta para geneerar el pdf del formulario
-@main_bp.route('/generar_pdf/<int:paciente_id>', methods=['GET'])
-def generar_pdf(paciente_id):
+            # Crear el historial médico
+            nuevo_historial = FormularioMedico(
+                paciente_id=paciente_id,
+                pregunta_respuesta=pregunta_respuesta
+            )
+            db.session.add(nuevo_historial)
+            db.session.commit()
+            return jsonify({"message": "Historial clínico guardado exitosamente"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"message": f"Error al guardar: {str(e)}"}), 500
+
+# Exportar formulario médico a PDF
+@main_bp.route('/paciente/<int:paciente_id>/formulario/pdf', methods=['GET'])
+@login_requerido
+def exportar_formulario_pdf(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
-    formulario = FormularioMedico.query.filter_by(paciente_id=paciente_id).first()
+    formulario = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
 
     if not formulario:
-        return jsonify({"message": "No se encontró el formulario médico para este paciente"}), 404
+        flash('No se encontró un formulario médico para este paciente.', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
-    # Crear el archivo PDF en memoria
-    pdf_output = BytesIO()
-    c = canvas.Canvas(pdf_output, pagesize=letter)
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    pdf.setTitle('Formulario Médico')
 
-    # Agregar título
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(200, 750, "Formulario Médico")
+    pdf.setFont('Helvetica-Bold', 16)
+    pdf.drawString(200, 750, 'Formulario Médico')
 
-    # Datos del paciente
-    c.setFont("Helvetica", 12)
-    c.drawString(50, 720, f"Nombre completo: {paciente.nombre} {paciente.paterno} {paciente.materno}")
-    c.drawString(50, 705, f"Cédula de Identidad: {paciente.ci}")
-    c.drawString(50, 690, f"Fecha de nacimiento: {paciente.fecha_nacimiento}")
-    c.drawString(50, 675, f"Estado Civil: {paciente.estado_civil}")
-    c.drawString(50, 660, f"Ocupación: {paciente.ocupacion}")
-    c.drawString(50, 645, f"Teléfono: {paciente.telefono}")
-    c.drawString(50, 630, f"Celular: {paciente.celular}")
+    pdf.setFont('Helvetica', 12)
+    pdf.drawString(50, 720, f'Paciente: {paciente.nombre} {paciente.paterno or ""} {paciente.materno or ""}')
+    pdf.drawString(50, 700, f'Cédula: {paciente.ci}')
+    pdf.drawString(50, 680, f'Fecha de Nacimiento: {paciente.fecha_nacimiento}')
 
-    # Antecedentes médicos
-    y_position = 600
+    y = 660
     for pregunta, respuesta in formulario.pregunta_respuesta.items():
-        c.drawString(50, y_position, f"{pregunta}: {respuesta}")
-        y_position -= 15  # Espacio entre cada línea
+        pdf.drawString(50, y, f'{pregunta}: {respuesta}')
+        y -= 20
+        if y < 50:
+            pdf.showPage()
+            pdf.setFont('Helvetica', 12)
+            y = 750
 
-    # Finalizar el PDF
-    c.showPage()
-    c.save()
+    pdf.save()
+    buffer.seek(0)
 
-    # Retornar el PDF como archivo descargable
-    pdf_output.seek(0)
-    return send_file(pdf_output, as_attachment=True, download_name=f"formulario_paciente_{paciente_id}.pdf", mimetype="application/pdf")
+    return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')

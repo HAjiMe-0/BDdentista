@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Bienvenido {% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Bienvenido, Doctor/a</h1> 
+        <h1 class="text-center mb-4">{{ doctor.nombre }}</h1>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Pacientes
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for paciente in pacientes %}
+                            <li class="list-group-item">{{ paciente.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Citas Pendientes
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for cita in citas %}
+                            <li class="list-group-item">{{ cita.fecha }} - {{ cita.hora }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Tratamientos Activos
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for tratamiento in tratamientos %}
+                            <li class="list-group-item">{{ tratamiento.descripcion }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

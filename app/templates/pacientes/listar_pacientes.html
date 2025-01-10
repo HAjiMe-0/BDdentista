@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Listar Pacientes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Lista de Pacientes</h1>
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Apellido Paterno</th>
+                    <th>Cédula</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paciente in pacientes %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ paciente.nombre }}</td>
+                    <td>{{ paciente.paterno }}</td>
+                    <td>{{ paciente.ci }}</td>
+                    <td>{{ paciente.telefono }}</td>
+                    <td>
+                        <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-info btn-sm">Ver</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No se encontraron pacientes.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.crear_paciente') }}" class="btn btn-success">Agregar Nuevo Paciente</a>
+    </div>
+</div>
+{% endblock %}

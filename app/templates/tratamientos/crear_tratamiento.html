@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Tratamiento{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="text-center mb-4">Crear Nuevo Tratamiento</h1>
+
+    <form method="POST" action="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="nombre" class="form-label"><strong>Nombre del Tratamiento</strong></label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ingrese el nombre del tratamiento" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="costo_total" class="form-label"><strong>Costo Total</strong></label>
+                    <input type="number" step="0.01" id="costo_total" name="costo_total" class="form-control" placeholder="Ingrese el costo total" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fecha_inicio" class="form-label"><strong>Fecha de Inicio</strong></label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="pieza_dental" class="form-label"><strong>Pieza Dental</strong></label>
+                    <input type="text" id="pieza_dental" name="pieza_dental" class="form-control" placeholder="Ingrese la pieza dental">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="diagnostico" class="form-label"><strong>Diagnóstico</strong></label>
+                    <input type="text" id="diagnostico" name="diagnostico" class="form-control" placeholder="Ingrese el diagnóstico">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="tratamiento_descripcion" class="form-label"><strong>Descripción del Tratamiento</strong></label>
+                    <textarea id="tratamiento_descripcion" name="tratamiento_descripcion" class="form-control" placeholder="Ingrese la descripción del tratamiento"></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="observaciones" class="form-label"><strong>Observaciones</strong></label>
+                    <textarea id="observaciones" name="observaciones" class="form-control" placeholder="Ingrese observaciones adicionales"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <button type="submit" class="btn btn-primary">Crear Tratamiento</button>
+            <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
