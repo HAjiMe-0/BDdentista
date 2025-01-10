@@ -13,6 +13,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import json
 from decimal import Decimal
+from datetime import date
 
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
@@ -458,6 +459,30 @@ def ver_tratamiento(tratamiento_id):
         return redirect(url_for('main.listar_pacientes'))
 
     return render_template('tratamientos/ver_tratamiento.html', tratamiento=tratamiento)
+
+# Finalizar Tratamiento
+@main_bp.route('/tratamiento/<int:tratamiento_id>/finalizar', methods=['POST'])
+@login_requerido
+def finalizar_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+
+    # Verificar permisos del doctor
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para finalizar este tratamiento.', 'error')
+        return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
+
+    # Verificar si ya está finalizado
+    if tratamiento.estado == 'Finalizado':
+        flash('Este tratamiento ya está finalizado.', 'info')
+        return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
+
+    # Actualizar estado y fecha de finalización
+    tratamiento.estado = 'Finalizado'
+    tratamiento.fecha_fin = date.today()
+    db.session.commit()
+
+    flash('El tratamiento ha sido finalizado correctamente.', 'success')
+    return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
 
 # Crear formulario médico
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])
