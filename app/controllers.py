@@ -22,7 +22,7 @@ def login_requerido(funcion):
     @wraps(funcion)
     def decorador(*args, **kwargs):
         if 'doctor_id' not in session:
-            return redirect(url_for('main.  '))
+            return redirect(url_for('main.iniciar_sesion'))
         return funcion(*args, **kwargs)
     return decorador
 
@@ -437,7 +437,7 @@ def agregar_pago_tratamiento(tratamiento_id):
     tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
     if tratamiento.paciente.doctor_id != session['doctor_id']:
         flash('No tienes permiso para agregar pagos a este tratamiento.', 'error')
-        return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+        return redirect(url_for('main.ver_tratamiento',  tratamiento_id=tratamiento_id))
 
     
 
@@ -446,9 +446,9 @@ def agregar_pago_tratamiento(tratamiento_id):
     tratamiento.saldo = tratamiento.costo_total - tratamiento.monto_pagado
     db.session.commit()
     flash('Pago agregado exitosamente.', 'success')
-    return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+    return redirect(url_for('main.ver_tratamiento',  tratamiento_id=tratamiento_id))
 
-#
+# Ver Tratamiento
 @main_bp.route('/tratamiento/<int:tratamiento_id>', methods=['GET'])
 @login_requerido
 def ver_tratamiento(tratamiento_id):
