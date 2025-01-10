@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Detalle del Tratamiento</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ tratamiento.nombre }}</h5>
+            <p class="card-text"><strong>ID del Tratamiento:</strong> {{ tratamiento.tratamiento_id }}</p>
+            <p class="card-text"><strong>ID del Paciente:</strong> {{ tratamiento.paciente_id }}</p>
+            <p class="card-text"><strong>Costo Total:</strong> ${{ tratamiento.costo_total }}</p>
+            <p class="card-text"><strong>Monto Pagado:</strong> ${{ tratamiento.monto_pagado }}</p>
+            <p class="card-text"><strong>Saldo:</strong> ${{ tratamiento.saldo }}</p>
+            <p class="card-text"><strong>Fecha de Inicio:</strong> {{ tratamiento.fecha_inicio }}</p>
+            <p class="card-text"><strong>Fecha de Fin:</strong> {{ tratamiento.fecha_fin }}</p>
+            <p class="card-text"><strong>Estado:</strong> {{ tratamiento.estado }}</p>
+            <p class="card-text"><strong>Pieza Dental:</strong> {{ tratamiento.pieza_dental }}</p>
+            <p class="card-text"><strong>Diagnóstico:</strong> {{ tratamiento.diagnostico }}</p>
+            <p class="card-text"><strong>Descripción del Tratamiento:</strong> {{ tratamiento.tratamiento_descripcion }}</p>
+            <p class="card-text"><strong>Observaciones:</strong> {{ tratamiento.observaciones }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

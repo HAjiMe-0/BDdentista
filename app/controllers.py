@@ -12,6 +12,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import json
+from decimal import Decimal
 
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
@@ -29,8 +30,8 @@ def login_requerido(funcion):
 @main_bp.route('/')
 def inicio():
     if 'doctor_id' in session:
-        return redirect(url_for('main.dashboard'))
-    return redirect(url_for('main.iniciar_sesion'))
+        return redirect(url_for('main.iniciar_sesion'))
+    return redirect(url_for('main.dashboard'))
 
 # Pantalla de inicio de sesión
 @main_bp.route('/iniciar-sesion', methods=['GET', 'POST'])
@@ -348,9 +349,11 @@ def eliminar_citaPC(cita_id):
 
         db.session.delete(cita)
         db.session.commit()
-        return jsonify({"message": "Cita eliminada exitosamente."}), 200
+        flash('Cita eliminada exitosamente.', 'success')
+        return redirect(url_for('main.listar_citas'))
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        flash(f'Error al eliminar la cita: {str(e)}', 'error')
+        return redirect(url_for('main.listar_citas'))
 
 # Gestión de tratamientos
 # Crear tratamiento
@@ -436,12 +439,25 @@ def agregar_pago_tratamiento(tratamiento_id):
         flash('No tienes permiso para agregar pagos a este tratamiento.', 'error')
         return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
 
-    monto_pago = float(request.form['monto_pago'])
+    
+
+    monto_pago = Decimal(request.form['monto_pago'])
     tratamiento.monto_pagado += monto_pago
     tratamiento.saldo = tratamiento.costo_total - tratamiento.monto_pagado
     db.session.commit()
     flash('Pago agregado exitosamente.', 'success')
     return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+
+#
+@main_bp.route('/tratamiento/<int:tratamiento_id>', methods=['GET'])
+@login_requerido
+def ver_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para ver este tratamiento.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
+
+    return render_template('tratamientos/ver_tratamiento.html', tratamiento=tratamiento)
 
 # Crear formulario médico
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])

@@ -34,6 +34,7 @@
                         <th>Nombre</th>
                         <th>Costo Total</th>
                         <th>Monto Pagado</th>
+                        <th>Saldo</th>
                         <th>Fecha Inicio</th>
                         <th>Fecha Fin</th>
                         <th>Estado</th>
@@ -47,6 +48,7 @@
                         <td>{{ tratamiento.nombre }}</td>
                         <td>{{ tratamiento.costo_total }}</td>
                         <td>{{ tratamiento.monto_pagado }}</td>
+                        <td>{{ tratamiento.saldo }}</td>
                         <td>{{ tratamiento.fecha_inicio }}</td>
                         <td>{{ tratamiento.fecha_fin or 'En Progreso' }}</td>
                         <td>{{ tratamiento.estado }}</td>
@@ -59,6 +61,7 @@
                                 <input type="number" name="monto_pago" class="form-control form-control-sm d-inline-block" placeholder="Monto" required>
                                 <button type="submit" class="btn btn-info btn-sm">Agregar Pago</button>
                             </form>
+                            <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" class="btn btn-info btn-sm">Ver</a>
                         </td>
                     </tr>
                     {% endfor %}
