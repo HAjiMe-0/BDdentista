@@ -395,7 +395,7 @@ def editar_tratamiento(tratamiento_id):
     tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
     if tratamiento.paciente.doctor_id != session['doctor_id']:
         flash('No tienes permiso para editar este tratamiento.', 'error')
-        return redirect(url_for('main.listar_pacientes'))
+        return redirect(url_for('main.ver_tratamiento'))
 
     if request.method == 'POST':
         tratamiento.nombre = request.form['nombre']
@@ -413,7 +413,7 @@ def editar_tratamiento(tratamiento_id):
         tratamiento.observaciones = request.form.get('observaciones')
         db.session.commit()
         flash('Tratamiento actualizado exitosamente.', 'success')
-        return redirect(url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id))
+        return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
 
     return render_template('tratamientos/editar_tratamiento.html', tratamiento=tratamiento)
 
@@ -483,6 +483,29 @@ def finalizar_tratamiento(tratamiento_id):
 
     flash('El tratamiento ha sido finalizado correctamente.', 'success')
     return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
+
+# Cancelar Tratamiento
+@main_bp.route('/tratamiento/<int:tratamiento_id>/cancelar', methods=['POST'])
+@login_requerido
+def cancelar_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para cancelar este tratamiento.', 'error')
+        return redirect(url_for('main.listar_pacientes'))
+
+    # Verificar si el tratamiento ya está cancelado
+    if tratamiento.estado == "Cancelado":
+        flash('El tratamiento ya ha sido cancelado.', 'info')
+        return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id))
+
+    # Cambiar el estado a "Cancelado" y registrar la fecha de fin
+    tratamiento.estado = "Cancelado"
+    tratamiento.fecha_fin = datetime.today().date()
+
+    db.session.commit()
+    flash('El tratamiento ha sido cancelado exitosamente.', 'success')
+    return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id))
+
 
 # Crear formulario médico
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])

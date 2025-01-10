@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Editar Tratamiento</h2>
+    <form action="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST">
+        <!-- Nombre del Tratamiento -->
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre del Tratamiento</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ tratamiento.nombre }}" required>
+        </div>
+
+        <!-- Costo Total -->
+        <div class="mb-3">
+            <label for="costo_total" class="form-label">Costo Total</label>
+            <input type="number" id="costo_total" name="costo_total" class="form-control" value="{{ tratamiento.costo_total }}" step="0.01" required>
+        </div>
+
+        <!-- Monto Pagado -->
+        <div class="mb-3">
+            <label for="monto_pagado" class="form-label">Monto Pagado</label>
+            <input type="number" id="monto_pagado" name="monto_pagado" class="form-control" value="{{ tratamiento.monto_pagado }}" step="0.01">
+        </div>
+
+        <!-- Fecha de Inicio -->
+        <div class="mb-3">
+            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="{{ tratamiento.fecha_inicio }}" required>
+        </div>
+
+        <!-- Fecha de Fin -->
+        <div class="mb-3">
+            <label for="fecha_fin" class="form-label">Fecha de Fin</label>
+            <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ tratamiento.fecha_fin }}">
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3">
+            <label for="estado" class="form-label">Estado</label>
+            <select id="estado" name="estado" class="form-select" required>
+                <option value="En Progreso" {% if tratamiento.estado == 'En Progreso' %}selected{% endif %}>En Progreso</option>
+                <option value="Finalizado" {% if tratamiento.estado == 'Finalizado' %}selected{% endif %}>Finalizado</option>
+                <option value="Cancelado" {% if tratamiento.estado == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+            </select>
+        </div>
+
+        <!-- Pieza Dental -->
+        <div class="mb-3">
+            <label for="pieza_dental" class="form-label">Pieza Dental</label>
+            <input type="text" id="pieza_dental" name="pieza_dental" class="form-control" value="{{ tratamiento.pieza_dental }}">
+        </div>
+
+        <!-- Diagnóstico -->
+        <div class="mb-3">
+            <label for="diagnostico" class="form-label">Diagnóstico</label>
+            <textarea id="diagnostico" name="diagnostico" class="form-control" rows="3">{{ tratamiento.diagnostico }}</textarea>
+        </div>
+
+        <!-- Descripción del Tratamiento -->
+        <div class="mb-3">
+            <label for="tratamiento_descripcion" class="form-label">Descripción del Tratamiento</label>
+            <textarea id="tratamiento_descripcion" name="tratamiento_descripcion" class="form-control" rows="3">{{ tratamiento.tratamiento_descripcion }}</textarea>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="mb-3">
+            <label for="observaciones" class="form-label">Observaciones</label>
+            <textarea id="observaciones" name="observaciones" class="form-control" rows="3">{{ tratamiento.observaciones }}</textarea>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

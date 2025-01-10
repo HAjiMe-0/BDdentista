@@ -28,7 +28,12 @@
                 <button type="submit" class="btn btn-success">
                     <i class="bi bi-check-circle"></i> Finalizar Tratamiento
                 </button>
-            </form>            
+            </form>
+            <form action="{{ url_for('main.cancelar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este tratamiento?');">
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-x-circle"></i> Cancelar Tratamiento
+                </button>
+            </form>
             <a href="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Editar
             </a>
