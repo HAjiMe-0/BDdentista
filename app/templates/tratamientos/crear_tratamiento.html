@@ -3,99 +3,269 @@
 {% block title %}Crear Tratamiento{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h1 class="text-center mb-4">Crear Nuevo Tratamiento</h1>
-
-    <form method="POST" action="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="nombre" class="form-label"><strong>Nombre del Tratamiento</strong></label>
-                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ingrese el nombre del tratamiento" required>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="costo_total" class="form-label"><strong>Costo Total</strong></label>
-                    <input type="number" step="0.01" id="costo_total" name="costo_total" class="form-control" placeholder="Ingrese el costo total" required>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="fecha_inicio" class="form-label"><strong>Fecha de Inicio</strong></label>
-                    <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="pieza_dental" class="form-label"><strong>Pieza Dental</strong></label>
-                    <select id="pieza_dental" name="pieza_dental" class="form-control">
-                        <option value="">Seleccione la pieza dental</option>
-                        <option value="11">11 - Incisivo Central Superior Derecho</option>
-                        <option value="12">12 - Incisivo Lateral Superior Derecho</option>
-                        <option value="13">13 - Canino Superior Derecho</option>
-                        <option value="14">14 - Primer Premolar Superior Derecho</option>
-                        <option value="15">15 - Segundo Premolar Superior Derecho</option>
-                        <option value="16">16 - Primer Molar Superior Derecho</option>
-                        <option value="17">17 - Segundo Molar Superior Derecho</option>
-                        <option value="18">18 - Tercer Molar Superior Derecho</option>
-                        <option value="21">21 - Incisivo Central Superior Izquierdo</option>
-                        <option value="22">22 - Incisivo Lateral Superior Izquierdo</option>
-                        <option value="23">23 - Canino Superior Izquierdo</option>
-                        <option value="24">24 - Primer Premolar Superior Izquierdo</option>
-                        <option value="25">25 - Segundo Premolar Superior Izquierdo</option>
-                        <option value="26">26 - Primer Molar Superior Izquierdo</option>
-                        <option value="27">27 - Segundo Molar Superior Izquierdo</option>
-                        <option value="28">28 - Tercer Molar Superior Izquierdo</option>
-                        <option value="31">31 - Incisivo Central Inferior Izquierdo</option>
-                        <option value="32">32 - Incisivo Lateral Inferior Izquierdo</option>
-                        <option value="33">33 - Canino Inferior Izquierdo</option>
-                        <option value="34">34 - Primer Premolar Inferior Izquierdo</option>
-                        <option value="35">35 - Segundo Premolar Inferior Izquierdo</option>
-                        <option value="36">36 - Primer Molar Inferior Izquierdo</option>
-                        <option value="37">37 - Segundo Molar Inferior Izquierdo</option>
-                        <option value="38">38 - Tercer Molar Inferior Izquierdo</option>
-                        <option value="41">41 - Incisivo Central Inferior Derecho</option>
-                        <option value="42">42 - Incisivo Lateral Inferior Derecho</option>
-                        <option value="43">43 - Canino Inferior Derecho</option>
-                        <option value="44">44 - Primer Premolar Inferior Derecho</option>
-                        <option value="45">45 - Segundo Premolar Inferior Derecho</option>
-                        <option value="46">46 - Primer Molar Inferior Derecho</option>
-                        <option value="47">47 - Segundo Molar Inferior Derecho</option>
-                        <option value="48">48 - Tercer Molar Inferior Derecho</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="diagnostico" class="form-label"><strong>Diagnóstico</strong></label>
-                    <input type="text" id="diagnostico" name="diagnostico" class="form-control" placeholder="Ingrese el diagnóstico">
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="tratamiento_descripcion" class="form-label"><strong>Descripción del Tratamiento</strong></label>
-                    <textarea id="tratamiento_descripcion" name="tratamiento_descripcion" class="form-control" placeholder="Ingrese la descripción del tratamiento"></textarea>
-                </div>
-            </div>
-
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="observaciones" class="form-label"><strong>Observaciones</strong></label>
-                    <textarea id="observaciones" name="observaciones" class="form-control" placeholder="Ingrese observaciones adicionales"></textarea>
-                </div>
-            </div>
+<div class="container py-5">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>Crear Nuevo Tratamiento</h1>
+            <p class="subtitle">Ingrese los detalles del nuevo tratamiento para el paciente</p>
         </div>
 
-        <div class="mt-4 text-center">
-            <button type="submit" class="btn btn-primary">Crear Tratamiento</button>
-            <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+        <form method="POST" action="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" class="treatment-form">
+            <!-- Información Básica -->
+            <div class="form-section">
+                <h3 class="section-title">Información Básica</h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select name="tipo_tratamiento" 
+                                   id="tipo_tratamiento" 
+                                   class="form-control custom-input" 
+                                   required>
+                                <option value="">Seleccione un tipo</option>
+                                <option value="limpieza">Limpieza Dental</option>
+                                <option value="ortodoncia">Ortodoncia</option>
+                                <option value="endodoncia">Endodoncia</option>
+                                <option value="periodoncia">Periodoncia</option>
+                                <option value="extraccion">Extracción</option>
+                                <option value="implante">Implante Dental</option>
+                                <option value="protesis">Prótesis Dental</option>
+                            </select>
+                            <label for="tipo_tratamiento">Tipo de Tratamiento</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" 
+                                   step="0.01" 
+                                   id="costo_total" 
+                                   name="costo_total" 
+                                   class="form-control custom-input" 
+                                   placeholder="Costo total"
+                                   required>
+                            <label for="costo_total">Costo Total</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fechas y Detalles -->
+            <div class="form-section">
+                <h3 class="section-title">Fechas y Detalles</h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="date" 
+                                   id="fecha_inicio" 
+                                   name="fecha_inicio" 
+                                   class="form-control custom-input" 
+                                   required>
+                            <label for="fecha_inicio">Fecha de Inicio</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" 
+                                   id="pieza_dental" 
+                                   name="pieza_dental" 
+                                   class="form-control custom-input" 
+                                   placeholder="Pieza dental">
+                            <label for="pieza_dental">Pieza Dental</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información Clínica -->
+            <div class="form-section">
+                <h3 class="section-title">Información Clínica</h3>
+                <div class="row g-4">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" 
+                                   id="diagnostico" 
+                                   name="diagnostico" 
+                                   class="form-control custom-input" 
+                                   placeholder="Diagnóstico">
+                            <label for="diagnostico">Diagnóstico</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea id="tratamiento_descripcion" 
+                                    name="tratamiento_descripcion" 
+                                    class="form-control custom-input" 
+                                    placeholder="Descripción del tratamiento"
+                                    style="height: 100px"></textarea>
+                            <label for="tratamiento_descripcion">Descripción del Tratamiento</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea id="observaciones" 
+                                    name="observaciones" 
+                                    class="form-control custom-input" 
+                                    placeholder="Observaciones"
+                                    style="height: 100px"></textarea>
+                            <label for="observaciones">Observaciones</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-crear">
+                    <i class="bi bi-plus-circle"></i> Crear Tratamiento
+                </button>
+                <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-cancelar">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<style>
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+    }
+
+    body {
+        background-color: var(--color-light-mint);
+    }
+    
+    .form-card {
+        background: var(--color-white);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-light-mint);
+    }
+
+    .form-header h1 {
+        color: var(--color-dark-teal);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .form-section {
+        background: var(--color-light-mint);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        color: var(--color-dark-teal);
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+
+    .custom-input {
+        border: 2px solid var(--color-mint);
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-input:focus {
+        border-color: var(--color-teal);
+        box-shadow: 0 0 0 0.2rem rgba(104, 195, 183, 0.25);
+    }
+
+    .form-floating > label {
+        color: var(--color-dark-teal);
+        padding: 1rem;
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: var(--color-dark-teal);
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-crear {
+        background-color: var(--color-teal);
+        color: white;
+    }
+
+    .btn-cancelar {
+        background-color: var(--color-mint);
+        color: var(--color-dark-teal);
+    }
+
+    textarea.custom-input {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    @media (max-width: 768px) {
+        .form-card {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    /* Estilos adicionales para el select */
+    select.custom-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23539091' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+    }
+</style>
 {% endblock %}

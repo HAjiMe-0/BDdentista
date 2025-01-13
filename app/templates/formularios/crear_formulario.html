@@ -3,14 +3,108 @@
 {% block title %}Dashboard - Bienvenido {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Formulario de Historial Clínico</h1>
+<style>
+    :root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+}
+
+body {
+    background-color: var(--color-light-mint);
+}
+    .custom-card-header {
+        background-color: #68c3b7 !important;
+        color: white !important;
+        border: none;
+    }
+    
+    .btn-custom-primary {
+        background-color: #539091;
+        border-color: #539091;
+        color: white;
+    }
+    
+    .btn-custom-primary:hover {
+        background-color: #68c3b7;
+        border-color: #68c3b7;
+        color: white;
+    }
+    
+    .custom-container {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    
+    .accordion-button {
+        background-color: #cceae8 !important;
+        color: #539091 !important;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #a8dcd9 !important;
+        color: #539091 !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #68c3b7;
+        border-color: #68c3b7;
+    }
+    
+    .form-control:focus {
+        border-color: #68c3b7;
+        box-shadow: 0 0 0 0.2rem rgba(104, 195, 183, 0.25);
+    }
+    
+    .page-title {
+        color: #539091;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+    
+    .card {
+        border: 1px solid #cceae8;
+        margin-bottom: 2rem;
+    }
+    
+    .card-body {
+        background-color: #ffffff;
+    }
+    
+    .accordion-item {
+        border: 1px solid #cceae8;
+    }
+    
+    .form-label {
+        color: #539091;
+        font-weight: 500;
+    }
+    
+    .btn-secondary {
+        background-color: #a8dcd9;
+        border-color: #a8dcd9;
+        color: #539091;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #cceae8;
+        border-color: #cceae8;
+        color: #539091;
+    }
+</style>
+
+<div class="container custom-container mt-5">
+    <h1 class="text-center page-title" style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; ">Formulario de Historial Clínico</h1>
     <form id="formularioClinico" class="needs-validation" novalidate>
         <input type="hidden" id="paciente_id" value="{{ paciente.paciente_id }}">
 
         <!-- Información básica -->
         <div class="card mb-4">
-            <div class="card-header bg-primary text-white">Información Básica del Paciente</div>
+            <div class="card-header custom-card-header">Información Básica del Paciente</div>
             <div class="card-body">
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Nombre completo:</strong></label>
@@ -93,7 +187,6 @@
                                 <label class="form-check-label" for="enfermedadesRespiratorias">Enfermedades respiratorias</label>
                                 <input type="text" name="detalle_respiratorias" class="form-control mt-2" placeholder="Detalle Enfermedades respiratorias (opcional)">
                             </div>
-
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades renales" id="enfermedadesRenales">
                                 <label class="form-check-label" for="enfermedadesRenales">Enfermedades renales</label>
@@ -151,9 +244,6 @@
                                 <label for="alergias" class="form-label">¿A qué es alérgico?</label>
                                 <input type="text" class="form-control" name="alergias" id="alergias">
                             </div>
-
-                            <!-- Agregar más checkboxes aquí -->
-                             
                         </div>
                         <div class="mb-3">
                             <label class="form-label">3. ¿Siente dolor en el tórax después de hacer ejercicio?</label>
@@ -195,6 +285,7 @@
                             <label class="form-label">6. ¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="problema_odontologico" value="Sí" id="problemaOdontologicoSi">
+                                <label class="form-check-label
                                 <label class="form-check-label" for="problemaOdontologicoSi">Sí</label>
                             </div>
                             <div class="form-check">
@@ -360,7 +451,7 @@
 
         <!-- Declaración -->
         <div class="card mb-4">
-            <div class="card-header bg-primary text-white">Declaración</div>
+            <div class="card-header custom-card-header">Declaración</div>
             <div class="card-body">
                 <p>El paciente declara haber entendido todas las explicaciones...</p>
             </div>
@@ -368,7 +459,7 @@
 
         <!-- Botones -->
         <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-primary" onclick="guardarFormulario()">Guardar</button>
+            <button type="button" class="btn btn-custom-primary" onclick="guardarFormulario()">Guardar</button>
             <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-secondary">Volver</a>
         </div>
     </form>

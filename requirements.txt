@@ -4,9 +4,6 @@ flask-migrate
 flask-wtf
 wtforms
 flask_mail 
-#flask-itsdangerous 
-flask-Werkzeug
-#pg8000
 datetime
 weasyprint
 reportlab

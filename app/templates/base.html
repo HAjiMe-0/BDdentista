@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,25 +8,109 @@
     <meta name="author" content="Tu nombre o equipo">
     <meta name="keywords" content="dentista, pacientes, doctores, gestión">
     <title>{% block title %}DentAPP 1.1{% endblock %}</title>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
     <!-- Íconos de Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
-    <!-- Tu propio CSS (opcional) -->
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Tema personalizado -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+    <style>
+        :root {
+            --primary-color: #68c3b7;
+            --secondary-color: #539091;
+            --highlight-color: #47d2ba;
+            --background-light: #f8fafc;
+            --gradient-color-1: rgba(104, 195, 183, 0.8);
+            --gradient-color-2: rgba(83, 144, 145, 0.8);
+            --background-image: url("static/img/fondo_dental5.jpg"); 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background: linear-gradient(135deg, var(--gradient-color-1), var(--gradient-color-2));
+            background-attachment: fixed;
+            background-size: cover;
+            background-image: var(--background-image);
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+        }
+
+        .footer {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-primary {
+            background-color: var(--highlight-color);
+            border-color: var(--highlight-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .badge-warning {
+            background-color: var(--highlight-color);
+            color: #ffffff;
+        }
+
+        a {
+            color: var(--highlight-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .navbar-brand i {
+            color: #ffffff;
+        }
+
+        /* Efecto difuminado adicional para contenedores principales */
+        .container-fluid {
+            background-color: var(--gradient-overlay);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .modo-oscuro {
+            --primary-color: #1a1a1a;
+            --secondary-color: #282828;
+            --background-color: #121212;
+            --text-color: #fff;
+            /* Ajusta otros colores y estilos según sea necesario */
+        }
+
+        body.modo-oscuro {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <!-- Barra superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
-                <i class="bi bi-hospital"></i> DentAPP 1.1
+                <i class="bi bi-tooth"></i>DentAPP 1.1
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -45,12 +130,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link disabled">
-                            <i class="bi bi-bar-chart"></i> Reportes <span class="badge bg-primary">Próximamente</span>
+                            <i class="bi bi-bar-chart"></i> Reportes <span class="badge badge-warning">Próximamente</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link disabled">
-                            <i class="bi bi-gear"></i> Configuración <span class="badge bg-primary">Próximamente</span>
+                            <i class="bi bi-gear"></i> Configuración <span class="badge badge-warning">Próximamente</span>
                         </a>
                     </li>
                     {% if session.get('doctor_id') %}
@@ -77,43 +162,20 @@
             </div>
         </div>
     </nav>
-
+    
+    <!-- Contenido Principal -->
     <div class="container-fluid">
         <div class="row">
-            <!-- Contenido principal -->
             <main class="col-12 ms-sm-auto px-md-4 py-4">
-                <!-- Alertas -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <div class="alert-container">
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function () {
-                                    const alerts = document.querySelectorAll(".alert-dismissible");
-                                    alerts.forEach((alert) => {
-                                        setTimeout(() => {
-                                            alert.classList.remove("show");
-                                            alert.addEventListener("transitionend", () => alert.remove());
-                                        }, 5000); // Oculta después de 5 segundos
-                                    });
-                                });
-                            </script>
-                        </div>
-                    {% endif %}
-                {% endwith %}
                 {% block content %}
                 {% endblock %}
             </main>
         </div>
-    </div>
+    </div> 
+
 
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-dark text-white text-center">
+    <footer class="footer py-3 text-white text-center shadow-sm">
         <div class="container">
             <span>&copy; 2025 DentAPP 1.1. Todos los derechos reservados.</span>
         </div>
@@ -124,4 +186,5 @@
     <!-- Script de configuración -->
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
 </body>
+
 </html>

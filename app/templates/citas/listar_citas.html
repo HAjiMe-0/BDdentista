@@ -1,38 +1,246 @@
 {% extends 'base.html' %}
 {% block content %}
+    <style>
+        :root {
+            --color-white: #ffffff;
+            --color-light: #cceae8;
+            --color-medium: #a8dcd9;
+            --color-dark: #68c3b7;
+            --color-darker: #539091;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .calendar-section {
+            flex: 0 0 80%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .details-section {
+            flex: 0 0 20%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-container {
+            margin-top: 1rem;
+            box-shadow: 0 0 15px rgba(83, 144, 145, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #calendar {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #calendar .table {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+
+        .page-title {
+            color: var(--color-dark) !important;
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .month-title {
+            color: var(--color-darker) !important;
+            font-weight: bold;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+        }
+
+        .month-navigation {
+            background-color: var(--color-light);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .table th {
+            background-color: var(--color-dark) !important;
+            color: var(--color-white) !important;
+            padding: 15px;
+            font-size: 1.1em;
+        }
+
+        .table td {
+            height: 100px;
+            vertical-align: top;
+            padding: 10px;
+            transition: all 0.3s;
+            background-color: var(--color-white);
+        }
+
+        .table td:hover {
+            background-color: var(--color-light);
+            cursor: pointer;
+        }
+
+        .calendar-day {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .day-with-appointments {
+            background-color: var(--color-medium) !important;
+        }
+
+        .appointment-count {
+            color: var(--color-darker);
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .btn-custom {
+            background-color: var(--color-dark);
+            color: var(--color-white);
+            border: none;
+            transition: all 0.3s;
+            min-width: 100px;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .btn-custom:hover {
+            background-color: var(--color-darker);
+            transform: translateY(-2px);
+            color: var(--color-white);
+        }
+
+        .btn-navigation {
+            background-color: var(--color-dark);
+            color: var(--color-white);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-navigation:hover {
+            background-color: var(--color-darker);
+            transform: translateY(-2px);
+            color: var(--color-white);
+            box-shadow: 0 4px 6px rgba(83, 144, 145, 0.2);
+        }
+
+        .cita-details-container {
+    background-color: transparent; /* Blanco semitransparente */
+    border-radius: 10px;
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+        .cita-details-container h3 {
+            color: var(--color-darker);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .action-buttons-container {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .action-buttons-container a,
+        .action-buttons-container form {
+            width: 100%;
+        }
+
+        .action-buttons-container button {
+            width: 100%;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #bb2d3b;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .details-section .table td {
+            height: auto;
+            padding: 8px;
+        }
+
+        .details-section .table th {
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        #cita-details {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+    </style>
+
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Calendario de Citas</h1>
+        <h1 class="text-center mb-4 page-title">Calendario de Citas</h1>
         
         <!-- Botón para Crear Cita -->
-        <div class="text-center">
-            <a href="{{ url_for('main.crear_cita') }}" class="btn btn-outline-success btn-lg rounded-pill">
+        <div class="text-center mb-4">
+            <a href="{{ url_for('main.crear_cita') }}" class="btn btn-custom btn-lg rounded-pill">
                 <i class="bi bi-calendar-plus"></i> Crear Cita
             </a>
         </div>
 
-        <!-- Controles para navegar entre meses -->
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <button id="prev-month" class="btn btn-outline-primary rounded-pill">
-                <i class="bi bi-arrow-left-circle"></i> Anterior
-            </button>
-            <h3 id="month-title" class="text-primary"></h3>
-            <button id="next-month" class="btn btn-outline-primary rounded-pill">
-                Siguiente <i class="bi bi-arrow-right-circle"></i>
-            </button>
-        </div>
+        <div class="main-container">
+            <div class="calendar-section">
+                <!-- Controles para navegar entre meses -->
+                <div class="month-navigation d-flex justify-content-between align-items-center">
+                    <button id="prev-month" class="btn btn-navigation rounded-pill">
+                        <i class="bi bi-arrow-left-circle"></i> Anterior
+                    </button>
+                    <h3 id="month-title" class="month-title mb-0"></h3>
+                    <button id="next-month" class="btn btn-navigation rounded-pill">
+                        Siguiente <i class="bi bi-arrow-right-circle"></i>
+                    </button>
+                </div>
 
-        <!-- Calendario -->
-        <div id="calendar" class="mt-4"></div>
-        <div id="cita-details" class="mt-4"></div>
+                <!-- Calendario -->
+                <div class="calendar-container">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <div class="cita-details-container">
+                    <div id="cita-details">
+                        <p class="text-center text-muted">Seleccione un día para ver las citas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@3.0.1/main.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        let currentMonth = new Date().getMonth(); // Mes actual
-        let currentYear = new Date().getFullYear(); // Año actual
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
 
-        // Obtener las citas desde la base de datos
         function getCitas(year, month) {
             return $.ajax({
                 url: `/citas/${year}/${month}`,
@@ -41,50 +249,44 @@
             });
         }
 
-        // Actualizar título del mes
         function updateMonthTitle() {
             const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
             document.getElementById('month-title').textContent = `${monthNames[currentMonth]} ${currentYear}`;
         }
 
-        // Crear calendario
         function crearCalendario() {
             getCitas(currentYear, currentMonth + 1).then(citas => {
                 const monthDays = document.getElementById('calendar');
-
-                // Obtener el primer día del mes y cuántos días tiene el mes
                 let firstDayOfMonth = new Date(currentYear, currentMonth, 1);
                 let lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-
                 let daysInMonth = lastDayOfMonth.getDate();
-                let firstDay = firstDayOfMonth.getDay(); // Día de la semana del primer día del mes
+                let firstDay = firstDayOfMonth.getDay();
 
                 let calendarHTML = '<table class="table table-bordered text-center"><thead><tr>';
-                // Cabecera con los días de la semana
                 ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].forEach(day => {
-                    calendarHTML += `<th class="bg-light">${day}</th>`;
+                    calendarHTML += `<th>${day}</th>`;
                 });
                 calendarHTML += '</tr></thead><tbody><tr>';
 
-                // Espacios vacíos antes del primer día
                 for (let i = 0; i < firstDay; i++) {
                     calendarHTML += '<td></td>';
                 }
 
-                // Crear los días del mes
                 for (let day = 1; day <= daysInMonth; day++) {
                     const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                    
-                    // Comprobar si hay citas para ese día
                     let citasDelDia = citas.filter(cita => cita.fecha === dateString);
-                    let dayClass = citasDelDia.length > 0 ? 'bg-success text-white rounded' : '';
+                    let dayClass = citasDelDia.length > 0 ? 'day-with-appointments' : '';
 
-                    calendarHTML += `<td class="p-2 ${dayClass}" onclick="showCitas('${dateString}')">
-                                        <span class="d-block fw-bold">${day}</span>
-                                        ${citasDelDia.length > 0 ? `<small>(${citasDelDia.length})</small>` : ''}
-                                      </td>`;
+                    calendarHTML += `
+                        <td class="${dayClass}" onclick="showCitas('${dateString}')">
+                            <span class="calendar-day">${day}</span>
+                            ${citasDelDia.length > 0 ? `
+                                <span class="appointment-count">
+                                    (${citasDelDia.length} cita${citasDelDia.length > 1 ? 's' : ''})
+                                </span>
+                            ` : ''}
+                        </td>`;
 
-                    // Cambiar de fila después de sábado
                     if ((firstDay + day) % 7 === 0) {
                         calendarHTML += '</tr><tr>';
                     }
@@ -95,47 +297,50 @@
             });
         }
 
-        // Mostrar las citas del día en formato de tabla
         function showCitas(date) {
             getCitas(currentYear, currentMonth + 1).then(citas => {
                 const citasDelDia = citas.filter(cita => cita.fecha === date);
                 const detalles = document.getElementById('cita-details');
                 if (citasDelDia.length > 0) {
-                    let citasHTML = `<h3>Citas para el ${date}</h3>
-                                    <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                        <th>Paciente</th>
-                                        <th>Motivo</th>
-                                        <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
+                    let citasHTML = `
+                        <h3>Citas: ${date}</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Paciente</th>
+                                    <th>Motivo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
                     citasDelDia.forEach(cita => {
-                        citasHTML += `<tr>
-                                        <td>${cita.paciente}</td>
-                                        <td>${cita.motivo}</td>
-                                        <td>
-                                            <a href="/cita/${cita.id}" class="btn btn-info btn-sm rounded-pill">
-                                                <i class="bi bi-eye"></i> Ver
-                                            </a>
-                                            <form action="/delete_cita/${cita.id}" method="POST" style="display:inline;">
-                                                <button type="submit" class="btn btn-danger btn-sm rounded-pill" onclick="return confirm('¿Estás seguro de eliminar esta cita?')">
-                                                    <i class="bi bi-trash"></i> Eliminar
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>`;
+                        citasHTML += `
+                            <tr>
+                                <td>${cita.paciente}</td>
+                                <td>${cita.motivo}</td>
+                                <td>
+                                    <div class="action-buttons-container">
+                                        <a href="/cita/${cita.id}" class="btn btn-custom btn-sm rounded-pill">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <form action="/delete_cita/${cita.id}" method="POST">
+                                            <button type="submit" class="btn btn-delete btn-sm rounded-pill" 
+                                                    onclick="return confirm('¿Estás seguro de eliminar esta cita?')">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>`;
                     });
-                    citasHTML += `</tbody></table>`;
+                    citasHTML += '</tbody></table>';
                     detalles.innerHTML = citasHTML;
                 } else {
-                    detalles.innerHTML = `<p>No hay citas programadas para el ${date}.</p>`;
+                    detalles.innerHTML = `<p class="text-center">No hay citas programadas para el ${date}.</p>`;
                 }
             });
         }
 
-        // Navegar al mes anterior
         document.getElementById('prev-month').addEventListener('click', function() {
             if (currentMonth === 0) {
                 currentMonth = 11;
@@ -147,7 +352,6 @@
             crearCalendario();
         });
 
-        // Navegar al siguiente mes
         document.getElementById('next-month').addEventListener('click', function() {
             if (currentMonth === 11) {
                 currentMonth = 0;
@@ -159,7 +363,6 @@
             crearCalendario();
         });
 
-        // Inicializar calendario
         document.addEventListener('DOMContentLoaded', function () {
             updateMonthTitle();
             crearCalendario();
