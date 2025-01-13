@@ -14,6 +14,15 @@ from reportlab.pdfgen import canvas
 import json
 from decimal import Decimal
 from datetime import date
+from reportlab.lib import colors
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph,
+    Spacer,
+)
+from reportlab.lib.styles import getSampleStyleSheet
 
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
@@ -568,28 +577,131 @@ def exportar_formulario_pdf(paciente_id):
         flash('No se encontró un formulario médico para este paciente.', 'error')
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
+    # Configurar buffer y documento
     buffer = BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-    pdf.setTitle('Formulario Médico')
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
 
-    pdf.setFont('Helvetica-Bold', 16)
-    pdf.drawString(200, 750, 'Formulario Médico')
+    # Título del documento
+    title = Paragraph("Formulario Médico", styles['Title'])
+    elements.append(title)
+    elements.append(Spacer(1, 12))
 
-    pdf.setFont('Helvetica', 12)
-    pdf.drawString(50, 720, f'Paciente: {paciente.nombre} {paciente.paterno or ""} {paciente.materno or ""}')
-    pdf.drawString(50, 700, f'Cédula: {paciente.ci}')
-    pdf.drawString(50, 680, f'Fecha de Nacimiento: {paciente.fecha_nacimiento}')
+    # Información del paciente
+    paciente_info = f"""
+    <b>Paciente:</b> {paciente.nombre} {paciente.paterno or ""} {paciente.materno or ""}<br/>
+    <b>Cédula:</b> {paciente.ci}<br/>
+    <b>Fecha de Nacimiento:</b> {paciente.fecha_nacimiento}
+    """
+    elements.append(Paragraph(paciente_info, styles['Normal']))
+    elements.append(Spacer(1, 12))
 
-    y = 660
-    for pregunta, respuesta in formulario.pregunta_respuesta.items():
-        pdf.drawString(50, y, f'{pregunta}: {respuesta}')
-        y -= 20
-        if y < 50:
-            pdf.showPage()
-            pdf.setFont('Helvetica', 12)
-            y = 750
+    # Ordenar y estructurar datos del formulario
+    orden_preguntas = [
+        ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+        ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+        ("¿A qué es alérgico?", "alergias"),
+        ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+        ("¿Le falta aire después del ejercicio?", "falta_aire"),
+        ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+        ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+        ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+        ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+        ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+        ("¿Cuál?", "detalle_reacciones_medicamentos"),
+        ("Acostumbra:", "costumbres[]"),
+        ("¿Tiene algún problema con:", "problemas[]"),
+        ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+        ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+        ("¿Cuántas semanas?", "semanas_embarazo"),
+        ("Observaciones:", "observaciones"),
+        ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+        ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias"),
+    ]
 
-    pdf.save()
+    # Tabla de preguntas y respuestas
+    data = [[Paragraph("<b>Pregunta</b>", styles['Normal']), Paragraph("<b>Respuesta</b>", styles['Normal'])]]
+    for pregunta, key in orden_preguntas:
+        respuesta = formulario.pregunta_respuesta.get(key, "No especificado")
+        # Manejar listas
+        if isinstance(respuesta, list):
+            respuesta = "<br/>".join(respuesta)
+        data.append([Paragraph(pregunta, styles['Normal']), Paragraph(str(respuesta), styles['Normal'])])
+
+    table = Table(data, colWidths=[200, 300])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(table)
+
+    # Construir el PDF
+    doc.build(elements)
     buffer.seek(0)
 
     return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
+
+# Exportar tratamiento a PDF
+@main_bp.route('/tratamiento/<int:tratamiento_id>/pdf', methods=['GET'])
+@login_requerido
+def generar_pdf_tratamiento(tratamiento_id):
+        tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+        if tratamiento.paciente.doctor_id != session['doctor_id']:
+            flash('No tienes permiso para generar un PDF de este tratamiento.', 'error')
+            return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
+
+        # Configurar buffer y documento
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        elements = []
+        styles = getSampleStyleSheet()
+
+        # Título del documento
+        title = Paragraph("Detalle del Tratamiento", styles['Title'])
+        elements.append(title)
+        elements.append(Spacer(1, 12))
+
+        # Información del tratamiento
+        tratamiento_info = [
+            ["Tratamiento:", tratamiento.nombre],
+            ["Paciente:", f"{tratamiento.paciente.nombre} {tratamiento.paciente.paterno or ''} {tratamiento.paciente.materno or ''}"],
+            ["Costo Total:", f"{tratamiento.costo_total:.2f}"],
+            ["Monto Pagado:", f"{tratamiento.monto_pagado:.2f}"],
+            ["Saldo:", f"{tratamiento.saldo:.2f}"],
+            ["Fecha de Inicio:", tratamiento.fecha_inicio.strftime('%Y-%m-%d')],
+            ["Fecha de Fin:", tratamiento.fecha_fin.strftime('%Y-%m-%d') if tratamiento.fecha_fin else "En Progreso"],
+            ["Estado:", tratamiento.estado],
+            ["Pieza Dental:", tratamiento.pieza_dental or "No especificado"],
+            ["Diagnóstico:", tratamiento.diagnostico or "No especificado"],
+            ["Descripción del Tratamiento:", tratamiento.tratamiento_descripcion or "No especificado"],
+            ["Observaciones:", tratamiento.observaciones or "No especificado"]
+        ]
+
+        # Crear tabla con la información del tratamiento
+        table = Table(tratamiento_info, colWidths=[150, 350])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
+
+        elements.append(table)
+
+        # Construir el PDF
+        doc.build(elements)
+        buffer.seek(0)
+
+        return send_file(buffer, as_attachment=True, download_name=f'Tratamiento_{tratamiento_id}.pdf', mimetype='application/pdf')
