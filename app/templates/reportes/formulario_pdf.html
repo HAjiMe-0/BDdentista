@@ -2,26 +2,120 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Historial Clínico</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* General Styles */
+        :root {
+            --background-color: #cceae8;
+            --primary-color: #539091;
+            --secondary-color: #68c3b7;
+            --accent-color: #a8dcd9;
+            --text-color: #539091;
         }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 20px;
+            line-height: 1.6;
+        }
+
         h1, h2 {
             text-align: center;
-            color: #333;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
         }
+
+        h3 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
         }
+
         table th, table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            border: 1px solid var(--accent-color);
+            padding: 15px;
+            text-align: left;
         }
+
         table th {
-            background-color: #f4f4f4;
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: rgba(168, 220, 217, 0.1);
+        }
+
+        table tr:hover {
+            background-color: rgba(168, 220, 217, 0.2);
+        }
+
+        /* List Styles */
+        ul {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+            list-style-type: none;
+            margin: 0;
+        }
+
+        ul li {
+            margin-bottom: 15px;
+            font-size: 16px;
+            padding: 10px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        ul li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        ul li strong {
+            color: var(--secondary-color);
+            display: inline-block;
+            min-width: 200px;
+            margin-right: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+
+            ul {
+                padding: 15px;
+            }
+
+            ul li strong {
+                display: block;
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>

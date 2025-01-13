@@ -4,46 +4,72 @@
 
 {% block content %}
     <div class="container py-5">
-        <h1 class="text-center mb-4">Bienvenido, Doctor/a</h1> 
-        <h1 class="text-center mb-4">{{ doctor.nombre }}</h1>
+        <!-- Encabezado Principal alineado a la derecha -->
+        <div class="text-end mb-5" style="padding: 20px;">
+            <!-- Cambié el tipo de letra de la frase -->
+            <h1 class="display-4 fw-bold" style="font-family: 'Courier New', Courier, monospace; color: #ffffff;">
+                "Tu sonrisa es nuestra pasión"
+            </h1>
+            <h2 class="display-4 fw-bold" style="font-family:'Times New Roman', Courier, monospace;color: #ffffff;">El cuidado dental comienza aquí, con dedicación y precisión.</h2>
+            <h1 class="display-4 fw-bold text-info">Bienvenido, Doctor/a</h1>
+            <!-- Cambié el tipo de letra del apellido -->
+            <h2 class="display-5 fw-bold" style="font-family:'Times New Roman', Times, serif; color:#ffffff;">{{ doctor.paterno }}</h2>
+        </div>
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        Pacientes
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for paciente in pacientes %}
-                            <li class="list-group-item">{{ paciente.nombre }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
+        <!-- Espacio adicional para separación -->
+        <div class="my-5"></div>
 
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        Citas Pendientes
+        <!-- Opciones del dashboard en contenedor transparente -->
+        <div class="rounded-4" style="background-color: rgba(248, 249, 250, 0.1);">
+            <div class="card-body py-5">
+                <div class="row">
+                    <!-- Gestión de Pacientes -->
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #d9f3f2;">
+                            <div class="card-body text-center">
+                                <i class="bi bi-person-lines-fill text-info display-1 mb-3"></i>
+                                <h5 class="card-title text-dark">Gestión de Pacientes</h5>
+                                <p class="card-text">Administra, edita y consulta la información de tus pacientes.</p>
+                                <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-outline-info">Ir a Pacientes</a>
+                            </div>
+                        </div>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for cita in citas %}
-                            <li class="list-group-item">{{ cita.fecha }} - {{ cita.hora }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        Tratamientos Activos
+                    <!-- Gestión de Citas -->
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #e6f9f4;">
+                            <div class="card-body text-center">
+                                <i class="bi bi-calendar-check text-success display-1 mb-3"></i>
+                                <h5 class="card-title text-dark">Gestión de Citas</h5>
+                                <p class="card-text">Crea, edita y organiza las citas de tus pacientes.</p>
+                                <a href="{{ url_for('main.listar_citas') }}" class="btn btn-outline-success">Ir a Citas</a>
+                            </div>
+                        </div>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for tratamiento in tratamientos %}
-                            <li class="list-group-item">{{ tratamiento.descripcion }}</li>
-                        {% endfor %}
-                    </ul>
+
+                    <!-- Reportes -->
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #f9f3e6;">
+                            <div class="card-body text-center">
+                                <i class="bi bi-bar-chart text-warning display-1 mb-3"></i>
+                                <h5 class="card-title text-dark">Reportes</h5>
+                                <p class="card-text">Visualización y generación de reportes detallados <span class="badge bg-warning text-dark">Próximamente</span></p>
+                                <button class="btn btn-outline-warning disabled">En desarrollo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración -->
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #f2e6f9;">
+                            <div class="card-body text-center">
+                                <i class="bi bi-gear text-danger display-1 mb-3"></i>
+                                <h5 class="card-title text-dark">Configuración</h5>
+                                <p class="card-text">Ajusta la configuración de tu perfil y preferencias <span class="badge bg-danger text-white">Próximamente</span></p>
+                                <button class="btn btn-outline-danger disabled">En desarrollo</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

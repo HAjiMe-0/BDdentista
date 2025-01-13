@@ -1,26 +1,55 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Bienvenido {% endblock %}
+{% block title %}Dashboard - Bienvenido{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-5" style="background-color: #ffffff;">
     <!-- Título -->
-    <h1 class="text-center mb-4">Perfil del Doctor</h1>
+    <h1 class="text-center mb-4" style="color: #539091;">Perfil del Doctor</h1>
     
     <!-- Tarjeta con la información del doctor -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h3 class="card-title text-primary">{{ doctor.nombre }} {{ doctor.paterno }} {{ doctor.materno }}</h3>
-            <p class="card-text"><strong>CI:</strong> {{ doctor.ci }}</p>
-            <p class="card-text"><strong>Especialidad:</strong> {{ doctor.especialidad }}</p>
-            <p class="card-text"><strong>Teléfono:</strong> {{ doctor.telefono }}</p>
-            <p class="card-text"><strong>Email:</strong> {{ doctor.email }}</p>
+    <div class="card shadow-sm" style="border-color: #a8dcd9; background-color: #ffffff;">
+        <div class="card-header" style="background-color: #cceae8;">
+            <h3 class="card-title mb-0" style="color: #539091;">{{ doctor.nombre }} {{ doctor.paterno }} {{ doctor.materno }}</h3>
         </div>
-        <div class="card-footer text-center">
+        <div class="card-body" style="background-color: #ffffff;">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="card-text mb-3">
+                        <strong style="color: #68c3b7;">CI:</strong> 
+                        <span style="color: #539091;">{{ doctor.ci }}</span>
+                    </p>
+                    <p class="card-text mb-3">
+                        <strong style="color: #68c3b7;">Especialidad:</strong> 
+                        <span style="color: #539091;">{{ doctor.especialidad }}</span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p class="card-text mb-3">
+                        <strong style="color: #68c3b7;">Teléfono:</strong> 
+                        <span style="color: #539091;">{{ doctor.telefono }}</span>
+                    </p>
+                    <p class="card-text mb-3">
+                        <strong style="color: #68c3b7;">Email:</strong> 
+                        <span style="color: #539091;">{{ doctor.email }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center" style="background-color: #cceae8; border-top: 1px solid #a8dcd9;">
             <!-- Botones -->
-            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary me-2">Volver al panel principal</a>
-            <a href="{{ url_for('main.editar_doctor', doctor_id=doctor.doctor_id) }}" class="btn btn-primary me-2">Editar Doctor</a>
-            <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-success ms-2">Ver Pacientes</a>
+            <a href="{{ url_for('main.dashboard') }}" class="btn me-2" 
+               style="background-color: #539091; color: #ffffff; border: none;">
+                Volver al panel principal
+            </a>
+            <a href="{{ url_for('main.editar_doctor', doctor_id=doctor.doctor_id) }}" class="btn me-2" 
+               style="background-color: #68c3b7; color: #ffffff; border: none;">
+                Editar Doctor
+            </a>
+            <a href="{{ url_for('main.listar_pacientes') }}" class="btn ms-2" 
+               style="background-color: #a8dcd9; color: #539091; border: none;">
+                Ver Pacientes
+            </a>
         </div>
     </div>
 </div>

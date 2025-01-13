@@ -1,0 +1,29 @@
+.calendar-container {
+    background-color: #f0f0f0; /* Color de fondo del contenedor del calendario */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.cita-details-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para los eventos del calendario (ejemplo con FullCalendar) */
+.fc-event {
+    background-color: #2196F3; /* Color de fondo de los eventos */
+    color: #fff;
+}
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 5rem;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.fa-tooth {
+    color: #333; /* Cambia el color según tu preferencia */
+}
+

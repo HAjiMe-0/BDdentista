@@ -4,35 +4,307 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <!-- Tu propio CSS (opcional) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #47d2ba;
+            --secondary-color: #34bba4;
+            --background-start: #f8fafc;
+            --background-end: #e2e8f0;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --background-image: url("static/img/fondo_dental3.jpg"); 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background: linear-gradient(135deg, var(--gradient-color-1), var(--gradient-color-2));
+            background-attachment: fixed;
+            background-size: cover;
+            backdrop-filter: blur(5px);
+            background-image: var(--background-image);
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            top: -25%;
+            left: -25%;
+            animation: pulse 15s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .card {
+            max-width: 400px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .login-header h1 {
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #64748b;
+            margin-bottom: 0;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            background: white;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            transition: all 0.3s ease;
+        }
+
+        .input-group:focus-within .input-icon {
+            color: var(--primary-color);
+        }
+
+        .floating-label {
+            position: absolute;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #94a3b8;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .form-control:focus ~ .floating-label,
+        .form-control:not(:placeholder-shown) ~ .floating-label {
+            top: 0;
+            left: 1rem;
+            font-size: 0.75rem;
+            padding: 0 0.5rem;
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #64748b;
+        }
+
+        .register-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .register-link a:hover {
+            color: var(--secondary-color);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-password a {
+            color: #64748b;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 576px) {
+            .card {
+                margin: 1rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card p-4 shadow-lg" style="max-width: 400px; width: 100%;">
-            <h1 class="text-center mb-4">Iniciar Sesión</h1>
-            
+<body>
+    <div class="login-container">
+        <div class="card p-4">
+            <div class="login-header">
+                <i class="fas fa-tooth"></i>
+                <h1>Bienvenido</h1>
+                <p>Ingresa a tu cuenta</p>
+            </div>
+
             <form method="POST" action="{{ url_for('main.iniciar_sesion') }}">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Correo electrónico:</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
+                <div class="input-group">
+                    <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
+                    <i class="fas fa-envelope input-icon"></i>
+                    <label class="floating-label">Correo electrónico</label>
                 </div>
-                <div class="mb-3">
-                    <label for="contraseña" class="form-label">Contraseña:</label>
-                    <input type="password" id="contraseña" name="contraseña" class="form-control" required>
+
+                <div class="input-group">
+                    <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder=" " required>
+                    <i class="fas fa-lock input-icon"></i>
+                    <label class="floating-label">Contraseña</label>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+
+                <div class="forgot-password">
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                </button>
             </form>
-            <p class="text-center mt-3">
-                ¿No tienes una cuenta? <a href="{{ url_for('main.registrarse') }}">Regístrate aquí</a>
-            </p>
-            
+
+            <div class="register-link">
+                <span>¿No tienes una cuenta?</span>
+                <a href="{{ url_for('main.registrarse') }}" class="ms-2">Regístrate aquí</a>
+            </div>
         </div>
     </div>
 
-    <!-- Bootstrap Bundle JS -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        // Form validation and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const inputs = form.querySelectorAll('input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('focused');
+                    }
+                });
+            });
+
+            form.addEventListener('submit', function(event) {
+                const button = form.querySelector('.btn-login');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...';
+                button.disabled = true;
+            });
+        });
+    </script>
 </body>
 </html>

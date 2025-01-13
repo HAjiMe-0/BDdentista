@@ -1,82 +1,227 @@
 {% extends "base.html" %}
 
+{% block title %}Editar Tratamiento{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Editar Tratamiento</h2>
-    <form action="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST">
-        <!-- Nombre del Tratamiento -->
-        <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre del Tratamiento</label>
-            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ tratamiento.nombre }}" required>
-        </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-tooth me-2"></i>
+                        Editar Tratamiento
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form action="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST">
+                        <div class="row mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Información del Tratamiento</h5>
+                            
+                            <!-- Nombre del Tratamiento -->
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label fw-bold">
+                                    <i class="fas fa-file-alt me-1"></i>
+                                    Nombre del Tratamiento
+                                </label>
+                                <input type="text" id="nombre" name="nombre" class="form-control form-control-lg" value="{{ tratamiento.nombre }}" required>
+                            </div>
 
-        <!-- Costo Total -->
-        <div class="mb-3">
-            <label for="costo_total" class="form-label">Costo Total</label>
-            <input type="number" id="costo_total" name="costo_total" class="form-control" value="{{ tratamiento.costo_total }}" step="0.01" required>
-        </div>
+                            <!-- Costo Total -->
+                            <div class="col-md-6 mb-3">
+                                <label for="costo_total" class="form-label fw-bold">
+                                    <i class="fas fa-dollar-sign me-1"></i>
+                                    Costo Total (Bs)
+                                </label>
+                                <input type="number" id="costo_total" name="costo_total" class="form-control form-control-lg" value="{{ tratamiento.costo_total }}" step="0.01" required>
+                            </div>
 
-        <!-- Monto Pagado -->
-        <div class="mb-3">
-            <label for="monto_pagado" class="form-label">Monto Pagado</label>
-            <input type="number" id="monto_pagado" name="monto_pagado" class="form-control" value="{{ tratamiento.monto_pagado }}" step="0.01">
-        </div>
+                            <!-- Monto Pagado -->
+                            <div class="col-md-6 mb-3">
+                                <label for="monto_pagado" class="form-label fw-bold">
+                                    <i class="fas fa-money-bill-wave me-1"></i>
+                                    Monto Pagado (Bs)
+                                </label>
+                                <input type="number" id="monto_pagado" name="monto_pagado" class="form-control form-control-lg" value="{{ tratamiento.monto_pagado }}" step="0.01">
+                            </div>
 
-        <!-- Fecha de Inicio -->
-        <div class="mb-3">
-            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
-            <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="{{ tratamiento.fecha_inicio }}" required>
-        </div>
+                            <!-- Fecha de Inicio -->
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha_inicio" class="form-label fw-bold">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    Fecha de Inicio
+                                </label>
+                                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control form-control-lg" value="{{ tratamiento.fecha_inicio }}" required>
+                            </div>
 
-        <!-- Fecha de Fin -->
-        <div class="mb-3">
-            <label for="fecha_fin" class="form-label">Fecha de Fin</label>
-            <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ tratamiento.fecha_fin }}">
-        </div>
+                            <!-- Fecha de Fin -->
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha_fin" class="form-label fw-bold">
+                                    <i class="fas fa-calendar-check me-1"></i>
+                                    Fecha de Fin
+                                </label>
+                                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control form-control-lg" value="{{ tratamiento.fecha_fin }}">
+                            </div>
 
-        <!-- Estado -->
-        <div class="mb-3">
-            <label for="estado" class="form-label">Estado</label>
-            <select id="estado" name="estado" class="form-select" required>
-                <option value="En Progreso" {% if tratamiento.estado == 'En Progreso' %}selected{% endif %}>En Progreso</option>
-                <option value="Finalizado" {% if tratamiento.estado == 'Finalizado' %}selected{% endif %}>Finalizado</option>
-                <option value="Cancelado" {% if tratamiento.estado == 'Cancelado' %}selected{% endif %}>Cancelado</option>
-            </select>
-        </div>
+                            <!-- Estado -->
+                            <div class="col-md-6 mb-3">
+                                <label for="estado" class="form-label fw-bold">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Estado
+                                </label>
+                                <select id="estado" name="estado" class="form-select form-select-lg" required>
+                                    <option value="En Progreso" {% if tratamiento.estado == 'En Progreso' %}selected{% endif %}>En Progreso</option>
+                                    <option value="Finalizado" {% if tratamiento.estado == 'Finalizado' %}selected{% endif %}>Finalizado</option>
+                                    <option value="Cancelado" {% if tratamiento.estado == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                                </select>
+                            </div>
 
-        <!-- Pieza Dental -->
-        <div class="mb-3">
-            <label for="pieza_dental" class="form-label">Pieza Dental</label>
-            <input type="text" id="pieza_dental" name="pieza_dental" class="form-control" value="{{ tratamiento.pieza_dental }}">
-        </div>
+                            <!-- Pieza Dental -->
+                            <div class="col-md-6 mb-3">
+                                <label for="pieza_dental" class="form-label fw-bold">
+                                    <i class="fas fa-tooth me-1"></i>
+                                    Pieza Dental
+                                </label>
+                                <input type="text" id="pieza_dental" name="pieza_dental" class="form-control form-control-lg" value="{{ tratamiento.pieza_dental }}">
+                            </div>
 
-        <!-- Diagnóstico -->
-        <div class="mb-3">
-            <label for="diagnostico" class="form-label">Diagnóstico</label>
-            <textarea id="diagnostico" name="diagnostico" class="form-control" rows="3">{{ tratamiento.diagnostico }}</textarea>
-        </div>
+                            <!-- Diagnóstico -->
+                            <div class="col-md-12 mb-3">
+                                <label for="diagnostico" class="form-label fw-bold">
+                                    <i class="fas fa-stethoscope me-1"></i>
+                                    Diagnóstico
+                                </label>
+                                <textarea id="diagnostico" name="diagnostico" class="form-control form-control-lg" rows="2">{{ tratamiento.diagnostico }}</textarea>
+                            </div>
 
-        <!-- Descripción del Tratamiento -->
-        <div class="mb-3">
-            <label for="tratamiento_descripcion" class="form-label">Descripción del Tratamiento</label>
-            <textarea id="tratamiento_descripcion" name="tratamiento_descripcion" class="form-control" rows="3">{{ tratamiento.tratamiento_descripcion }}</textarea>
-        </div>
+                            <!-- Descripción del Tratamiento -->
+                            <div class="col-md-12 mb-3">
+                                <label for="tratamiento_descripcion" class="form-label fw-bold">
+                                    <i class="fas fa-notes-medical me-1"></i>
+                                    Descripción del Tratamiento
+                                </label>
+                                <textarea id="tratamiento_descripcion" name="tratamiento_descripcion" class="form-control form-control-lg" rows="2">{{ tratamiento.tratamiento_descripcion }}</textarea>
+                            </div>
 
-        <!-- Observaciones -->
-        <div class="mb-3">
-            <label for="observaciones" class="form-label">Observaciones</label>
-            <textarea id="observaciones" name="observaciones" class="form-control" rows="3">{{ tratamiento.observaciones }}</textarea>
-        </div>
+                            <!-- Observaciones -->
+                            <div class="col-md-12 mb-3">
+                                <label for="observaciones" class="form-label fw-bold">
+                                    <i class="fas fa-comments me-1"></i>
+                                    Observaciones
+                                </label>
+                                <textarea id="observaciones" name="observaciones" class="form-control form-control-lg" rows="2">{{ tratamiento.observaciones }}</textarea>
+                            </div>
+                        </div>
 
-        <!-- Botones -->
-        <div class="d-flex justify-content-between">
-            <a href="{{ url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id) }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-save"></i> Guardar Cambios
-            </button>
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="{{ url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id) }}" class="btn btn-secondary btn-lg px-5">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-save me-2"></i>
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
+
+<style>
+:root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+}
+
+body {
+    background-color: var(--color-light-mint);
+}
+
+.card {
+    border-radius: 15px;
+    background-color: var(--color-white);
+}
+
+.card-header {
+    background-color: var(--color-dark-teal) !important;
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: 0;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid var(--color-mint);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 0.25rem rgba(104, 195, 183, 0.25);
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: var(--color-teal);
+}
+
+.btn-primary {
+    background-color: var(--color-teal);
+    border-color: var(--color-teal);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-dark-teal);
+    border-color: var(--color-dark-teal);
+}
+
+.btn-secondary {
+    background-color: var(--color-mint);
+    border-color: var(--color-mint);
+    color: var(--color-dark-teal);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-light-mint);
+    border-color: var(--color-light-mint);
+    color: var(--color-dark-teal);
+}
+
+.btn {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+h5 {
+    color: var(--color-dark-teal);
+}
+
+.form-label {
+    color: var(--color-dark-teal);
+}
+
+.border-bottom {
+    border-color: var(--color-mint) !important;
+}
+
+/* Custom focus states */
+.form-control:focus, .form-select:focus {
+    background-color: var(--color-white);
+}
+
+/* Hover effects */
+.card:hover {
+    box-shadow: 0 8px 24px rgba(83, 144, 145, 0.15) !important;
+}
+</style>
 {% endblock %}

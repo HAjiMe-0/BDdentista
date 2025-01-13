@@ -1,27 +1,150 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    <h2>Crear Cita</h2>
-    <!-- templates/cita/create_cita.html -->
-    <form method="POST">
-        <div class="form-group">
-            <label for="paciente_id">Paciente</label>
-            <select name="paciente_id" class="form-control" required>
-                {% for paciente in pacientes %}
-                <option value="{{ paciente.paciente_id }}">{{ paciente.nombre }} {{ paciente.paterno }}</option>
-                {% endfor %}
-            </select>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+    }
+
+    body {
+        background-color: var(--color-light-mint);
+        font-family: 'Roboto', sans-serif; /* Cambiamos la fuente a Roboto */
+    }
+    
+    .form-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(83, 144, 145, 0.1);
+        width: 50%;
+        min-width: 350px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background-color: #539091;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 700; /* Negrita */
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .section-title {
+        color: #539091;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+    }
+    
+    .form-label {
+        color: #539091;
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+        display: block;
+        font-weight: 500; /* Peso medio */
+    }
+    
+    .form-control {
+        border: 1px solid #cceae8;
+        border-radius: 4px;
+        padding: 0.5rem;
+        width: 100%;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        font-family: 'Roboto', sans-serif; /* Fuente consistente */
+    }
+    
+    .form-control:focus {
+        border-color: #68c3b7;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(104, 195, 183, 0.25);
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 2rem;
+        border-radius: 4px;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Roboto', sans-serif; /* Fuente para los botones */
+    }
+    
+    .btn-primary {
+        background-color: #68c3b7;
+        color: white;
+    }
+    
+    .btn-secondary {
+        background-color: #b4ddda;
+        color: #539091;
+    }
+</style>
+
+<div class="custom-container d-flex justify-content-center align-items-center">
+    <div class="form-card">
+        <div class="card-header">
+            Crear Cita
         </div>
-        
-        <div class="form-group">
-            <label for="fecha">Fecha</label>
-            <input type="datetime-local" name="fecha" class="form-control" required>
+        <div class="card-body">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="paciente_id" class="form-label">Paciente</label>
+                    <select name="paciente_id" class="form-control" required>
+                        {% for paciente in pacientes %}
+                        <option value="{{ paciente.paciente_id }}">
+                            {{ paciente.nombre }} {{ paciente.paterno }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha" class="form-label">Fecha y Hora</label>
+                    <input type="datetime-local" 
+                           name="fecha" 
+                           class="form-control" 
+                           required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="motivo" class="form-label">Motivo de la Cita</label>
+                    <textarea name="motivo" 
+                          class="form-control" 
+                          rows="3" 
+                          required
+                          placeholder="Describe el motivo de la cita..."></textarea>
+                </div>
+                
+                <div class="button-container">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary">Volver</button>
+                </div>
+            </form>
         </div>
-        
-        <div class="form-group">
-            <label for="motivo">Motivo</label>
-            <textarea name="motivo" class="form-control" required></textarea>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Crear Cita</button>
-    </form>
+    </div>
+</div>
 {% endblock %}

@@ -2,50 +2,282 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Detalle del Tratamiento</h2>
-    <div class="card">
+    <div class="card tratamiento-card">
+        <div class="card-header">
+            <h2 class="mb-0">Detalle del Tratamiento</h2>
+        </div>
         <div class="card-body">
-            <h5 class="card-title">{{ tratamiento.nombre }}</h5>
-            <p class="card-text"><strong>Costo Total:</strong> ${{ tratamiento.costo_total }}</p>
-            <p class="card-text"><strong>Monto Pagado:</strong> ${{ tratamiento.monto_pagado }}</p>
-            <p class="card-text"><strong>Saldo:</strong> ${{ tratamiento.saldo }}</p>
-            <p class="card-text"><strong>Fecha de Inicio:</strong> {{ tratamiento.fecha_inicio }}</p>
-            <p class="card-text"><strong>Fecha de Fin:</strong> 
-                {{ tratamiento.fecha_fin if tratamiento.fecha_fin else 'En Progreso' }}
-            </p>
-            <p class="card-text"><strong>Estado:</strong> {{ tratamiento.estado }}</p>
-            <p class="card-text"><strong>Pieza Dental:</strong> {{ tratamiento.pieza_dental }}</p>
-            <p class="card-text"><strong>Diagnóstico:</strong> {{ tratamiento.diagnostico }}</p>
-            <p class="card-text"><strong>Descripción del Tratamiento:</strong> {{ tratamiento.tratamiento_descripcion }}</p>
-            <p class="card-text"><strong>Observaciones:</strong> {{ tratamiento.observaciones }}</p>
+            <div class="tratamiento-info">
+                <h5 class="tratamiento-titulo">{{ tratamiento.nombre }}</h5>
+                
+                <div class="panels-container">
+                    <!-- Todos los paneles en una sola fila -->
+                    <div class="row">
+                        <!-- Panel Financiero -->
+                        <div class="col-md-3">
+                            <div class="info-panel financiero">
+                                <h6 class="panel-title">Información Financiera</h6>
+                                <div class="info-content">
+                                    <div class="info-item">
+                                        <span class="info-label">Costo Total:</span>
+                                        <span class="info-value">${{ tratamiento.costo_total }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Monto Pagado:</span>
+                                        <span class="info-value">${{ tratamiento.monto_pagado }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Saldo:</span>
+                                        <span class="info-value">${{ tratamiento.saldo }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Botones de acción -->
-            <form action="{{ url_for('main.agregar_pago_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline">
-                <input type="number" name="monto_pago" class="form-control form-control-sm d-inline-block" placeholder="Monto" required>
-                <button type="submit" class="btn btn-info btn-sm">Agregar Pago</button>
-            </form>
-            <form action="{{ url_for('main.finalizar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas finalizar este tratamiento?');">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle"></i> Finalizar Tratamiento
-                </button>
-            </form>
-            <form action="{{ url_for('main.cancelar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este tratamiento?');">
-                <button type="submit" class="btn btn-warning">
-                    <i class="bi bi-x-circle"></i> Cancelar Tratamiento
-                </button>
-            </form>
-            <a href="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" class="btn btn-warning">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            <a href="{{ url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id) }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-            <form action="{{ url_for('main.eliminar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tratamiento?');">
-                <button type="submit" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Eliminar
-                </button>
-            </form>
+                        <!-- Panel Fechas -->
+                        <div class="col-md-3">
+                            <div class="info-panel fechas">
+                                <h6 class="panel-title">Fechas</h6>
+                                <div class="info-content">
+                                    <div class="info-item">
+                                        <span class="info-label">Fecha de Inicio:</span>
+                                        <span class="info-value">{{ tratamiento.fecha_inicio }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Fecha de Fin:</span>
+                                        <span class="info-value">{{ tratamiento.fecha_fin if tratamiento.fecha_fin else 'En Progreso' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel Estado y Pieza -->
+                        <div class="col-md-3">
+                            <div class="info-panel estado">
+                                <h6 class="panel-title">Estado y Ubicación</h6>
+                                <div class="info-content">
+                                    <div class="info-item">
+                                        <span class="info-label">Estado:</span>
+                                        <span class="estado-badge">{{ tratamiento.estado }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Pieza Dental:</span>
+                                        <span class="info-value">{{ tratamiento.pieza_dental }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel Clínico -->
+                        <div class="col-md-3">
+                            <div class="info-panel clinico">
+                                <h6 class="panel-title">Información Clínica</h6>
+                                <div class="info-content">
+                                    <div class="info-item">
+                                        <span class="info-label">Diagnóstico:</span>
+                                        <span class="info-value">{{ tratamiento.diagnostico }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Descripción:</span>
+                                        <span class="info-value">{{ tratamiento.tratamiento_descripcion }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Observaciones:</span>
+                                        <span class="info-value">{{ tratamiento.observaciones }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Acciones -->
+                <div class="acciones-panel">
+                    <div class="pago-section">
+                        <form action="{{ url_for('main.agregar_pago_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="pago-form">
+                            <input type="number" name="monto_pago" class="form-control monto-input" placeholder="Monto" required>
+                            <button type="submit" class="btn btn-pago">
+                                <i class="bi bi-plus-circle"></i> Agregar Pago
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="botones-accion">
+                        <form action="{{ url_for('main.finalizar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-finalizar">
+                                <i class="bi bi-check-circle"></i> Finalizar
+                            </button>
+                        </form>
+                        
+                        <form action="{{ url_for('main.cancelar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-cancelar">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </button>
+                        </form>
+                        
+                        <a href="{{ url_for('main.editar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" class="btn btn-editar">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        
+                        <form action="{{ url_for('main.eliminar_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-eliminar">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </form>
+                        
+                        <a href="{{ url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id) }}" class="btn btn-volver">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+    }
+
+    body {
+        background-color: var(--color-light-mint);
+    }
+
+    .tratamiento-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(83, 144, 145, 0.1);
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: var(--color-dark-teal);
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        border: none;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .tratamiento-titulo {
+        color: var(--color-dark-teal);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .panels-container {
+        margin-bottom: 2rem;
+    }
+
+    .info-panel {
+        background-color: var(--color-light-mint);
+        border-radius: 8px;
+        padding: 1.5rem;
+        height: 100%;
+    }
+
+    .panel-title {
+        color: var(--color-dark-teal);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .info-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .info-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .info-label {
+        color: var(--color-dark-teal);
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .info-value {
+        color: #333;
+        font-size: 0.9rem;
+    }
+
+    .estado-badge {
+        background: var(--color-teal);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .acciones-panel {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .pago-form {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        justify-content: center;
+    }
+
+    .monto-input {
+        border: 1px solid var(--color-light-mint);
+        border-radius: 4px;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        max-width: 200px;
+    }
+
+    .botones-accion {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-pago { background-color: var(--color-teal); color: white; }
+    .btn-finalizar { background-color: var(--color-teal); color: white; }
+    .btn-cancelar { background-color: var(--color-mint); color: var(--color-dark-teal); }
+    .btn-editar { background-color: var(--color-light-mint); color: var(--color-dark-teal); }
+    .btn-eliminar { background-color: #ff6b6b; color: white; }
+    .btn-volver { background-color: var(--color-dark-teal); color: white; }
+
+    @media (max-width: 768px) {
+        .container { padding: 1rem; }
+        .tratamiento-card { width: 100%; }
+        .pago-form { flex-direction: column; align-items: center; }
+        .monto-input { width: 100%; max-width: none; }
+        .botones-accion { flex-direction: column; }
+        .btn { width: 100%; }
+        .info-panel { margin-bottom: 1rem; }
+    }
+</style>
 {% endblock %}
