@@ -117,7 +117,9 @@ def detalle_doctor(doctor_id):
         flash('No tienes permiso para ver este perfil.', 'error')
         return redirect(url_for('main.dashboard'))
     return render_template('doctor/detalle_doctor.html', doctor=doctor)
-    
+
+
+# Editar Doctor
 @main_bp.route('/doctor/<int:doctor_id>/editar', methods=['GET', 'POST'])
 @login_requerido
 def editar_doctor(doctor_id):
@@ -125,19 +127,34 @@ def editar_doctor(doctor_id):
     if doctor.doctor_id != session.get('doctor_id'):
         flash('No tienes permiso para editar este perfil.', 'error')
         return redirect(url_for('main.dashboard'))
+    
     if request.method == 'POST':
-        doctor.nombre = request.form['nombre']
+        # Actualización de datos
+        doctor.nombre = request.form.get('nombre')
         doctor.paterno = request.form.get('paterno')
         doctor.materno = request.form.get('materno')
         doctor.ci = request.form.get('ci')
         doctor.fecha_nacimiento = request.form.get('fecha_nacimiento')
         doctor.especialidad = request.form.get('especialidad')
-        doctor.paterno = request.form.get('paterno')
-        db.session.commit()
-        flash('Perfil actualizado exitosamente.', 'success')
-        return redirect(url_for('main.detalle_doctor', doctor_id=doctor_id))
+        doctor.telefono = request.form.get('telefono')
+        doctor.email = request.form.get('email')
+        
+        # Manejo de contraseña opcional con encriptación
+        nueva_contraseña = request.form.get('contraseña')
+        if nueva_contraseña:
+            doctor.contraseña = generate_password_hash(nueva_contraseña)
+        
+        try:
+            db.session.commit()
+            flash('Perfil actualizado exitosamente.', 'success')
+            return redirect(url_for('main.detalle_doctor', doctor_id=doctor_id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Hubo un error al actualizar los datos. Inténtalo de nuevo.', 'error')
     
     return render_template('doctor/editar_doctor.html', doctor=doctor)
+
+
 
 
 # Gestión de pacientes

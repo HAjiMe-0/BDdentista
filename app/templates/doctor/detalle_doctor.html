@@ -10,7 +10,7 @@
     <!-- Tarjeta con la información del doctor -->
     <div class="card shadow-sm" style="border-color: #a8dcd9; background-color: #ffffff;">
         <div class="card-header" style="background-color: #cceae8;">
-            <h3 class="card-title mb-0" style="color: #539091;">{{ doctor.nombre }} {{ doctor.paterno }} {{ doctor.materno }}</h3>
+            <h3 class="card-title mb-0" style="color: #539091;">{{ doctor.nombre }} {{ doctor.paterno or '' }} {{ doctor.materno or '' }}</h3>
         </div>
         <div class="card-body" style="background-color: #ffffff;">
             <div class="row">
@@ -21,13 +21,19 @@
                     </p>
                     <p class="card-text mb-3">
                         <strong style="color: #68c3b7;">Especialidad:</strong> 
-                        <span style="color: #539091;">{{ doctor.especialidad }}</span>
+                        <span style="color: #539091;">{{ doctor.especialidad or 'No especificada' }}</span>
+                    </p>
+                    <p class="card-text mb-3">
+                        <strong style="color: #68c3b7;">Fecha de Nacimiento:</strong> 
+                        <span style="color: #539091;">
+                            {{ doctor.fecha_nacimiento.strftime('%d/%m/%Y') if doctor.fecha_nacimiento else 'No especificada' }}
+                        </span>
                     </p>
                 </div>
                 <div class="col-md-6">
                     <p class="card-text mb-3">
                         <strong style="color: #68c3b7;">Teléfono:</strong> 
-                        <span style="color: #539091;">{{ doctor.telefono }}</span>
+                        <span style="color: #539091;">{{ doctor.telefono or 'No especificado' }}</span>
                     </p>
                     <p class="card-text mb-3">
                         <strong style="color: #68c3b7;">Email:</strong> 

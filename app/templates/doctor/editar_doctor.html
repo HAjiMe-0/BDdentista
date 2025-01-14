@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Bienvenido{% endblock %}
+{% block title %}Dashboard - Editar Doctor{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -15,6 +15,48 @@
                    name="nombre" 
                    class="form-control" 
                    value="{{ doctor.nombre }}" 
+                   required
+                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+        </div>
+        
+        <div class="mb-4">
+            <label for="paterno" class="form-label" style="color: #539091; font-weight: 600;">Apellido Paterno:</label>
+            <input type="text" 
+                   id="paterno" 
+                   name="paterno" 
+                   class="form-control" 
+                   value="{{ doctor.paterno or '' }}"
+                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+        </div>
+        
+        <div class="mb-4">
+            <label for="materno" class="form-label" style="color: #539091; font-weight: 600;">Apellido Materno:</label>
+            <input type="text" 
+                   id="materno" 
+                   name="materno" 
+                   class="form-control" 
+                   value="{{ doctor.materno or '' }}"
+                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+        </div>
+        
+        <div class="mb-4">
+            <label for="ci" class="form-label" style="color: #539091; font-weight: 600;">Cédula de Identidad (CI):</label>
+            <input type="number" 
+                   id="ci" 
+                   name="ci" 
+                   class="form-control" 
+                   value="{{ doctor.ci }}" 
+                   required
+                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+        </div>
+        
+        <div class="mb-4">
+            <label for="fecha_nacimiento" class="form-label" style="color: #539091; font-weight: 600;">Fecha de Nacimiento:</label>
+            <input type="date" 
+                   id="fecha_nacimiento" 
+                   name="fecha_nacimiento" 
+                   class="form-control" 
+                   value="{{ doctor.fecha_nacimiento }}" 
                    required
                    style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
         </div>
@@ -66,6 +108,11 @@
                     style="background-color: #68c3b7; color: #ffffff; border: none;">
                 Actualizar
             </button>
+            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}" 
+               class="btn px-4 py-2" 
+               style="background-color: #539091; color: #ffffff; border: none;">
+                Volver
+            </a>
             <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}" 
                class="btn px-4 py-2" 
                style="background-color: #539091; color: #ffffff; border: none;">
