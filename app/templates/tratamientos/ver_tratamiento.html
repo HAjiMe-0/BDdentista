@@ -124,6 +124,12 @@
                                 <i class="bi bi-trash"></i> Eliminar
                             </button>
                         </form>
+
+                        <form action="{{ url_for('main.generar_pdf_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" method="GET" class="d-inline">
+                            <button type="submit" class="btn btn-pdf">
+                                <i class="bi bi-file-earmark-pdf"></i> Exportar a PDF
+                            </button>
+                        </form>
                         
                         <a href="{{ url_for('main.detalle_paciente', paciente_id=tratamiento.paciente_id) }}" class="btn btn-volver">
                             <i class="bi bi-arrow-left"></i> Volver

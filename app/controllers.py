@@ -1,5 +1,6 @@
 from flask import (Blueprint, render_template, request, redirect, url_for, session,
                    flash, jsonify, make_response, send_file)
+from sqlalchemy import cast, String
 from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from app.models import db, Doctor, Paciente, Cita, Tratamiento, FormularioMedico
@@ -69,7 +70,7 @@ def registrarse():
             'paterno': request.form.get('paterno'),
             'materno': request.form.get('materno'),
             'especialidad': request.form.get('especialidad'),
-            'telefono': request.form.get('telefono'),
+            'paterno': request.form.get('paterno'),
             'fecha_nacimiento': request.form.get('fecha_nacimiento'),
             'email': request.form['email'],
             'contraseña': generate_password_hash(request.form['contraseña'])
@@ -131,7 +132,7 @@ def editar_doctor(doctor_id):
         doctor.ci = request.form.get('ci')
         doctor.fecha_nacimiento = request.form.get('fecha_nacimiento')
         doctor.especialidad = request.form.get('especialidad')
-        doctor.telefono = request.form.get('telefono')
+        doctor.paterno = request.form.get('paterno')
         db.session.commit()
         flash('Perfil actualizado exitosamente.', 'success')
         return redirect(url_for('main.detalle_doctor', doctor_id=doctor_id))
@@ -154,15 +155,46 @@ def listar_pacientes():
         # Manejo del caso en que el doctor no existe
         return "Doctor no encontrado", 404
 
-    # Obtener los pacientes asociados al doctor
-    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+    # Obtener los pacientes asociados al doctor con paginación
+    page = request.args.get('page', 1, type=int)
+    pacientes_paginados = Paciente.query.filter_by(doctor_id=doctor_id).paginate(page=page, per_page=10)
 
-    # Pasar el doctor y los pacientes al template
+    # Pasar el doctor y los pacientes paginados al template
     return render_template(
         'pacientes/listar_pacientes.html', 
-        pacientes=pacientes, 
-        doctor=doctor
+        pacientes=pacientes_paginados.items, 
+        doctor=doctor,
+        pagination=pacientes_paginados
     )
+
+#Buscar Paciente
+
+@main_bp.route('/pacientes/buscar', methods=['GET', 'POST'])
+@login_requerido
+def buscar_pacientes():
+    doctor_id = session.get('doctor_id')
+    if not doctor_id:
+        return redirect(url_for('main.iniciar_sesion'))
+
+    query = Paciente.query.filter_by(doctor_id=doctor_id)
+    
+    if request.method == 'POST':
+        ci = request.form.get('ci')
+
+        if ci:
+            # Usar cast para convertir `ci` a texto y luego usar ILIKE para la comparación
+            query = query.filter(cast(Paciente.ci, String).ilike(f'%{ci}%'))
+
+    page = request.args.get('page', 1, type=int)
+    pacientes_paginados = query.paginate(page=page, per_page=3)
+
+    return render_template(
+        'pacientes/listar_pacientes.html', 
+        pacientes=pacientes_paginados.items, 
+        pagination=pacientes_paginados
+    )
+
+
 
 
 @main_bp.route('/paciente/crear', methods=['GET', 'POST'])
@@ -176,7 +208,7 @@ def crear_paciente():
             'ci': request.form.get('ci'),
             'fecha_nacimiento': request.form.get('fecha_nacimiento'),
             'direccion': request.form.get('direccion'),
-            'telefono': request.form.get('telefono'),
+            'paterno': request.form.get('paterno'),
             'celular': request.form.get('celular'),
             'estado_civil': request.form.get('estado_civil'),
             'ocupacion': request.form.get('ocupacion'),
@@ -217,7 +249,7 @@ def editar_paciente(paciente_id):
         paciente.ci = request.form.get('ci')
         paciente.fecha_nacimiento = request.form.get('fecha_nacimiento')
         paciente.direccion = request.form.get('direccion')
-        paciente.telefono = request.form.get('telefono')
+        paciente.paterno = request.form.get('paterno')
         paciente.celular = request.form.get('celular')
         paciente.estado_civil = request.form.get('estado_civil')
         paciente.ocupacion = request.form.get('ocupacion')
@@ -514,6 +546,63 @@ def cancelar_tratamiento(tratamiento_id):
     db.session.commit()
     flash('El tratamiento ha sido cancelado exitosamente.', 'success')
     return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id))
+# Exportar tratamiento a PDF
+@main_bp.route('/tratamiento/<int:tratamiento_id>/pdf', methods=['GET'])
+@login_requerido
+def generar_pdf_tratamiento(tratamiento_id):
+    tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    if tratamiento.paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para generar un PDF de este tratamiento.', 'error')
+        return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
+
+    # Configurar buffer y documento
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Título del documento
+    title = Paragraph("Detalle del Tratamiento", styles['Title'])
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    # Información del tratamiento
+    tratamiento_info = [
+        ["Tratamiento:", tratamiento.nombre],
+        ["Paciente:", f"{tratamiento.paciente.nombre} {tratamiento.paciente.paterno or ''} {tratamiento.paciente.materno or ''}"],
+        ["Costo Total:", f"{tratamiento.costo_total:.2f}"],
+        ["Monto Pagado:", f"{tratamiento.monto_pagado:.2f}"],
+        ["Saldo:", f"{tratamiento.saldo:.2f}"],
+        ["Fecha de Inicio:", tratamiento.fecha_inicio.strftime('%Y-%m-%d')],
+        ["Fecha de Fin:", tratamiento.fecha_fin.strftime('%Y-%m-%d') if tratamiento.fecha_fin else "En Progreso"],
+        ["Estado:", tratamiento.estado],
+        ["Pieza Dental:", tratamiento.pieza_dental or "No especificado"],
+        ["Diagnóstico:", tratamiento.diagnostico or "No especificado"],
+        ["Descripción del Tratamiento:", tratamiento.tratamiento_descripcion or "No especificado"],
+        ["Observaciones:", tratamiento.observaciones or "No especificado"]
+    ]
+
+    # Crear tabla con la información del tratamiento
+    table = Table(tratamiento_info, colWidths=[150, 350])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(table)
+
+    # Construir el PDF
+    doc.build(elements)
+    buffer.seek(0)
+    fecha_actual = datetime.now().strftime('%Y_%m_%d')
+
+    return send_file(buffer, as_attachment=True, download_name=f'{tratamiento.paciente.paterno}_{tratamiento.nombre}_{fecha_actual}.pdf', mimetype='application/pdf')
 
 
 # Crear formulario médico
@@ -648,60 +737,3 @@ def exportar_formulario_pdf(paciente_id):
     buffer.seek(0)
 
     return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
-
-# Exportar tratamiento a PDF
-@main_bp.route('/tratamiento/<int:tratamiento_id>/pdf', methods=['GET'])
-@login_requerido
-def generar_pdf_tratamiento(tratamiento_id):
-        tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
-        if tratamiento.paciente.doctor_id != session['doctor_id']:
-            flash('No tienes permiso para generar un PDF de este tratamiento.', 'error')
-            return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
-
-        # Configurar buffer y documento
-        buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        elements = []
-        styles = getSampleStyleSheet()
-
-        # Título del documento
-        title = Paragraph("Detalle del Tratamiento", styles['Title'])
-        elements.append(title)
-        elements.append(Spacer(1, 12))
-
-        # Información del tratamiento
-        tratamiento_info = [
-            ["Tratamiento:", tratamiento.nombre],
-            ["Paciente:", f"{tratamiento.paciente.nombre} {tratamiento.paciente.paterno or ''} {tratamiento.paciente.materno or ''}"],
-            ["Costo Total:", f"{tratamiento.costo_total:.2f}"],
-            ["Monto Pagado:", f"{tratamiento.monto_pagado:.2f}"],
-            ["Saldo:", f"{tratamiento.saldo:.2f}"],
-            ["Fecha de Inicio:", tratamiento.fecha_inicio.strftime('%Y-%m-%d')],
-            ["Fecha de Fin:", tratamiento.fecha_fin.strftime('%Y-%m-%d') if tratamiento.fecha_fin else "En Progreso"],
-            ["Estado:", tratamiento.estado],
-            ["Pieza Dental:", tratamiento.pieza_dental or "No especificado"],
-            ["Diagnóstico:", tratamiento.diagnostico or "No especificado"],
-            ["Descripción del Tratamiento:", tratamiento.tratamiento_descripcion or "No especificado"],
-            ["Observaciones:", tratamiento.observaciones or "No especificado"]
-        ]
-
-        # Crear tabla con la información del tratamiento
-        table = Table(tratamiento_info, colWidths=[150, 350])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ]))
-
-        elements.append(table)
-
-        # Construir el PDF
-        doc.build(elements)
-        buffer.seek(0)
-
-        return send_file(buffer, as_attachment=True, download_name=f'Tratamiento_{tratamiento_id}.pdf', mimetype='application/pdf')
