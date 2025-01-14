@@ -91,16 +91,21 @@ body {
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-clipboard-list text-primary me-2"></i>
-                            <h2 class="h5 mb-0">Tratamientos Activos</h2>
+                            <h2 class="h5 mb-0">Tratamientos</h2>
                         </div>
-                        <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" 
-                            class="btn btn-sm btn-primary">
-                            <i class="fas fa-plus me-2"></i>Nuevo Tratamiento
-                        </a>
+                        <div>
+                            <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" 
+                                class="btn btn-sm btn-primary me-2">
+                                <i class="fas fa-plus me-2"></i>Nuevo Tratamiento
+                            </a>
+                            <button class="btn btn-sm btn-outline-secondary" id="toggleTratamientos">
+                                Ver Finalizados
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    {% if tratamientos %}
+                <div class="card-body" id="tratamientosActivos">
+                    {% if tratamientos_activos %}
                     <div class="table-responsive">
                         <table class="table align-middle table-hover">
                             <thead class="bg-light">
@@ -112,7 +117,7 @@ body {
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for tratamiento in tratamientos %}
+                                {% for tratamiento in tratamientos_activos %}
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
@@ -147,13 +152,67 @@ body {
                     </div>
                     {% else %}
                     <div class="text-center py-5">
-                        <img src="/static/images/no-data.svg" alt="No hay tratamientos" class="mb-3" style="width: 120px;">
+                        <h3 class="h5 text-muted">No hay tratamientos registrados</h3>
+                        <p class="text-muted mb-0">Comienza agregando un nuevo tratamiento</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-body d-none" id="tratamientosFinalizados">
+                    {% if tratamientos_finalizados %}
+                    <div class="table-responsive">
+                        <table class="table align-middle table-hover">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Tratamiento</th>
+                                    <th>Estado</th>
+                                    <th>Monto</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tratamiento in tratamientos_finalizados %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tooth text-primary me-3"></i>
+                                            <div>
+                                                <strong class="d-block">{{ tratamiento.nombre }}</strong>
+                                                <small class="text-muted">Inicio: {{ tratamiento.fecha_inicio }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            {{ tratamiento.estado }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <strong>Bs{{ tratamiento.costo_total }}</strong>
+                                            <small class="text-success">Pagado: Bs{{ tratamiento.monto_pagado }}</small>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
+                                            class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-eye"></i>Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
                         <h3 class="h5 text-muted">No hay tratamientos registrados</h3>
                         <p class="text-muted mb-0">Comienza agregando un nuevo tratamiento</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
+
+
 
             <!-- Próximas Citas -->
             <div class="card border-0 shadow-sm">
@@ -163,7 +222,7 @@ body {
                             <i class="fas fa-calendar-alt text-primary me-2"></i>
                             <h2 class="h5 mb-0">Próximas Citas</h2>
                         </div>
-                        <a href="{{ url_for('main.crear_cita', paciente_id=paciente.paciente_id) }}" 
+                        <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
                            class="btn btn-sm btn-primary">
                             <i class="fas fa-plus me-2"></i>Nueva Cita
                         </a>
@@ -192,6 +251,11 @@ body {
                                             {{ cita.estado }}
                                         </span>
                                     </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" class="btn btn-custom btn-sm rounded-pill">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -206,6 +270,7 @@ body {
                 </div>
             </div>
         </div>
+        
 
         <!-- Formulario Médico (Acordeón) -->
         <div class="col-lg-12 mt-4">
@@ -249,16 +314,33 @@ body {
                                class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-download me-2"></i>Exportar PDF
                             </a>
+                            
                             <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                               class="btn btn-sm btn-primary">
-                                <i class="fas fa-edit me-2"></i>Editar
+                                class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
                             </a>
                         </div>
-                    </div>
                     
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+<script>
+    document.getElementById('toggleTratamientos').addEventListener('click', function() {
+        var activos = document.getElementById('tratamientosActivos');
+        var finalizados = document.getElementById('tratamientosFinalizados');
+        if (activos.classList.contains('d-none')) {
+            activos.classList.remove('d-none');
+            finalizados.classList.add('d-none');
+            this.textContent = 'Ver Finalizados';
+        } else {
+            activos.classList.add('d-none');
+            finalizados.classList.remove('d-none');
+            this.textContent = 'Ver Activos';
+        }
+    });
+    </script>

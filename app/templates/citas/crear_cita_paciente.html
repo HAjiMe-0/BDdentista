@@ -103,38 +103,17 @@
         color: #539091;
     }
 </style>
-
 <div class="custom-container d-flex justify-content-center align-items-center">
     <div class="form-card">
         <div class="card-header">
             Crear Cita
         </div>
         <div class="card-body">
-            <form method="POST">    
+            <form method="POST">
                 <div class="form-group">
                     <label for="paciente_id" class="form-label">Paciente</label>
-                    <input type="text" id="paciente_search" class="form-control" placeholder="Buscar paciente...">
-                    <select name="paciente_id" id="paciente_select" class="form-control" required>
-                        <option value="" disabled selected>Seleccione un paciente</option>
-                        {% for paciente in pacientes %}
-                        <option value="{{ paciente.paciente_id }}">
-                            {{ paciente.nombre }} {{ paciente.paterno }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    <input type="text" name="paciente_id" class="form-control" value="{{ paciente.nombre }} {{ paciente.paterno }}" readonly>
                 </div>
-
-                <script>
-                    document.getElementById('paciente_search').addEventListener('input', function() {
-                        var searchValue = this.value.toLowerCase();
-                        var options = document.getElementById('paciente_select').options;
-                        
-                        for (var i = 0; i < options.length; i++) {
-                            var optionText = options[i].text.toLowerCase();
-                            options[i].style.display = optionText.includes(searchValue) ? '' : 'none';
-                        }
-                    });
-                </script>
                 
                 <div class="form-group">
                     <label for="fecha" class="form-label">Fecha y Hora</label>
@@ -155,7 +134,7 @@
                 
                 <div class="button-container">
                     <button type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-secondary">Volver</button>
+                    <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-secondary">Volver</a>
                 </div>
             </form>
         </div>

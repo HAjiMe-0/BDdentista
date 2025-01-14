@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
     <!-- templates/cita/detail_cita.html -->
-    <h3>Detalle de la Cita</h3>
-    <p><strong>Paciente:</strong> {{ cita.paciente.nombre }} {{ cita.paciente.paterno }}</p>
-    <p><strong>Doctor:</strong> {{ cita.doctor.nombre }}</p>
-    <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
-    <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
-    <p><strong>Estado:</strong> {{ cita.estado }}</p>
-
-    <a href="{{ url_for('main.edit_cita', cita_id=cita.cita_id) }}" class="btn btn-warning">Editar Cita</a>
-    <form method="POST" action="{{ url_for('main.delete_cita', cita_id=cita.cita_id) }}" style="display:inline;">
-        <button type="submit" class="btn btn-danger">Eliminar Cita</button>
-    </form>
+    <div class="container mt-5">
+        <h3 class="mb-4">Detalle de la Cita</h3>
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Paciente:</strong> {{ cita.paciente.nombre }} {{ cita.paciente.paterno }}</p>
+                <p><strong>Doctor:</strong> {{ cita.doctor.nombre }}</p>
+                <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
+                <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
+                <p><strong>Estado:</strong> {{ cita.estado }}</p>
+                <div class="mt-4">
+                    <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="btn btn-warning">Editar Cita</a>
+                    <form method="POST" action="{{ url_for('main.eliminar_citaPC', cita_id=cita.cita_id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Eliminar Cita</button>
+                    </form>
+                    <a href="{{ url_for('main.detalle_paciente', paciente_id=cita.paciente.paciente_id) }}" class="btn btn-primary">Ver Paciente</a>
+                </div>
+                <div class="mt-4"></div>
+                    <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
+                        <input type="hidden" name="estado" value="Completado">
+                        <button type="submit" class="btn btn-success">Marcar como Completado</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
+                        <input type="hidden" name="estado" value="Cancelado">
+                        <button type="submit" class="btn btn-secondary">Marcar como Cancelado</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
+                        <input type="hidden" name="estado" value="Pendiente">
+                        <button type="submit" class="btn btn-info">Marcar como Pendiente</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

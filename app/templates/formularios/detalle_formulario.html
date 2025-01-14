@@ -1,0 +1,506 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Bienvenido {% endblock %}
+
+{% block content %}
+<style>
+    :root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+}
+
+body {
+    background-color: var(--color-light-mint);
+}
+    .custom-card-header {
+        background-color: #68c3b7 !important;
+        color: white !important;
+        border: none;
+    }
+    
+    .btn-custom-primary {
+        background-color: #539091;
+        border-color: #539091;
+        color: white;
+    }
+    
+    .btn-custom-primary:hover {
+        background-color: #68c3b7;
+        border-color: #68c3b7;
+        color: white;
+    }
+    
+    .custom-container {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    
+    .accordion-button {
+        background-color: #cceae8 !important;
+        color: #539091 !important;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #a8dcd9 !important;
+        color: #539091 !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #68c3b7;
+        border-color: #68c3b7;
+    }
+    
+    .form-control:focus {
+        border-color: #68c3b7;
+        box-shadow: 0 0 0 0.2rem rgba(104, 195, 183, 0.25);
+    }
+    
+    .page-title {
+        color: #539091;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+    
+    .card {
+        border: 1px solid #cceae8;
+        margin-bottom: 2rem;
+    }
+    
+    .card-body {
+        background-color: #ffffff;
+    }
+    
+    .accordion-item {
+        border: 1px solid #cceae8;
+    }
+    
+    .form-label {
+        color: #539091;
+        font-weight: 500;
+    }
+    
+    .btn-secondary {
+        background-color: #a8dcd9;
+        border-color: #a8dcd9;
+        color: #539091;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #cceae8;
+        border-color: #cceae8;
+        color: #539091;
+    }
+</style>
+
+<div class="container custom-container mt-5">
+    <h1 class="text-center page-title" style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; ">Formulario de Historial Clínico</h1>
+    <form id="formularioClinico" class="needs-validation" novalidate>
+        <input type="hidden" id="paciente_id" value="{{ paciente.paciente_id }}">
+
+        <!-- Información básica -->
+        <div class="card mb-4">
+            <div class="card-header custom-card-header">Información Básica del Paciente</div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Nombre completo:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="nombre_completo"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Cédula de Identidad:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="ci"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Fecha de nacimiento:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="fecha_nacimiento"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Estado civil:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="estado_civil"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Ocupación:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="ocupacion"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Dirección:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="direccion"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label"><strong>Teléfono fijo:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="telefono"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-4 col-form-label"><strong>Celular:</strong></label>
+                    <div class="col-sm-8">
+                        <span id="celular"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Antecedentes Médicos -->
+        <div class="accordion mb-4" id="antecedentesAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAntecedentes" aria-expanded="true">
+                        Antecedentes Médicos
+                    </button>
+                </h2>
+                <div id="collapseAntecedentes" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label for="operaciones" class="form-label">1. ¿Ha tenido alguna operación o enfermedad grave?</label>
+                            <textarea name="operaciones" id="operaciones" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="enfermedades" class="form-label">2. ¿Ha tenido alguna de las siguientes enfermedades?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Fiebre reumática" id="fiebreReumatica">
+                                <label class="form-check-label" for="fiebreReumatica">Fiebre reumática</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Cardiopatía" id="cardiopatia">
+                                <label class="form-check-label" for="cardiopatia">Cardiopatía</label>
+                                <input type="text" name="detalle_cardiopatia" class="form-control mt-2" placeholder="Detalle Cardiopatía (opcional)">
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades respiratorias" id="Enfermedades respiratorias">
+                                <label class="form-check-label" for="enfermedadesRespiratorias">Enfermedades respiratorias</label>
+                                <input type="text" name="detalle_respiratorias" class="form-control mt-2" placeholder="Detalle Enfermedades respiratorias (opcional)">
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades renales" id="enfermedadesRenales">
+                                <label class="form-check-label" for="enfermedadesRenales">Enfermedades renales</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Asma" id="asma">
+                                <label class="form-check-label" for="asma">Asma</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Mareos" id="mareos">
+                                <label class="form-check-label" for="mareos">Mareos</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Diabetes" id="diabetes">
+                                <label class="form-check-label" for="diabetes">Diabetes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Artritis" id="artritis">
+                                <label class="form-check-label" for="artritis">Artritis</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Úlcera gástrica" id="ulceraGastrica">
+                                <label class="form-check-label" for="ulceraGastrica">Úlcera gástrica</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Tuberculosis" id="tuberculosis">
+                                <label class="form-check-label" for="tuberculosis">Tuberculosis</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades venéreas" id="enfermedadesVenereas">
+                                <label class="form-check-label" for="enfermedadesVenereas">Enfermedades venéreas</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Presión alta" id="presionAlta">
+                                <label class="form-check-label" for="presionAlta">Presión alta</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Presión baja" id="presionBaja">
+                                <label class="form-check-label" for="presionBaja">Presión baja</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Hepatitis" id="hepatitis">
+                                <label class="form-check-label" for="hepatitis">Hepatitis</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Sinusitis" id="sinusitis">
+                                <label class="form-check-label" for="sinusitis">Sinusitis</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="enfermedades[]" value="VIH/SIDA" id="vihSida">
+                                <label class="form-check-label" for="vihSida">VIH/SIDA</label>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="alergias" class="form-label">¿A qué es alérgico?</label>
+                                <input type="text" class="form-control" name="alergias" id="alergias">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">3. ¿Siente dolor en el tórax después de hacer ejercicio?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="dolor_torax" value="Sí" id="dolorToraxSi">
+                                <label class="form-check-label" for="dolorToraxSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="dolor_torax" value="No" id="dolorToraxNo">
+                                <label class="form-check-label" for="dolorToraxNo">No</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">4. ¿Le falta aire después del ejercicio?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="falta_aire" value="Sí" id="faltaAireSi">
+                                <label class="form-check-label" for="faltaAireSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="falta_aire" value="No" id="faltaAireNo">
+                                <label class="form-check-label" for="faltaAireNo">No</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">5. ¿Ha sangrado de forma anormal después de una extracción?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sangrado_anormal" value="Sí" id="sangradoAnormalSi">
+                                <label class="form-check-label" for="sangradoAnormalSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sangrado_anormal" value="No" id="sangradoAnormalNo">
+                                <label class="form-check-label" for="sangradoAnormalNo">No</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">6. ¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="problema_odontologico" value="Sí" id="problemaOdontologicoSi">
+                                <label class="form-check-label
+                                <label class="form-check-label" for="problemaOdontologicoSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="problema_odontologico" value="No" id="problemaOdontologicoNo">
+                                <label class="form-check-label" for="problemaOdontologicoNo">No</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">7. ¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="problema_no_odontologico" value="Sí" id="problemaNoOdontologicoSi">
+                                <label class="form-check-label" for="problemaNoOdontologicoSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="problema_no_odontologico" value="No" id="problemaNoOdontologicoNo">
+                                <label class="form-check-label" for="problemaNoOdontologicoNo">No</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">8. ¿Está tomando algún tipo de medicamento o fármaco?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="medicamento" value="Sí" id="medicamentoSi">
+                                <label class="form-check-label" for="medicamentoSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="medicamento" value="No" id="medicamentoNo">
+                                <label class="form-check-label" for="medicamentoNo">No</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">9. ¿Ha tenido reacciones adversas a medicamentos?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reacciones_medicamentos" value="Sí" id="reaccionesMedicamentosSi">
+                                <label class="form-check-label" for="reaccionesMedicamentosSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reacciones_medicamentos" value="No" id="reaccionesMedicamentosNo">
+                                <label class="form-check-label" for="reaccionesMedicamentosNo">No</label>
+                            </div>
+                            <label for="detalleReaccionesMedicamentos" class="form-label mt-2">¿Cuál?</label>
+                            <input type="text" class="form-control" name="detalle_reacciones_medicamentos" id="detalleReaccionesMedicamentos">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">10. Acostumbra:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Fumar" id="costumbreFumar">
+                                <label class="form-check-label" for="costumbreFumar">Fumar</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Beber" id="costumbreBeber">
+                                <label class="form-check-label" for="costumbreBeber">Beber</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Rechinar los dientes" id="costumbreRechinar">
+                                <label class="form-check-label" for="costumbreRechinar">Rechinar los dientes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Roncar" id="costumbreRoncar">
+                                <label class="form-check-label" for="costumbreRoncar">Roncar</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Respirar por la boca" id="costumbreRespirar">
+                                <label class="form-check-label" for="costumbreRespirar">Respirar por la boca</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Morderse los labios o la lengua" id="costumbreMorderse">
+                                <label class="form-check-label" for="costumbreMorderse">Morderse los labios o la lengua</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="costumbres[]" value="Chuparse el dedo" id="costumbreChuparse">
+                                <label class="form-check-label" for="costumbreChuparse">Chuparse el dedo</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">11. ¿Tiene algún problema con:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="problemas[]" value="Riñones" id="problemasRinones">
+                                <label class="form-check-label" for="problemasRinones">Riñones</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="problemas[]" value="Pulmones" id="problemasPulmones">
+                                <label class="form-check-label" for="problemasPulmones">Pulmones</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="problemas[]" value="Hígado" id="problemasHigado">
+                                <label class="form-check-label" for="problemasHigado">Hígado</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="problemas[]" value="Articulaciones" id="problemasArticulaciones">
+                                <label class="form-check-label" for="problemasArticulaciones">Articulaciones</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="problemas[]" value="Otros" id="problemasOtros">
+                                <label class="form-check-label" for="problemasOtros">Otros</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">12. ¿Ud. ha tenido en los últimos 14 días:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Problemas respiratorios" id="ultimos14Respiratorios">
+                                <label class="form-check-label" for="ultimos14Respiratorios">Problemas respiratorios</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Fiebre" id="ultimos14Fiebre">
+                                <label class="form-check-label" for="ultimos14Fiebre">Fiebre</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Dolor muscular" id="ultimos14Dolor">
+                                <label class="form-check-label" for="ultimos14Dolor">Dolor muscular</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Contacto con pacientes COVID-19" id="ultimos14Contacto">
+                                <label class="form-check-label" for="ultimos14Contacto">Contacto con pacientes COVID-19</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Viajes a lugares de riesgo COVID-19" id="ultimos14Viajes">
+                                <label class="form-check-label" for="ultimos14Viajes">Viajes a lugares de riesgo COVID-19</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exclusivo para mujeres -->
+        <div class="accordion mb-4" id="exclusivoMujeresAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMujeres" aria-expanded="true">
+                        Exclusivo para mujeres
+                    </button>
+                </h2>
+                <div id="collapseMujeres" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label class="form-label">13. ¿Está usted embarazada?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="embarazo" value="Sí" id="embarazoSi">
+                                <label class="form-check-label" for="embarazoSi">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="embarazo" value="No" id="embarazoNo">
+                                <label class="form-check-label" for="embarazoNo">No</label>
+                            </div>
+                            <label for="semanasEmbarazo" class="form-label mt-2">¿Cuántas semanas?</label>
+                            <input type="number" class="form-control" name="semanas_embarazo" id="semanasEmbarazo" placeholder="Si aplica">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">14. Observaciones</label>
+                            <textarea class="form-control" name="observaciones" id="observaciones"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Declaración -->
+        <div class="card mb-4">
+            <div class="card-header custom-card-header">Declaración</div>
+            <div class="card-body">
+                <p>El paciente declara haber entendido todas las explicaciones...</p>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-custom-primary" onclick="guardarFormulario()">Guardar</button>
+            <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-secondary">Volver</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    async function guardarFormulario() {
+        const pacienteId = document.getElementById('paciente_id').value;
+        const form = document.getElementById('formularioClinico');
+        const formData = new FormData(form);
+
+        const preguntaRespuesta = {};
+        formData.forEach((value, key) => {
+            if (preguntaRespuesta[key]) {
+                if (!Array.isArray(preguntaRespuesta[key])) {
+                    preguntaRespuesta[key] = [preguntaRespuesta[key]];
+                }
+                preguntaRespuesta[key].push(value);
+            } else {
+                preguntaRespuesta[key] = value;
+            }
+        });
+
+        const data = {
+            paciente_id: pacienteId,
+            pregunta_respuesta: preguntaRespuesta
+        };
+
+        try {
+            const response = await fetch('/guardar_historial', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            console.error("Error al guardar el formulario:", error);
+            alert('Error al guardar el historial.');
+        }
+    }
+</script>
+
+{% endblock %}

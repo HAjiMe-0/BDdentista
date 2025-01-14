@@ -316,6 +316,7 @@
                     citasDelDia.forEach(cita => {
                         citasHTML += `
                             <tr>
+
                                 <td>${cita.paciente}</td>
                                 <td>${cita.motivo}</td>
                                 <td>
@@ -323,6 +324,7 @@
                                         <a href="/cita/${cita.id}" class="btn btn-custom btn-sm rounded-pill">
                                             <i class="bi bi-eye"></i> Ver
                                         </a>
+                                        
                                         <form action="/delete_cita/${cita.id}" method="POST">
                                             <button type="submit" class="btn btn-delete btn-sm rounded-pill" 
                                                     onclick="return confirm('¿Estás seguro de eliminar esta cita?')">

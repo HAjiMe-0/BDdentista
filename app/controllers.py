@@ -246,10 +246,11 @@ def detalle_paciente(paciente_id):
         flash('No tienes permiso para ver este paciente.', 'error')
         return redirect(url_for('main.listar_pacientes'))
 
-    tratamientos = Tratamiento.query.filter_by(paciente_id=paciente_id).all()
-    citas = Cita.query.filter_by(paciente_id=paciente_id).all()
+    tratamientos_activos = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='En Progreso').all()
+    tratamientos_finalizados = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='Finalizado').all()
+    citas = Cita.query.filter_by(paciente_id=paciente_id, estado='Pendiente').order_by(Cita.fecha.desc()).all()
     formulario_medico = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
-    return render_template('pacientes/detalle_paciente.html', paciente=paciente, tratamientos=tratamientos, citas=citas, formulario_medico=formulario_medico)
+    return render_template('pacientes/detalle_paciente.html', paciente=paciente, tratamientos_activos=tratamientos_activos, tratamientos_finalizados=tratamientos_finalizados, citas=citas, formulario_medico=formulario_medico)
 
 @main_bp.route('/paciente/<int:paciente_id>/editar', methods=['GET', 'POST'])
 @login_requerido
@@ -296,6 +297,17 @@ def listar_citas():
     doctor_id = session['doctor_id']
     citas = Cita.query.filter_by(doctor_id=doctor_id).order_by(Cita.fecha.asc()).all()
     return render_template('citas/listar_citas.html', citas=citas)
+
+# Detalle de cita
+@main_bp.route('/cita/<int:cita_id>')
+@login_requerido
+def detalle_cita(cita_id):
+    cita = Cita.query.get_or_404(cita_id)
+    if cita.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para ver esta cita.', 'error')
+        return redirect(url_for('main.listar_citas'))
+
+    return render_template('citas/detalle_cita.html', cita=cita)
 
 @main_bp.route('/cita/crear', methods=['GET', 'POST'])
 @login_requerido
@@ -374,6 +386,34 @@ def obtener_citas(year, month):
         return jsonify(citas_serializadas)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+# Ruta para crear una cita (Para paciente espacifoco)
+@main_bp.route('/paciente/<int:paciente_id>/cita/crear', methods=['GET', 'POST'])
+@login_requerido
+def crear_cita_para_paciente(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para crear una cita para este paciente.', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+    if request.method == 'POST':
+        try:
+            datos = {
+                'paciente_id': paciente_id,
+                'doctor_id': session['doctor_id'],
+                'fecha': datetime.strptime(request.form['fecha'], '%Y-%m-%dT%H:%M'),
+                'motivo': request.form['motivo'],
+                'estado': 'Pendiente'
+            }
+            nueva_cita = Cita(**datos)
+            db.session.add(nueva_cita)
+            db.session.commit()
+            flash('Cita creada exitosamente.', 'success')
+            return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al crear la cita: {str(e)}', 'error')
+
+    return render_template('citas/crear_cita_paciente.html', paciente=paciente)
 
 # Ruta para crear una cita (formularios de la pantalla Crear Cita)
 @main_bp.route('/citas/crear', methods=['GET', 'POST'])
@@ -395,7 +435,7 @@ def crear_citaPC():
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     pacientes = Paciente.query.filter_by(doctor_id=session['doctor_id']).all()
-    return render_template('citas/crear_cita.html', pacientes=pacientes)
+    return render_template('citas/cr    ear_cita.html', pacientes=pacientes)
 
 # Ruta para eliminar una cita
 @main_bp.route('/delete_cita/<int:cita_id>', methods=['POST'])
@@ -412,6 +452,25 @@ def eliminar_citaPC(cita_id):
         return redirect(url_for('main.listar_citas'))
     except Exception as e:
         flash(f'Error al eliminar la cita: {str(e)}', 'error')
+        return redirect(url_for('main.listar_citas'))
+    
+# Ruta para editar el estado de una cita (Pendiente, Cancelada, Realizada)
+@main_bp.route('/cita/<int:cita_id>/editar_estado', methods=['POST'])
+@login_requerido
+def editar_estado_cita(cita_id):
+    try:
+        cita = Cita.query.get_or_404(cita_id)
+        if cita.doctor_id != session['doctor_id']:
+            flash('No tienes permiso para editar el estado de esta cita.', 'error')
+            return redirect(url_for('main.listar_citas'))
+
+        nuevo_estado = request.form['estado']
+        cita.estado = nuevo_estado
+        db.session.commit()
+        flash('Estado de la cita actualizado exitosamente.', 'success')
+        return redirect(url_for('main.detalle_cita', cita_id=cita_id))
+    except Exception as e:
+        flash(f'Error al actualizar el estado de la cita: {str(e)}', 'error')
         return redirect(url_for('main.listar_citas'))
 
 # Gestión de tratamientos

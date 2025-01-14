@@ -163,6 +163,20 @@
         </div>
     </nav>
     
+    <!-- Mensaje Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-4">
+                {% for category, message in messages %}
+                    <div id="flashMessage" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <!-- Contenido Principal -->
     <div class="container-fluid">
         <div class="row">
@@ -185,6 +199,16 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <!-- Script de configuración -->
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script>
+        // Configuración para que el mensaje desaparezca automáticamente después de 5 segundos
+        setTimeout(() => {
+            const flashMessage = document.getElementById('flashMessage');
+            if (flashMessage) {
+                const alert = bootstrap.Alert.getOrCreateInstance(flashMessage); // Obtén la instancia de Bootstrap Alert
+                alert.close(); // Cierra el mensaje
+            }
+        }, 5000); // 5000 ms = 5 segundos
+    </script>
 </body>
 
 </html>
