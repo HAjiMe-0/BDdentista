@@ -53,8 +53,8 @@
                             <div class="card-body text-center">
                                 <i class="bi bi-bar-chart text-warning display-1 mb-3"></i>
                                 <h5 class="card-title text-dark">Reportes</h5>
-                                <p class="card-text">Visualización y generación de reportes detallados <span class="badge bg-warning text-dark">Próximamente</span></p>
-                                <button class="btn btn-outline-warning disabled">En desarrollo</button>
+                                <p class="card-text">Visualización y generación de reportes detallados</p>
+                                <a href="{{ url_for('main.generar_informe_doctor', doctor_id=session.get('doctor_id')) }}" class="btn btn-outline-warning">Ir a Reportes</a>
                             </div>
                         </div>
                     </div>
