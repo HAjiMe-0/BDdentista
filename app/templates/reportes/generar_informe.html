@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Bienvenido {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Generar Informe para el Doctor {{ doctor.nombre }}</h1>
+        <form action="{{ url_for('main.generar_informe_doctor', doctor_id=doctor.doctor_id) }}" method="POST">
+            <div class="form-group mb-3">
+                <label for="periodo">Seleccionar Tipo de Informe</label>
+                <select name="periodo" id="periodo" class="form-control" required>
+                    <option value="mensual">Mensual</option>
+                    <option value="anual">Anual</option>
+                </select>
+            </div>
+            <div id="mes-selector" class="form-group mb-3">
+                <label for="mes">Seleccionar Mes</label>
+                <select name="mes" id="mes" class="form-control">
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="año">Seleccionar Año</label>
+                <input type="number" name="año" id="año" class="form-control" min="2000" max="{{ datetime.utcnow().year }}" value="{{ datetime.utcnow().year }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Generar Informe</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('periodo').addEventListener('change', function () {
+            const mesSelector = document.getElementById('mes-selector');
+            if (this.value === 'anual') {
+                mesSelector.style.display = 'none';
+            } else {
+                mesSelector.style.display = 'block';
+            }
+        });
+    </script>
+{% endblock %}

@@ -129,8 +129,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled">
-                            <i class="bi bi-bar-chart"></i> Reportes <span class="badge badge-warning">Próximamente</span>
+                        <a class="nav-link {% if request.endpoint == 'main.generar_informe_doctor' %}active{% endif %}" href="{{ url_for('main.generar_informe_doctor', doctor_id=session.get('doctor_id')) }}">
+                            <i class="bi bi-bar-chart"></i> Reportes
                         </a>
                     </li>
                     <li class="nav-item">

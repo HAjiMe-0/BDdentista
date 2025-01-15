@@ -23,7 +23,8 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
 )
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet ,ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
 
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
@@ -819,6 +820,128 @@ def exportar_formulario_pdf(paciente_id):
     buffer.seek(0)
 
     return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
+
+@main_bp.route('/doctor/<int:doctor_id>/informe', methods=['GET', 'POST'])
+@login_requerido
+def generar_informe_doctor(doctor_id):
+    doctor = Doctor.query.get_or_404(doctor_id)
+    if doctor.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para generar informes para este doctor.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    # Parámetros del informe
+    periodo = request.form.get('periodo', 'mensual')  # "mensual" o "anual"
+    mes = int(request.form.get('mes', datetime.now().month))
+    año = int(request.form.get('año', datetime.now().year))
+
+    # Filtrar datos según el periodo
+    inicio = datetime(año, mes, 1) if periodo == 'mensual' else datetime(año, 1, 1)
+    fin = (datetime(año, mes + 1, 1) if mes < 12 else datetime(año + 1, 1, 1)) if periodo == 'mensual' else datetime(año + 1, 1, 1)
+
+    # Consultas a la base de datos
+    citas = Cita.query.filter(Cita.doctor_id == doctor_id, Cita.fecha >= inicio, Cita.fecha < fin).all()
+    tratamientos = Tratamiento.query.filter(Tratamiento.paciente_id.in_(
+        [p.paciente_id for p in Paciente.query.filter_by(doctor_id=doctor_id).all()]
+    )).all()
+    pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+
+    # Datos del informe
+    nro_pacientes = len(set(cita.paciente_id for cita in citas))
+    nro_citas_pendientes = len([c for c in citas if c.estado == 'Pendiente'])
+    nro_citas_completadas = len([c for c in citas if c.estado == 'Realizada'])
+    nro_citas_canceladas = len([c for c in citas if c.estado == 'Cancelada'])
+    nro_tratamientos = len(tratamientos)
+    tratamientos_en_progreso = len([t for t in tratamientos if t.estado == 'En Progreso'])
+    tratamientos_finalizados = len([t for t in tratamientos if t.estado == 'Finalizado'])
+    tratamientos_cancelados = len([t for t in tratamientos if t.estado == 'Cancelado'])
+    ingresos_facturados = sum(t.costo_total for t in tratamientos)
+    ingresos_pagados = sum(t.monto_pagado for t in tratamientos)
+    saldo_pendiente = sum(t.saldo for t in tratamientos)
+
+    # Generar PDF
+    if request.method == 'POST':
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        elements = []
+        styles = getSampleStyleSheet()
+
+        # Encabezado
+        title = Paragraph(f"Reporte General - Dr. {doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}", styles['Title'])
+        elements.append(title)
+        elements.append(Spacer(1, 12))
+
+        # Información del doctor
+        doctor_info = [
+            ["Nombre:", f"{doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}"],
+            ["Especialidad:", doctor.especialidad or "No especificada"],
+            ["CI:", doctor.ci],
+            ["Teléfono:", doctor.telefono or "No especificado"],
+            ["Email:", doctor.email],
+            ["Total de pacientes asignados:", len(pacientes)],
+            ["Ingresos totales generados:", f"${ingresos_facturados:.2f}"]
+        ]
+        elements.append(Table(doctor_info, colWidths=[150, 350]))
+        elements.append(Spacer(1, 12))
+
+        # Lista de pacientes
+        elements.append(Paragraph("Lista de Pacientes", styles['Heading2']))
+        pacientes_data = [[
+            "Nombre Completo", "CI", "Fecha de Nacimiento", "Teléfono/Celular"
+        ]] + [
+            [
+                f"{p.nombre} {p.paterno or ''} {p.materno or ''}",
+                p.ci,
+                p.fecha_nacimiento.strftime('%Y-%m-%d'),
+                p.telefono or p.celular or "No especificado"
+            ] for p in pacientes
+        ]
+        elements.append(Table(pacientes_data, colWidths=[200, 100, 150, 150]))
+        elements.append(Spacer(1, 12))
+
+        # Resumen de tratamientos
+        elements.append(Paragraph("Resumen de Tratamientos", styles['Heading2']))
+        tratamientos_info = [
+            ["Total Tratamientos:", nro_tratamientos],
+            ["En Progreso:", tratamientos_en_progreso],
+            ["Finalizados:", tratamientos_finalizados],
+            ["Cancelados:", tratamientos_cancelados],
+            ["Monto Facturado:", f"${ingresos_facturados:.2f}"],
+            ["Monto Pagado:", f"${ingresos_pagados:.2f}"],
+            ["Saldo Pendiente:", f"${saldo_pendiente:.2f}"]
+        ]
+        elements.append(Table(tratamientos_info, colWidths=[200, 150]))
+        elements.append(Spacer(1, 12))
+
+        # Resumen de citas
+        elements.append(Paragraph("Resumen de Citas Médicas", styles['Heading2']))
+        citas_info = [
+            ["Total de Citas:", len(citas)],
+            ["Pendientes:", nro_citas_pendientes],
+            ["Completadas:", nro_citas_completadas],
+            ["Canceladas:", nro_citas_canceladas],
+        ]
+        elements.append(Table(citas_info, colWidths=[200, 150]))
+        elements.append(Spacer(1, 12))
+
+        # Estadísticas generales
+        elements.append(Paragraph("Estadísticas Generales", styles['Heading2']))
+        estadisticas_info = [
+            ["Promedio de pacientes atendidos/mes:", f"{nro_pacientes:.2f}"],
+            ["Ingresos promedio por tratamiento:", f"${ingresos_facturados / nro_tratamientos:.2f}" if nro_tratamientos else "$0.00"]
+        ]
+        elements.append(Table(estadisticas_info, colWidths=[250, 200]))
+        elements.append(Spacer(1, 12))
+
+        # Construcción del PDF
+        doc.build(elements)
+        buffer.seek(0)
+        return send_file(buffer, as_attachment=True, download_name=f'Informe_Dr_{doctor.nombre}_{año}_{mes}.pdf', mimetype='application/pdf')
+
+    return render_template(
+        'reportes/generar_informe.html',
+        doctor=doctor,
+        datetime=datetime  # Pasar datetime al contexto
+    )
 # Detalle formulario Medico
 @main_bp.route('/formulario/<int:historial_id>', methods=['GET'])
 @login_requerido
