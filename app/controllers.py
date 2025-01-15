@@ -29,6 +29,7 @@ from reportlab.lib.enums import TA_CENTER
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
 
+
 # Decorador para rutas que requieren autenticación
 def login_requerido(funcion):
     @wraps(funcion)
@@ -41,7 +42,9 @@ def login_requerido(funcion):
 # Ruta de inicio
 @main_bp.route('/')
 def inicio():
-    if 'doctor_id' in session:
+    if 'doctor_id' not in session:
+        flash('Por favor, inicia sesión para continuar.', 'info')
+        
         return redirect(url_for('main.iniciar_sesion'))
     return redirect(url_for('main.dashboard'))
 
@@ -435,11 +438,14 @@ def crear_citaPC():
             nueva_cita = Cita(**datos)
             db.session.add(nueva_cita)
             db.session.commit()
-            return jsonify({"message": "Cita creada exitosamente."}), 201
+            flash('Cita creada exitosamente.', 'success')
+            return redirect(url_for('main.listar_citas'))
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            db.session.rollback()
+            flash(f'Error al crear la cita: {str(e)}', 'error')
+            return redirect(url_for('main.crear_citaPC'))
     pacientes = Paciente.query.filter_by(doctor_id=session['doctor_id']).all()
-    return render_template('citas/cr    ear_cita.html', pacientes=pacientes)
+    return render_template('citas/crear_cita.html', pacientes=pacientes)
 
 # Ruta para eliminar una cita
 @main_bp.route('/delete_cita/<int:cita_id>', methods=['POST'])
@@ -707,36 +713,42 @@ def crear_formulario_medico(paciente_id):
                     return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
                 return render_template('formularios/crear_formulario.html', paciente=paciente, paciente_id=paciente_id)
+
 #Guardar historial medico
 @main_bp.route('/guardar_historial', methods=['POST'])
 @login_requerido
 def guardar_historial():
-        try:
-            data = request.get_json()
-            paciente_id = data.get('paciente_id')
-            pregunta_respuesta = data.get('pregunta_respuesta')
+    try:
+        data = request.get_json()
+        paciente_id = data.get('paciente_id')
+        pregunta_respuesta = data.get('pregunta_respuesta')
 
-            # Validaciones
-            if not paciente_id:
-                return jsonify({"message": "ID de paciente no recibido"}), 400
-            if not pregunta_respuesta:
-                return jsonify({"message": "No se recibieron respuestas"}), 400
+        # Validaciones
+        if not paciente_id:
+            flash('ID de paciente no recibido', 'error')
+            return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
+        if not pregunta_respuesta:
+            flash('No se recibieron respuestas', 'error')
+            return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
 
-            paciente = Paciente.query.get(paciente_id)
-            if not paciente:
-                return jsonify({"message": "Paciente no encontrado"}), 404
+        paciente = Paciente.query.get(paciente_id)
+        if not paciente:
+            flash('Paciente no encontrado', 'error')
+            return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
 
-            # Crear el historial médico
-            nuevo_historial = FormularioMedico(
-                paciente_id=paciente_id,
-                pregunta_respuesta=pregunta_respuesta
-            )
-            db.session.add(nuevo_historial)
-            db.session.commit()
-            return jsonify({"message": "Historial clínico guardado exitosamente"}), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"message": f"Error al guardar: {str(e)}"}), 500
+        # Crear el historial médico
+        nuevo_historial = FormularioMedico(
+            paciente_id=paciente_id,
+            pregunta_respuesta=pregunta_respuesta
+        )
+        db.session.add(nuevo_historial)
+        db.session.commit()
+        flash('Historial clínico guardado exitosamente', 'success')
+        return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al guardar: {str(e)}', 'error')
+        return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
 
 # Exportar formulario médico a PDF
 @main_bp.route('/paciente/<int:paciente_id>/formulario/pdf', methods=['GET'])
@@ -749,77 +761,82 @@ def exportar_formulario_pdf(paciente_id):
         flash('No se encontró un formulario médico para este paciente.', 'error')
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
-    # Configurar buffer y documento
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    elements = []
-    styles = getSampleStyleSheet()
+    try:
+        # Configurar buffer y documento
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        elements = []
+        styles = getSampleStyleSheet()
 
-    # Título del documento
-    title = Paragraph("Formulario Médico", styles['Title'])
-    elements.append(title)
-    elements.append(Spacer(1, 12))
+        # Título del documento
+        title = Paragraph("Formulario Médico", styles['Title'])
+        elements.append(title)
+        elements.append(Spacer(1, 12))
 
-    # Información del paciente
-    paciente_info = f"""
-    <b>Paciente:</b> {paciente.nombre} {paciente.paterno or ""} {paciente.materno or ""}<br/>
-    <b>Cédula:</b> {paciente.ci}<br/>
-    <b>Fecha de Nacimiento:</b> {paciente.fecha_nacimiento}
-    """
-    elements.append(Paragraph(paciente_info, styles['Normal']))
-    elements.append(Spacer(1, 12))
+        # Información del paciente
+        paciente_info = f"""
+        <b>Paciente:</b> {paciente.nombre} {paciente.paterno or ""} {paciente.materno or ""}<br/>
+        <b>Cédula:</b> {paciente.ci}<br/>
+        <b>Fecha de Nacimiento:</b> {paciente.fecha_nacimiento}
+        """
+        elements.append(Paragraph(paciente_info, styles['Normal']))
+        elements.append(Spacer(1, 12))
 
-    # Ordenar y estructurar datos del formulario
-    orden_preguntas = [
-        ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
-        ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
-        ("¿A qué es alérgico?", "alergias"),
-        ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
-        ("¿Le falta aire después del ejercicio?", "falta_aire"),
-        ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
-        ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
-        ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
-        ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
-        ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
-        ("¿Cuál?", "detalle_reacciones_medicamentos"),
-        ("Acostumbra:", "costumbres[]"),
-        ("¿Tiene algún problema con:", "problemas[]"),
-        ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
-        ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
-        ("¿Cuántas semanas?", "semanas_embarazo"),
-        ("Observaciones:", "observaciones"),
-        ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
-        ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias"),
-    ]
+        # Ordenar y estructurar datos del formulario
+        orden_preguntas = [
+            ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+            ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+            ("¿A qué es alérgico?", "alergias"),
+            ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+            ("¿Le falta aire después del ejercicio?", "falta_aire"),
+            ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+            ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+            ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+            ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+            ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+            ("¿Cuál?", "detalle_reacciones_medicamentos"),
+            ("Acostumbra:", "costumbres[]"),
+            ("¿Tiene algún problema con:", "problemas[]"),
+            ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+            ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+            ("¿Cuántas semanas?", "semanas_embarazo"),
+            ("Observaciones:", "observaciones"),
+            ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+            ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias"),
+        ]
 
-    # Tabla de preguntas y respuestas
-    data = [[Paragraph("<b>Pregunta</b>", styles['Normal']), Paragraph("<b>Respuesta</b>", styles['Normal'])]]
-    for pregunta, key in orden_preguntas:
-        respuesta = formulario.pregunta_respuesta.get(key, "No especificado")
-        # Manejar listas
-        if isinstance(respuesta, list):
-            respuesta = "<br/>".join(respuesta)
-        data.append([Paragraph(pregunta, styles['Normal']), Paragraph(str(respuesta), styles['Normal'])])
+        # Tabla de preguntas y respuestas
+        data = [[Paragraph("<b>Pregunta</b>", styles['Normal']), Paragraph("<b>Respuesta</b>", styles['Normal'])]]
+        for pregunta, key in orden_preguntas:
+            respuesta = formulario.pregunta_respuesta.get(key, "No especificado")
+            # Manejar listas
+            if isinstance(respuesta, list):
+                respuesta = "<br/>".join(respuesta)
+            data.append([Paragraph(pregunta, styles['Normal']), Paragraph(str(respuesta), styles['Normal'])])
 
-    table = Table(data, colWidths=[200, 300])
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-    ]))
+        table = Table(data, colWidths=[200, 300])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
 
-    elements.append(table)
+        elements.append(table)
 
-    # Construir el PDF
-    doc.build(elements)
-    buffer.seek(0)
+        # Construir el PDF
+        doc.build(elements)
+        buffer.seek(0)
 
-    return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
+        flash('Formulario médico exportado exitosamente.', 'success')
+        return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
+    except Exception as e:
+        flash(f'Error al generar el PDF: {str(e)}', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
 @main_bp.route('/doctor/<int:doctor_id>/informe', methods=['GET', 'POST'])
 @login_requerido
@@ -935,6 +952,7 @@ def generar_informe_doctor(doctor_id):
         # Construcción del PDF
         doc.build(elements)
         buffer.seek(0)
+        flash('Informe generado exitosamente.', 'success')
         return send_file(buffer, as_attachment=True, download_name=f'Informe_Dr_{doctor.nombre}_{año}_{mes}.pdf', mimetype='application/pdf')
 
     return render_template(
@@ -942,6 +960,8 @@ def generar_informe_doctor(doctor_id):
         doctor=doctor,
         datetime=datetime  # Pasar datetime al contexto
     )
+    
+
 # Detalle formulario Medico
 @main_bp.route('/formulario/<int:historial_id>', methods=['GET'])
 @login_requerido

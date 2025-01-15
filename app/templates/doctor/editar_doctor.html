@@ -93,14 +93,35 @@
         </div>
         
         <div class="mb-4">
-            <label for="contraseña" class="form-label" style="color: #539091; font-weight: 600;">Contraseña:</label>
+            <label for="contraseña" class="form-label" style="color: #539091; font-weight: 600;">Nueva Contraseña:</label>
             <input type="password" 
-                   id="contraseña" 
-                   name="contraseña" 
-                   class="form-control" 
-                   placeholder="Nueva contraseña (opcional)"
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+               id="contraseña" 
+               name="contraseña" 
+               class="form-control" 
+               placeholder="Nueva contraseña (opcional)"
+               style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
         </div>
+        
+        <div class="mb-4">
+            <label for="confirmar_contraseña" class="form-label" style="color: #539091; font-weight: 600;">Confirmar Nueva Contraseña:</label>
+            <input type="password" 
+               id="confirmar_contraseña" 
+               name="confirmar_contraseña" 
+               class="form-control" 
+               placeholder="Confirme la nueva contraseña"
+               style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+        </div>
+        
+        <script>
+            document.querySelector('form').addEventListener('submit', function (e) {
+            var password = document.getElementById('contraseña').value;
+            var confirmPassword = document.getElementById('confirmar_contraseña').value;
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
+            }
+            });
+        </script>
         
         <div class="text-center" style="background-color: #cceae8; padding: 1.5rem; margin: 1rem -1.5rem -1rem -1.5rem; border-radius: 0 0 0.375rem 0.375rem;">
             <button type="submit" 
