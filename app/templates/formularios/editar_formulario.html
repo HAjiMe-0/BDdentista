@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Editar Formulario Médico</h2>
+
+<form method="POST">
+    <!-- Preguntas y respuestas -->
+    <h3>Preguntas y Respuestas:</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>PREGUNTA</th>
+                <th>RESPUESTA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pregunta, key in [
+                ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+                ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+                ("¿A qué es alérgico?", "alergias"),
+                ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+                ("¿Le falta aire después del ejercicio?", "falta_aire"),
+                ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+                ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+                ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+                ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+                ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+                ("¿Cuál?", "detalle_reacciones_medicamentos"),
+                ("Acostumbra:", "costumbres[]"),
+                ("¿Tiene algún problema con:", "problemas[]"),
+                ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+                ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+                ("¿Cuántas semanas?", "semanas_embarazo"),
+                ("Observaciones:", "observaciones"),
+                ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+                ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
+            ] %}
+            <tr>
+                <td>{{ pregunta }}</td>
+                <td>
+                    <input type="text" name="{{ key }}" value="{{ formulario.pregunta_respuesta.get(key, '') }}" class="form-control">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Botones -->
+    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+    <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

@@ -67,6 +67,8 @@
 <!-- Botón para exportar el formulario a PDF -->
 <a href="{{ url_for('main.listar_formulario', paciente_id=paciente_id) }}" class="btn btn-secondary">Volver</a>
 <a href="{{ url_for('main.exportar_formulario_pdf2', paciente_id=paciente.paciente_id, historial_id=formulario.historial_id) }}" class="btn btn-primary">Exportar PDF</a>
+<!-- Botón Editar -->
+<a href="{{ url_for('main.editar_formulario', historial_id=formulario.historial_id) }}" class="btn btn-warning">Editar</a>
 <!-- Botón Eliminar -->
 <form action="{{ url_for('main.eliminar_formulario', historial_id=formulario.historial_id) }}" method="POST" style="display:inline;">
     <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de que desea eliminar este formulario médico?')">Eliminar</button>

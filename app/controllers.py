@@ -1063,8 +1063,32 @@ def eliminar_formulario(historial_id):
         db.session.rollback()
         flash(f'Error al eliminar el formulario médico: {e}', 'error')
     
-    # Redirigir al detalle del paciente
-    return redirect(url_for('main.detalle_paciente', paciente_id=formulario.paciente_id))
+    # Redirigir a la lista de formularios
+    return redirect(url_for('main.listar_formulario', paciente_id=formulario.paciente_id))
+
+
+# Controlador para editar el formulario médico
+@main_bp.route('/formulario/<int:historial_id>/editar', methods=['GET', 'POST'])
+@login_requerido
+def editar_formulario(historial_id):
+    # Obtener el formulario médico
+    formulario = FormularioMedico.query.get_or_404(historial_id)
+    
+    if request.method == 'POST':
+        # Aquí procesamos los datos enviados desde el formulario
+        formulario.pregunta_respuesta = request.form.to_dict()
+        
+        try:
+            # Guardamos los cambios en la base de datos
+            db.session.commit()
+            flash('Formulario médico actualizado correctamente.', 'success')
+            return redirect(url_for('main.detalle_formulario', historial_id=formulario.historial_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al actualizar el formulario: {e}', 'error')
+
+    # Renderizamos el formulario de edición
+    return render_template('formularios/editar_formulario.html', formulario=formulario)
 
 
 
