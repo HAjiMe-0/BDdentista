@@ -213,7 +213,7 @@ def buscar_pacientes():
 
 
 
-
+#Crear Paciente
 @main_bp.route('/paciente/crear', methods=['GET', 'POST'])
 @login_requerido
 def crear_paciente():
@@ -237,6 +237,7 @@ def crear_paciente():
         flash('Paciente creado exitosamente.', 'success')
         return redirect(url_for('main.listar_pacientes'))
     return render_template('pacientes/crear_paciente.html')
+#Detalle del Paciente
 
 @main_bp.route('/paciente/<int:paciente_id>')
 @login_requerido
@@ -252,6 +253,7 @@ def detalle_paciente(paciente_id):
     formulario_medico = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
     return render_template('pacientes/detalle_paciente.html', paciente=paciente, tratamientos_activos=tratamientos_activos, tratamientos_finalizados=tratamientos_finalizados, citas=citas, formulario_medico=formulario_medico)
 
+#Editar Paciente
 @main_bp.route('/paciente/<int:paciente_id>/editar', methods=['GET', 'POST'])
 @login_requerido
 def editar_paciente(paciente_id):
@@ -276,7 +278,7 @@ def editar_paciente(paciente_id):
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
     return render_template('pacientes/editar_paciente.html', paciente=paciente)
-
+#Eliminar Paciente
 @main_bp.route('/paciente/<int:paciente_id>/eliminar', methods=['POST'])
 @login_requerido
 def eliminar_paciente(paciente_id):
@@ -291,6 +293,7 @@ def eliminar_paciente(paciente_id):
     return redirect(url_for('main.listar_pacientes'))
 
 # Gestión de citas
+#Listar Citas
 @main_bp.route('/citas')
 @login_requerido
 def listar_citas():
@@ -308,7 +311,7 @@ def detalle_cita(cita_id):
         return redirect(url_for('main.listar_citas'))
 
     return render_template('citas/detalle_cita.html', cita=cita)
-
+#Crear Citas
 @main_bp.route('/cita/crear', methods=['GET', 'POST'])
 @login_requerido
 def crear_cita():
@@ -328,7 +331,7 @@ def crear_cita():
 
     pacientes = Paciente.query.filter_by(doctor_id=session['doctor_id']).all()
     return render_template('citas/crear_cita.html', pacientes=pacientes)
-
+#Editar citas
 @main_bp.route('/cita/<int:cita_id>/editar', methods=['GET', 'POST'])
 @login_requerido
 def editar_cita(cita_id):
@@ -346,7 +349,7 @@ def editar_cita(cita_id):
         return redirect(url_for('main.listar_citas'))
 
     return render_template('citas/editar_cita.html', cita=cita)
-
+#Eliminar Citas
 @main_bp.route('/cita/<int:cita_id>/eliminar', methods=['POST'])
 @login_requerido
 def eliminar_cita(cita_id):
@@ -681,6 +684,9 @@ def generar_pdf_tratamiento(tratamiento_id):
     return send_file(buffer, as_attachment=True, download_name=f'{tratamiento.paciente.paterno}_{tratamiento.nombre}_{fecha_actual}.pdf', mimetype='application/pdf')
 
 
+
+#Gestion de Formularios Medicos
+
 # Crear formulario médico
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])
 @login_requerido
@@ -699,8 +705,8 @@ def crear_formulario_medico(paciente_id):
                     flash('Formulario médico creado exitosamente.', 'success')
                     return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
-                return render_template('formularios/crear_formulario.html', paciente=paciente)
-
+                return render_template('formularios/crear_formulario.html', paciente=paciente, paciente_id=paciente_id)
+#Guardar historial medico
 @main_bp.route('/guardar_historial', methods=['POST'])
 @login_requerido
 def guardar_historial():
@@ -813,3 +819,130 @@ def exportar_formulario_pdf(paciente_id):
     buffer.seek(0)
 
     return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
+# Detalle formulario Medico
+@main_bp.route('/formulario/<int:historial_id>', methods=['GET'])
+@login_requerido
+def detalle_formulario(historial_id):
+    formulario = FormularioMedico.query.get_or_404(historial_id)
+    paciente = Paciente.query.get_or_404(formulario.paciente_id)  # Obtener el paciente relacionado
+    return render_template('formularios/detalle_formulario.html', formulario=formulario, paciente=paciente, paciente_id=paciente.paciente_id)
+
+
+
+# Listar formularios médicos de un paciente
+@main_bp.route('/paciente/<int:paciente_id>/formularios', methods=['GET'])
+@login_requerido
+def listar_formulario(paciente_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para ver los formularios médicos de este paciente.', 'error')
+        return redirect(url_for('main.dashboard'))
+
+    formularios = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).all()
+    return render_template('formularios/listar_formulario.html', paciente=paciente, formularios=formularios,)
+
+# Exportar formulario médico a PDF - Nueva versión
+@main_bp.route('/paciente/<int:paciente_id>/formulario/<int:historial_id>/pdf', methods=['GET'])
+@login_requerido
+def exportar_formulario_pdf2(paciente_id, historial_id):
+    paciente = Paciente.query.get_or_404(paciente_id)
+    formulario = FormularioMedico.query.filter_by(historial_id=historial_id, paciente_id=paciente_id).first()
+
+    if not formulario:
+        flash('No se encontró un formulario médico para este paciente.', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+    # Configurar buffer y documento
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Título del documento
+    title = Paragraph("Formulario Médico", styles['Title'])
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    # Información del paciente
+    paciente_info = f"""
+    <b>Paciente:</b> {paciente.nombre} {paciente.paterno or ""} {paciente.materno or ""}<br/>
+    <b>Cédula:</b> {paciente.ci}<br/>
+    <b>Fecha de Nacimiento:</b> {paciente.fecha_nacimiento}
+    """
+    elements.append(Paragraph(paciente_info, styles['Normal']))
+    elements.append(Spacer(1, 12))
+
+    # Ordenar y estructurar datos del formulario
+    orden_preguntas = [
+        ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+        ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+        ("¿A qué es alérgico?", "alergias"),
+        ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+        ("¿Le falta aire después del ejercicio?", "falta_aire"),
+        ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+        ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+        ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+        ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+        ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+        ("¿Cuál?", "detalle_reacciones_medicamentos"),
+        ("Acostumbra:", "costumbres[]"),
+        ("¿Tiene algún problema con:", "problemas[]"),
+        ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+        ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+        ("¿Cuántas semanas?", "semanas_embarazo"),
+        ("Observaciones:", "observaciones"),
+        ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+        ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias"),
+    ]
+
+    # Tabla de preguntas y respuestas
+    data = [[Paragraph("<b>Pregunta</b>", styles['Normal']), Paragraph("<b>Respuesta</b>", styles['Normal'])]]
+    for pregunta, key in orden_preguntas:
+        respuesta = formulario.pregunta_respuesta.get(key, "No especificado")
+        # Manejar listas
+        if isinstance(respuesta, list):
+            respuesta = "<br/>".join(respuesta)
+        data.append([Paragraph(pregunta, styles['Normal']), Paragraph(str(respuesta), styles['Normal'])])
+
+    table = Table(data, colWidths=[200, 300])
+    table.setStyle(TableStyle([  
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(table)
+
+    # Construir el PDF
+    doc.build(elements)
+    buffer.seek(0)
+
+    return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}_Historial_{historial_id}.pdf', mimetype='application/pdf')
+
+# Controlador para eliminar el formulario médico
+@main_bp.route('/formulario/<int:historial_id>/eliminar', methods=['POST'])
+@login_requerido
+def eliminar_formulario(historial_id):
+    # Buscar el formulario médico con el historial_id proporcionado
+    formulario = FormularioMedico.query.get_or_404(historial_id)
+    
+    # Eliminar el formulario médico
+    try:
+        db.session.delete(formulario)
+        db.session.commit()
+        flash('Formulario médico eliminado correctamente.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar el formulario médico: {e}', 'error')
+    
+    # Redirigir al detalle del paciente
+    return redirect(url_for('main.detalle_paciente', paciente_id=formulario.paciente_id))
+
+
+
+

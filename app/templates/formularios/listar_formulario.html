@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Formularios Médicos - {{ paciente.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4" style="color: #539091;">Formularios Médicos de {{ paciente.nombre }} {{ paciente.paterno }}</h1>
+    
+    <!-- Tabla de formularios -->
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered" style="background-color: #ffffff; border-color: #a8dcd9;">
+            <thead style="background-color: #cceae8; color: #539091;">
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if formularios %}
+                    {% for formulario in formularios %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ formulario.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                        <td>
+                            <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}" 
+                               class="btn btn-sm" 
+                               style="background-color: #68c3b7; color: #ffffff;">
+                                Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center" style="color: #539091;">No se encontraron formularios médicos.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Botón para volver al detalle del paciente -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
+            class="btn btn-sm btn-primary">
+             <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
+        </a>
+        <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" 
+           class="btn px-4 py-2" 
+           style="background-color: #539091; color: #ffffff;">
+            Volver al detalle del paciente
+        </a>
+    </div>
+</div>
+{% endblock %}

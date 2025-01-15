@@ -319,6 +319,12 @@ body {
                                 class="btn btn-sm btn-primary">
                                 <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
                             </a>
+                            <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
+                                class="btn px-4 py-2" 
+                                    style="background-color: #68c3b7; color: #ffffff; border: none;">
+                                    Historial Formularios
+                            </a>
+
                         </div>
                     
                     </div>
