@@ -10,11 +10,13 @@
         --color-mint: #a8dcd9;
         --color-teal: #68c3b7;
         --color-dark-teal: #539091;
+        --background-image: url("/static/img/fondo_dental7.jpg");
     }
 
     body {
         background-color: var(--color-light-mint);
         font-family: 'Roboto', sans-serif; /* Cambiamos la fuente a Roboto */
+        background-image: var(--background-image);
     }
     
     .form-card {
@@ -32,7 +34,7 @@
         padding: 1rem;
         text-align: center;
         font-size: 1.2rem;
-        font-weight: 700; /* Negrita */
+        font-weight: 300; /* Negrita */
     }
     
     .card-body {
@@ -107,12 +109,12 @@
 <div class="custom-container d-flex justify-content-center align-items-center">
     <div class="form-card">
         <div class="card-header">
-            Crear Cita
+            <h2>CREAR CITA</h2>
         </div>
         <div class="card-body">
             <form method="POST">    
                 <div class="form-group">
-                    <label for="paciente_id" class="form-label">Paciente</label>
+                    <label for="paciente_id" class="form-label" style="color: #539091;">Paciente</label>
                     <input type="text" id="paciente_search" class="form-control" placeholder="Buscar paciente...">
                     <select name="paciente_id" id="paciente_select" class="form-control" required>
                         <option value="" disabled selected>Seleccione un paciente</option>

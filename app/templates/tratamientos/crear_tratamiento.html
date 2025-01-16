@@ -3,23 +3,36 @@
 {% block title %}Crear Tratamiento{% endblock %}
 
 {% block content %}
+
 <style>
+    
     :root {
         --color-white: #ffffff;
         --color-light-mint: #cceae8;
         --color-mint: #a8dcd9;
         --color-teal: #68c3b7;
         --color-dark-teal: #539091;
-        --background-image: url("static/img/fondo_dental7.jpg");
+        --background-image: url("/static/img/fondo_dental7.jpg"); /* Ruta absoluta */
     }
 
     body {
-        background: transparent;
+        background: var(--color-light-mint);
         font-family: 'Segoe UI', sans-serif;
         background-attachment: fixed;
         background-size: cover;
-        background-image: var(--background-image);
+        background-image: var(--background-image); /* Se mantiene */
     }
+
+    .edit-header {
+            background-color: var(--color-dark-teal);
+            color: var(--color-white);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            font-size: 2rem;
+            margin-bottom: 0;
+            font-weight: 480; /* Negrita */
+        }
     
     .form-card {
         background: var(--color-white);
@@ -92,8 +105,8 @@
         font-size: 0.9rem;
     }
 
-    .form-floating > .form-control:focus ~ label,
-    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+    
+    .form-floating >  {
         color: var(--color-dark-teal);
         transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
         background: white;
@@ -189,13 +202,14 @@
 <div class="container py-5">
     <div class="form-card">
         <div class="form-header">
-            <h1>Crear Nuevo Tratamiento</h1>
+            <h2 class="edit-header">CREAR NUEVO TRATAMIENTO</h2>
+
             <p class="subtitle">Ingrese los detalles del nuevo tratamiento para el paciente</p>
         </div>
 
         <form method="POST" action="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" class="treatment-form">
             <!-- Información Básica -->
-            <div class="form-section">
+            <div >
                 <h3 class="section-title">Información Básica</h3>
                 <div class="row g-4">
                     <div class="col-md-6">
@@ -226,7 +240,7 @@
             </div>
 
             <!-- Fechas y Detalles -->
-            <div class="form-section">
+            <div >
                 <h3 class="section-title">Fechas y Detalles</h3>
                 <div class="row g-4">
                     <div class="col-md-6">
@@ -236,7 +250,7 @@
                                 name="fecha_inicio" 
                                 class="form-control custom-input" 
                                 required>
-                            <label for="fecha_inicio">Fecha de Inicio</label>
+                            <label for="fecha_inicio" style="color: #539091;">Fecha de Inicio</label>
                         </div>
                     </div>
 
@@ -254,7 +268,7 @@
             </div>
 
             <!-- Información Clínica -->
-            <div class="form-section">
+            <div >
                 <h3 class="section-title">Información Clínica</h3>
                 <div class="row g-4">
                     <div class="col-md-12">

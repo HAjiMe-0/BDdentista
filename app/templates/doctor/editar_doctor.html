@@ -10,238 +10,201 @@
         --color-mint: #a8dcd9;
         --color-teal: #68c3b7;
         --color-dark-teal: #539091;
+        --background-image: url("/static/img/fondo_dental7.jpg");
     }
-
+    
     body {
         background-color: var(--color-light-mint);
+        background-image: var(--background-image);
     }
-
-    .form-container {
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .edit-card {
+        background-color: #8DC3BE;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .edit-header {
+        background-color: #4A9B94;
+        color: white;
+        padding: 1rem;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .edit-body {
+        background-color: white;
+        padding: 1.5rem;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+    
+    .form-section-title {
+        color: #4A9B94;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .form-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
+        gap: 1rem;
     }
-
-    .form-container .form-group label {
-        color: var(--color-dark-teal);
-        font-weight: bold;
-        margin-bottom: 0.5rem;
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-label {
         display: block;
+        color: #4A9B94;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
     }
-
-    .form-container .form-group input {
-        border: 1px solid var(--color-mint);
-        padding: 0.8rem;
-        border-radius: 0.375rem;
-        background-color: var(--color-white);
-        transition: all 0.3s ease;
+    
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #8DC3BE;
+        border-radius: 4px;
+        background-color: white;
     }
-
-    .form-container .form-group input:focus {
+    
+    .form-control:focus {
         outline: none;
-        border-color: var(--color-teal);
-        box-shadow: 0 0 5px var(--color-teal);
+        border-color: #4A9B94;
+        box-shadow: 0 0 0 2px rgba(74, 155, 148, 0.2);
     }
-
-    .form-container .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-
+    
     .form-actions {
         display: flex;
         justify-content: center;
         gap: 1rem;
-        margin-top: 2rem;
         padding-top: 1rem;
-        border-top: 1px solid var(--color-mint);
-        background-color: var(--color-light-mint);
-        border-radius: 0 0 0.375rem 0.375rem;
+        margin-top: 1rem;
+        border-top: 1px solid #8DC3BE;
     }
-
-    .form-actions button,
-    .form-actions a {
-        background-color: var(--color-teal);
-        color: var(--color-white);
-        padding: 0.8rem 1.5rem;
+    
+    .btn {
+        padding: 0.5rem 1.5rem;
         border: none;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
     }
-
-    .form-actions button:hover,
-    .form-actions a:hover {
-        background-color: var(--color-dark-teal);
+    
+    .btn-back {
+        background-color: #8DC3BE;
+        color: white;
     }
-
-    h1 {
-        color: var(--color-dark-teal);
+    
+    .btn-back:hover {
+        background-color: #7AB3AE;
+    }
+    
+    .btn-save {
+        background-color: #4A9B94;
+        color: white;
+    }
+    
+    .btn-save:hover {
+        background-color: #3D807A;
     }
 </style>
 
-<div class="container py-5">
-    <h1 class="text-center mb-4">Editar Perfil del Doctor</h1>
-    
-    <!-- Formulario -->
-    <form method="post" class="shadow-sm p-4 rounded" style="background-color: #ffffff; border: 1px solid #a8dcd9;">
-        <div class="form-container">
-            <div class="form-group">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" class="form-control" value="{{ doctor.nombre }}" required>
-            </div>
-            <div class="form-group">
-                <label for="paterno">Apellido Paterno:</label>
-                <input type="text" id="paterno" name="paterno" class="form-control" value="{{ doctor.paterno or '' }}">
-            </div>
-            <div class="form-group">
-                <label for="materno">Apellido Materno:</label>
-                <input type="text" id="materno" name="materno" class="form-control" value="{{ doctor.materno or '' }}">
-            </div>
-            <div class="form-group">
-                <label for="ci">Cédula de Identidad (CI):</label>
-                <input type="number" id="ci" name="ci" class="form-control" value="{{ doctor.ci }}" required>
-            </div>
-            <div class="form-group">
-                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ doctor.fecha_nacimiento }}" required>
-            </div>
-            <div class="form-group">
-                <label for="especialidad">Especialidad:</label>
-                <input type="text" id="especialidad" name="especialidad" class="form-control" value="{{ doctor.especialidad }}">
-            </div>
-            <div class="form-group">
-                <label for="telefono">Teléfono:</label>
-                <input type="text" id="telefono" name="telefono" class="form-control" value="{{ doctor.telefono }}">
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ doctor.email }}" required>
-            </div>
-            <div class="form-group">
-                <label for="contraseña">Contraseña:</label>
-                <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Nueva contraseña (opcional)">
-            </div>
-        <div class="mb-4">
-            <label for="nombre" class="form-label" style="color: #539091; font-weight: 600;">Nombre:</label>
-            <input type="text" 
-                   id="nombre" 
-                   name="nombre" 
-                   class="form-control" 
-                   value="{{ doctor.nombre }}" 
-                   required
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+<div class="container">
+    <div class="edit-card">
+        <div class="edit-header">
+            <h2>Editor Doctor</h2>
         </div>
         
-        <div class="mb-4">
-            <label for="paterno" class="form-label" style="color: #539091; font-weight: 600;">Apellido Paterno:</label>
-            <input type="text" 
-                   id="paterno" 
-                   name="paterno" 
-                   class="form-control" 
-                   value="{{ doctor.paterno or '' }}"
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
+        <div class="edit-body">
+            <form method="post">
+                <div class="form-section">
+                    <h3 class="form-section-title">Información del Doctor</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ doctor.nombre }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="paterno">Apellido Paterno:</label>
+                            <input type="text" id="paterno" name="paterno" class="form-control" value="{{ doctor.paterno or '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="materno">Apellido Materno:</label>
+                            <input type="text" id="materno" name="materno" class="form-control" value="{{ doctor.materno or '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="ci">Cédula de Identidad (CI):</label>
+                            <input type="number" id="ci" name="ci" class="form-control" value="{{ doctor.ci }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="fecha_nacimiento">Fecha de Nacimiento:</label>
+                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ doctor.fecha_nacimiento }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="especialidad">Especialidad:</label>
+                            <input type="text" id="especialidad" name="especialidad" class="form-control" value="{{ doctor.especialidad }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="telefono">Teléfono:</label>
+                            <input type="text" id="telefono" name="telefono" class="form-control" value="{{ doctor.telefono }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email:</label>
+                            <input type="email" id="email" name="email" class="form-control" value="{{ doctor.email }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="contraseña">Nueva Contraseña:</label>
+                            <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Nueva contraseña (opcional)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="confirmar_contraseña">Confirmar Nueva Contraseña:</label>
+                            <input type="password" id="confirmar_contraseña" name="confirmar_contraseña" class="form-control" placeholder="Confirme la nueva contraseña">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">Actualizar</button>
+                    <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}"class="btn btn-back">Volver</a>
+                    <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}"class="btn btn-save">Cancelar</a>
+                </div>
+            </form>
         </div>
-        
-        <div class="mb-4">
-            <label for="materno" class="form-label" style="color: #539091; font-weight: 600;">Apellido Materno:</label>
-            <input type="text" 
-                   id="materno" 
-                   name="materno" 
-                   class="form-control" 
-                   value="{{ doctor.materno or '' }}"
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="ci" class="form-label" style="color: #539091; font-weight: 600;">Cédula de Identidad (CI):</label>
-            <input type="number" 
-                   id="ci" 
-                   name="ci" 
-                   class="form-control" 
-                   value="{{ doctor.ci }}" 
-                   required
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="fecha_nacimiento" class="form-label" style="color: #539091; font-weight: 600;">Fecha de Nacimiento:</label>
-            <input type="date" 
-                   id="fecha_nacimiento" 
-                   name="fecha_nacimiento" 
-                   class="form-control" 
-                   value="{{ doctor.fecha_nacimiento }}" 
-                   required
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="especialidad" class="form-label" style="color: #539091; font-weight: 600;">Especialidad:</label>
-            <input type="text" 
-                   id="especialidad" 
-                   name="especialidad" 
-                   class="form-control" 
-                   value="{{ doctor.especialidad }}"
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="telefono" class="form-label" style="color: #539091; font-weight: 600;">Teléfono:</label>
-            <input type="text" 
-                   id="telefono" 
-                   name="telefono" 
-                   class="form-control" 
-                   value="{{ doctor.telefono }}"
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="email" class="form-label" style="color: #539091; font-weight: 600;">Email:</label>
-            <input type="email" 
-                   id="email" 
-                   name="email" 
-                   class="form-control" 
-                   value="{{ doctor.email }}" 
-                   required
-                   style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="contraseña" class="form-label" style="color: #539091; font-weight: 600;">Nueva Contraseña:</label>
-            <input type="password" 
-               id="contraseña" 
-               name="contraseña" 
-               class="form-control" 
-               placeholder="Nueva contraseña (opcional)"
-               style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <div class="mb-4">
-            <label for="confirmar_contraseña" class="form-label" style="color: #539091; font-weight: 600;">Confirmar Nueva Contraseña:</label>
-            <input type="password" 
-               id="confirmar_contraseña" 
-               name="confirmar_contraseña" 
-               class="form-control" 
-               placeholder="Confirme la nueva contraseña"
-               style="border-color: #a8dcd9; padding: 0.75rem; background-color: #ffffff;">
-        </div>
-        
-        <script>
-            document.querySelector('form').addEventListener('submit', function (e) {
-            var password = document.getElementById('contraseña').value;
-            var confirmPassword = document.getElementById('confirmar_contraseña').value;
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
-            }
-            });
-        </script>
-        
-        <div class="form-actions">
-            <button type="submit">Actualizar</button>
-            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}">Volver</a>
-            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}">Cancelar</a>
-        </div>
-    </form>
+    </div>
 </div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var password = document.getElementById('contraseña').value;
+        var confirmPassword = document.getElementById('confirmar_contraseña').value;
+        
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.');
+        }
+    });
+</script>
 {% endblock %}

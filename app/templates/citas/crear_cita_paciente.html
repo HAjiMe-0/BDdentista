@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
@@ -10,11 +11,14 @@
         --color-mint: #a8dcd9;
         --color-teal: #68c3b7;
         --color-dark-teal: #539091;
+        --background-image: url("/static/img/fondo_dental7.jpg");   
+
     }
 
     body {
         background-color: var(--color-light-mint);
         font-family: 'Roboto', sans-serif; /* Cambiamos la fuente a Roboto */
+        background-image: var(--background-image);
     }
     
     .form-card {
@@ -106,7 +110,7 @@
 <div class="custom-container d-flex justify-content-center align-items-center">
     <div class="form-card">
         <div class="card-header">
-            Crear Cita
+            <h2>CREAR CITA</h2>
         </div>
         <div class="card-body">
             <form method="POST">

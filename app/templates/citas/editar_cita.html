@@ -1,46 +1,149 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
+    <style>
         :root {
-    --color-white: #ffffff;
-    --color-light-mint: #cceae8;
-    --color-mint: #a8dcd9;
-    --color-teal: #68c3b7;
-    --color-dark-teal: #539091;
-}
+            --color-white: #ffffff;
+            --color-light-mint: #cceae8;
+            --color-mint: #a8dcd9;
+            --color-teal: #68c3b7;
+            --color-dark-teal: #539091;
+            --background-image: url("/static/img/fondo_dental7.jpg");
+        }
 
-body {
-    background-color: var(--color-light-mint);
-}
-</style>
-    <h2 style="color: #539091; margin-bottom: 2rem;">Editar Cita</h2>
-    <!-- templates/cita/edit_cita.html -->
-    <form method="POST" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label for="fecha" style="color: #539091; display: block; margin-bottom: 0.5rem;">Nueva Fecha</label>
-            <input type="datetime-local" name="fecha" class="form-control" value="{{ cita.fecha }}" required 
-                   style="background-color: #cceae8; border: 1px solid #a8dcd9; width: 100%; padding: 0.5rem;">
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label for="motivo" style="color: #539091; display: block; margin-bottom: 0.5rem;">Motivo</label>
-            <textarea name="motivo" class="form-control" required 
-                      style="background-color: #cceae8; border: 1px solid #a8dcd9; width: 100%; padding: 0.5rem; min-height: 100px;">{{ cita.motivo }}</textarea>
-        </div>
+        body {
+            background-color: var(--color-light-mint);
+            background-image: var(--background-image);
+        }
 
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label for="estado" style="color: #539091; display: block; margin-bottom: 0.5rem;">Estado</label>
-            <select name="estado" class="form-control" required 
-                    style="background-color: #cceae8; border: 1px solid #a8dcd9; width: 100%; padding: 0.5rem;">
-                <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-                <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
-                <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
-            </select>
-        </div>
+        .edit-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: var(--color-white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-        <button type="submit" class="btn" 
-                style="background-color: #68c3b7; color: #ffffff; padding: 0.5rem 2rem; border: none; border-radius: 4px;">
-            Guardar Cambios
-        </button>
-    </form>
+        .edit-header {
+            background-color: var(--color-dark-teal);
+            color: var(--color-white);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .form-container {
+            padding: 2rem;
+        }
+
+        .section-title {
+            color:#539091;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-mint);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            color:#539091;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-mint);
+            border-radius: 4px;
+            background-color: var(--color-white);
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-mint);
+        }
+
+        .btn {
+            padding: 0.5rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn-back {
+            background-color: var(--color-light-mint);
+            color: var(--color-dark-teal);
+        }
+
+        .btn-save {
+            background-color: var(--color-teal);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+
+    <div class="edit-container">
+        <h2 class="edit-header">EDITAR CITA</h2>
+        <form method="POST" class="form-container">
+            <div class="section-title">Información de la Cita</div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label fw-bold" for="fecha">Fecha de Inicio</label>
+                    <input type="datetime-local" name="fecha" id="fecha" class="form-control" value="{{ cita.fecha }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label fw-bold" for="estado">Estado</label>
+                    <select name="estado" id="estado" class="form-control" required>
+                        <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                        <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label fw-bold" for="motivo">Motivo de la Cita</label>
+                <textarea name="motivo" id="motivo" class="form-control" required>{{ cita.motivo }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label fw-bold" for="observaciones">Observaciones</label>
+                <textarea name="observaciones" id="observaciones" class="form-control">{{ cita.observaciones if cita.observaciones else '' }}</textarea>
+            </div>
+
+            <div class="button-container">
+                <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" class="btn btn-back">Volver</a>
+                <button type="submit" class="btn btn-save">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}

@@ -8,19 +8,64 @@
         --color-mint: #a8dcd9;
         --color-teal: #68c3b7;
         --color-dark-teal: #539091;
+        --background-image: url("/static/img/fondo_dental7.jpg");
     }
+    
     body {
         background-color: var(--color-light-mint);
+        font-family: system-ui, -apple-system, sans-serif;
+        background-image: var(--background-image);
     }
-    .qa-columns {
-        column-count: 2;
-        column-gap: 2rem;
+
+    .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        background-color: var(--color-dark-teal);
+        color: var(--color-white);
         padding: 1rem;
+        border-radius: 8px 8px 0 0;
+        text-align: center;
+        margin-bottom: 0;
     }
-    .qa-item {
-        break-inside: avoid;
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
         margin-bottom: 1rem;
     }
+
+    .info-card {
+        background-color: var(--color-light-mint);
+        border-radius: 8px;
+        padding: 1.25rem;
+    }
+
+    .info-card h4 {
+        color: var(--color-dark-teal);
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .info-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .info-label {
+        color: var(--color-dark-teal);
+        font-weight: 500;
+    }
+
     .collapse-btn {
         cursor: pointer;
         display: flex;
@@ -29,109 +74,182 @@
         width: 100%;
         border: none;
         background: none;
-        padding: 0;
-        color: #539091;
+        padding: 0.75rem;
+        color: var(--color-dark-teal);
+        font-weight: 500;
     }
+
     .collapse-btn::after {
         content: '▼';
         font-size: 0.8rem;
         margin-left: 0.5rem;
     }
+
     .collapse-btn.collapsed::after {
         content: '▶';
     }
+
+    .qa-columns {
+        column-count: 2;
+        column-gap: 2rem;
+        padding: 1rem;
+    }
+
+    .qa-item {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        background-color: var(--color-light-mint);
+        padding: 1rem;
+        border-radius: 6px;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .btn-edit {
+        background-color: var(--color-mint);
+        color: var(--color-dark-teal);
+    }
+
+    .btn-delete {
+        background-color: #ff6b6b;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: var(--color-teal);
+        color: white;
+    }
+
+    .btn-return {
+        background-color: var(--color-dark-teal);
+        color: white;
+    }
+
     @media (max-width: 768px) {
         .qa-columns {
             column-count: 1;
         }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
-<div class="container py-4">
-    <h2 style="color: #539091; margin-bottom: 2rem;text-align: center;">Detalles del Formulario Médico</h2>
 
-    <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9; border-radius: 15px; margin-bottom: 2rem;">
-        <!-- Información del paciente -->
-        <div class="card-body">
-            <h3 style="color: #539091; font-size: 1.3rem;">Paciente:</h3>
-            <p><strong style="color: #539091;">Nombre:</strong> {{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</p>
-            <p><strong style="color: #539091;">Cédula:</strong> {{ paciente.ci }}</p>
-            <p><strong style="color: #539091;">Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
-
-            <h3 style="color: #539091; font-size: 1.3rem; margin-top: 1.5rem;">Formulario Médico:</h3>
-            <p><strong style="color: #539091;">Fecha de Creación:</strong> {{ formulario.fecha }}</p>
-            <p><strong style="color: #539091;">Observaciones:</strong> {{ formulario.pregunta_respuesta['observaciones'] }}</p>
-        </div>
+<div class="container">
+    <div class="page-header">
+        <h2>Detalles del Formulario Médico</h2>
     </div>
 
-    <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9; border-radius: 15px; margin-bottom: 2rem;">
-        <div class="card-body">
-            <button class="collapse-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#preguntasRespuestas" aria-expanded="false" aria-controls="preguntasRespuestas">
-                <h3 style="color: #539091; font-size: 1.3rem; margin-bottom: 0;">Preguntas y Respuestas:</h3>
-            </button>
-            <div class="collapse" id="preguntasRespuestas">
-                <div class="qa-columns mt-3">
-                    {% for pregunta, key in [
-                        ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
-                        ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
-                        ("¿A qué es alérgico?", "alergias"),
-                        ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
-                        ("¿Le falta aire después del ejercicio?", "falta_aire"),
-                        ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
-                        ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
-                        ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
-                        ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
-                        ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
-                        ("¿Cuál?", "detalle_reacciones_medicamentos"),
-                        ("Acostumbra:", "costumbres[]"),
-                        ("¿Tiene algún problema con:", "problemas[]"),
-                        ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
-                        ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
-                        ("¿Cuántas semanas?", "semanas_embarazo"),
-                        ("Observaciones:", "observaciones"),
-                        ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
-                        ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
-                    ] %}
-                    <div class="qa-item">
-                        <p style="color: #539091; font-weight: bold; margin-bottom: 0.5rem;">{{ pregunta }}</p>
-                        {% set respuesta = formulario.pregunta_respuesta.get(key, "No especificado") %}
-                        {% if respuesta is string %}
-                            <p style="margin-bottom: 1rem;">{{ respuesta }}</p>
-                        {% elif respuesta is iterable and not respuesta is string %}
-                            <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 1rem;">
-                            {% for item in respuesta %}
-                                <li>{{ item }}</li>
-                            {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p style="margin-bottom: 1rem;">{{ respuesta }}</p>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
+    <div class="info-grid">
+        <div class="info-card">
+            <h4>Información del Paciente</h4>
+            <div class="info-item">
+                <span class="info-label">Nombre:</span>
+                <span>{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Cédula:</span>
+                <span>{{ paciente.ci }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Fecha de Nacimiento:</span>
+                <span>{{ paciente.fecha_nacimiento }}</span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h4>Fechas</h4>
+            <div class="info-item">
+                <span class="info-label">Fecha de Creación:</span>
+                <span>{{ formulario.fecha }}</span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h4>Observaciones</h4>
+            <div class="info-item">
+                <span>{{ formulario.pregunta_respuesta['observaciones'] or 'Sin observaciones' }}</span>
             </div>
         </div>
     </div>
 
-    <!-- Botones de acción -->
-    <div class="text-center mt-4">
+    <div class="card" style="background-color: var(--color-white); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <button class="collapse-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#preguntasRespuestas" aria-expanded="false" aria-controls="preguntasRespuestas">
+            <h3 style="margin: 0;">Preguntas y Respuestas</h3>
+        </button>
+        <div class="collapse" id="preguntasRespuestas">
+            <div class="qa-columns">
+                {% for pregunta, key in [
+                    ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+                    ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+                    ("¿A qué es alérgico?", "alergias"),
+                    ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+                    ("¿Le falta aire después del ejercicio?", "falta_aire"),
+                    ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+                    ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+                    ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+                    ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+                    ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+                    ("¿Cuál?", "detalle_reacciones_medicamentos"),
+                    ("Acostumbra:", "costumbres[]"),
+                    ("¿Tiene algún problema con:", "problemas[]"),
+                    ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+                    ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+                    ("¿Cuántas semanas?", "semanas_embarazo"),
+                    ("Observaciones:", "observaciones"),
+                    ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+                    ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
+                ] %}
+                <div class="qa-item">
+                    <p class="info-label">{{ pregunta }}</p>
+                    {% set respuesta = formulario.pregunta_respuesta.get(key, "No especificado") %}
+                    {% if respuesta is string %}
+                        <p>{{ respuesta }}</p>
+                    {% elif respuesta is iterable and not respuesta is string %}
+                        <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 0;">
+                        {% for item in respuesta %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>{{ respuesta }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container">
         <a href="{{ url_for('main.listar_formulario', paciente_id=paciente_id) }}" 
-           class="btn" 
-           style="background-color: #cceae8; color: #539091; margin-right: 10px;">Volver</a>
+           class="btn btn-return">Volver</a>
         
         <a href="{{ url_for('main.exportar_formulario_pdf2', paciente_id=paciente.paciente_id, historial_id=formulario.historial_id) }}" 
-           class="btn" 
-           style="background-color: #68c3b7; color: #ffffff; margin-right: 10px;">Exportar PDF</a>
+           class="btn btn-cancel">Exportar PDF</a>
         
         <a href="{{ url_for('main.editar_formulario', historial_id=formulario.historial_id) }}" 
-           class="btn" 
-           style="background-color: #a8dcd9; color: #539091; margin-right: 10px;">Editar</a>
+           class="btn btn-edit">Editar</a>
         
         <form action="{{ url_for('main.eliminar_formulario', historial_id=formulario.historial_id) }}" 
               method="POST" 
               style="display:inline;">
             <button type="submit" 
-                    class="btn" 
-                    style="background-color: #539091; color: #ffffff;"
+                    class="btn btn-delete"
                     onclick="return confirm('¿Está seguro de que desea eliminar este formulario médico?')">
                 Eliminar
             </button>

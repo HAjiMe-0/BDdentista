@@ -10,10 +10,22 @@
     --color-mint: #a8dcd9;
     --color-teal: #68c3b7;
     --color-dark-teal: #539091;
+    --background-image: url("/static/img/fondo_dental7.jpg");
 }
 
 body {
     background-color: var(--color-light-mint);
+    background-image: var(--background-image);
+}
+
+.btn-view {
+    background: linear-gradient(45deg, var(--color-teal), var(--color-mint));
+    border-radius: 12px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(104, 195, 183, 0.2);
+    color: var(--color-white);
+    text-decoration: none;
 }
 </style>
 <div class="container-fluid px-4 py-5">
@@ -93,10 +105,10 @@ body {
                         </div>
                         <div>
                             <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" 
-                                class="btn btn-sm btn-primary me-2">
+                                class="btn-view me-2">
                                 <i class="fas fa-plus me-2"></i>Nuevo Tratamiento
                             </a>
-                            <button class="btn btn-sm btn-outline-secondary" id="toggleTratamientos">
+                            <button class="btn-view" id="toggleTratamientos">
                                 Ver Finalizados
                             </button>
                         </div>
@@ -139,8 +151,8 @@ body {
                                     </td>
                                     <td class="text-end pe-4">
                                         <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
-                                            class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="fas fa-eye"></i>Ver
+                                            class="btn-view">
+                                            <i class="fas fa-eye"></i> Ver
                                         </a>
                                     </td>
                                 </tr>
@@ -192,8 +204,8 @@ body {
                                     </td>
                                     <td class="text-end pe-4">
                                         <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
-                                            class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="fas fa-eye"></i>Ver
+                                            class="btn-view">
+                                            <i class="fas fa-eye"></i> Ver
                                         </a>
                                     </td>
                                 </tr>
@@ -219,7 +231,7 @@ body {
                             <h2 class="h5 mb-0">Próximas Citas</h2>
                         </div>
                         <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
-                           class="btn btn-sm btn-primary">
+                           class="btn-view">
                             <i class="fas fa-plus me-2"></i>Nueva Cita
                         </a>
                     </div>
@@ -249,7 +261,7 @@ body {
                                     </td>
                                     <td class="text-end pe-4">
                                         <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" 
-                                            class="btn btn-sm btn-outline-primary me-2">
+                                            class="btn-view">
                                             <i class="bi bi-eye"></i> Ver
                                         </a>
                                     </td>
@@ -297,9 +309,10 @@ body {
                             {% else %}
                             <div class="text-center py-4">
                                 <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                                <p class="text
                                 <p class="text-muted mb-3">No hay formulario médico registrado</p>
                                 <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                                   class="btn btn-primary">
+                                   class="btn-view">
                                     <i class="fas fa-plus-circle me-2"></i>Crear Formulario
                                 </a>
                             </div>
@@ -307,18 +320,17 @@ body {
                         </div>
                         <div class="btn-group">
                             <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
-                                class="btn btn-sm btn-outline-primary">
+                                class="btn-view me-2">
                                 <i class="fas fa-download me-2"></i>Exportar PDF
                             </a>
                             
                             <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                                class="btn btn-sm btn-primary">
+                                class="btn-view me-2">
                                 <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
                             </a>
                             <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
-                                class="btn px-4 py-2" 
-                                    style="background-color: #68c3b7; color: #ffffff; border: none;">
-                                    Historial Formularios
+                                class="btn-view">
+                                Historial Formularios
                             </a>
                         </div>
                     </div>
@@ -342,6 +354,4 @@ body {
         }
     });
 </script>
-    </script>
 {% endblock %}
-
