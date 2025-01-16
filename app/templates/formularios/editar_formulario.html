@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+    }
+    body {
+        background-color: var(--color-light-mint);
+    }
+    .qa-columns {
+        column-count: 2;
+        column-gap: 2rem;
+        padding: 1rem;
+    }
+    .qa-item {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #a8dcd9;
+    }
+    @media (max-width: 768px) {
+        .qa-columns {
+            column-count: 1;
+        }
+    }
+</style>
+<div class="container py-4">
+    <h2 style="color: #539091; margin-bottom: 2rem;text-align: center;">Editar Formulario Médico</h2>
+
+    <form method="POST">
+        <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9; border-radius: 15px; margin-bottom: 2rem;">
+            <div class="card-body">
+                <h3 style="color: #539091; font-size: 1.3rem; margin-bottom: 1.5rem;">Preguntas y Respuestas:</h3>
+                <div class="qa-columns">
+                    {% for pregunta, key in [
+                        ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+                        ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+                        ("¿A qué es alérgico?", "alergias"),
+                        ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+                        ("¿Le falta aire después del ejercicio?", "falta_aire"),
+                        ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+                        ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+                        ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+                        ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+                        ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+                        ("¿Cuál?", "detalle_reacciones_medicamentos"),
+                        ("Acostumbra:", "costumbres[]"),
+                        ("¿Tiene algún problema con:", "problemas[]"),
+                        ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+                        ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+                        ("¿Cuántas semanas?", "semanas_embarazo"),
+                        ("Observaciones:", "observaciones"),
+                        ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+                        ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
+                    ] %}
+                    <div class="qa-item">
+                        <label style="color: #539091; font-weight: bold; margin-bottom: 0.5rem; display: block;">
+                            {{ pregunta }}
+                        </label>
+                        <input type="text" 
+                               name="{{ key }}" 
+                               value="{{ formulario.pregunta_respuesta.get(key, '') }}" 
+                               class="form-control"
+                               style="background-color: #cceae8; border: 1px solid #a8dcd9; padding: 8px; border-radius: 6px; width: 100%;">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="text-center mt-4">
+            <button type="submit" 
+                    class="btn" 
+                    style="background-color: #68c3b7; color: #ffffff; margin-right: 10px; padding: 8px 20px;">
+                Guardar Cambios
+            </button>
+            <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}" 
+               class="btn" 
+               style="background-color: #cceae8; color: #539091; padding: 8px 20px;">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

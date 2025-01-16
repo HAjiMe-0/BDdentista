@@ -4,7 +4,6 @@
 
 {% block content %}
 <style>
-
     :root {
     --color-white: #ffffff;
     --color-light-mint: #cceae8;
@@ -22,7 +21,7 @@ body {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ url_for('main.listar_pacientes') }}" class="text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.listar_pacientes') }}" class="text-decoration-none">Lista pacientes</a></li>
                 <li class="breadcrumb-item active">Detalle del Paciente</li>
             </ol>
         </nav>
@@ -33,7 +32,6 @@ body {
             <div class="row g-0">
                 <div class="col-auto p-4 border-end" style="background-color: var(--primary-color);">
                     <div class="rounded-circle bg-white p-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                        <!-- Cambié el icono a uno que parece más una persona -->
                         <i class="fas fa-child fa-3x text-primary"></i>
                     </div>
                 </div>
@@ -212,8 +210,6 @@ body {
                 </div>
             </div>
 
-
-
             <!-- Próximas Citas -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header border-0 bg-white pt-4 pb-3">
@@ -252,7 +248,8 @@ body {
                                         </span>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" class="btn btn-custom btn-sm rounded-pill">
+                                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" 
+                                            class="btn btn-sm btn-outline-primary me-2">
                                             <i class="bi bi-eye"></i> Ver
                                         </a>
                                     </td>
@@ -270,21 +267,20 @@ body {
                 </div>
             </div>
         </div>
-        
 
         <!-- Formulario Médico (Acordeón) -->
         <div class="col-lg-12 mt-4">
             <div class="accordion" id="formularioMedicoAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingFormulario">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                                data-bs-target="#collapseFormulario" aria-expanded="true" 
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapseFormulario" aria-expanded="false" 
                                 aria-controls="collapseFormulario">
                             Formulario Médico
                         </button>
                     </h2>
                     
-                    <div id="collapseFormulario" class="accordion-collapse collapse show" 
+                    <div id="collapseFormulario" class="accordion-collapse collapse" 
                          aria-labelledby="headingFormulario" data-bs-parent="#formularioMedicoAccordion">
                         <div class="accordion-body">
                             {% if formulario_medico %}
@@ -311,7 +307,7 @@ body {
                         </div>
                         <div class="btn-group">
                             <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
-                               class="btn btn-sm btn-outline-primary">
+                                class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-download me-2"></i>Exportar PDF
                             </a>
                             
@@ -319,16 +315,18 @@ body {
                                 class="btn btn-sm btn-primary">
                                 <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
                             </a>
+                            <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
+                                class="btn px-4 py-2" 
+                                    style="background-color: #68c3b7; color: #ffffff; border: none;">
+                                    Historial Formularios
+                            </a>
                         </div>
-                    
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
 <script>
     document.getElementById('toggleTratamientos').addEventListener('click', function() {
         var activos = document.getElementById('tratamientosActivos');
@@ -343,4 +341,7 @@ body {
             this.textContent = 'Ver Activos';
         }
     });
+</script>
     </script>
+{% endblock %}
+

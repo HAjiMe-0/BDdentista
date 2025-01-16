@@ -98,7 +98,7 @@ body {
 </style>
 
 <div class="container custom-container mt-5">
-    <h1 class="text-center page-title" style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; ">Formulario de Historial Clínico</h1>
+    <h1 class="text-center page-title" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ">Formulario de Historial Clínico</h1>
     <form id="formularioClinico" class="needs-validation" novalidate>
         <input type="hidden" id="paciente_id" value="{{ paciente.paciente_id }}">
 
@@ -110,48 +110,56 @@ body {
                     <label class="col-sm-4 col-form-label"><strong>Nombre completo:</strong></label>
                     <div class="col-sm-8">
                         <span id="nombre_completo"></span>
+                        <span>{{paciente.nombre}} {{paciente.paterno}} {{paciente.materno}}</span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Cédula de Identidad:</strong></label>
                     <div class="col-sm-8">
                         <span id="ci"></span>
+                        <span>{{paciente.ci}}</span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Fecha de nacimiento:</strong></label>
                     <div class="col-sm-8">
                         <span id="fecha_nacimiento"></span>
+                        <span>{{paciente.fecha_nacimiento}}</span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Estado civil:</strong></label>
                     <div class="col-sm-8">
                         <span id="estado_civil"></span>
+                        <span>{{paciente.estado_civil}}</span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Ocupación:</strong></label>
                     <div class="col-sm-8">
                         <span id="ocupacion"></span>
+                        <span>{{paciente.ocupacion}}</span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Dirección:</strong></label>
                     <div class="col-sm-8">
                         <span id="direccion"></span>
+                        <span>{{paciente.direccion}}</span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label"><strong>Teléfono fijo:</strong></label>
                     <div class="col-sm-8">
                         <span id="telefono"></span>
+                        <span>{{paciente.telefono}}</span>
                     </div>
                 </div>
                 <div class="row">
                     <label class="col-sm-4 col-form-label"><strong>Celular:</strong></label>
                     <div class="col-sm-8">
                         <span id="celular"></span>
+                        <span>{{paciente.celular}}</span>
                     </div>
                 </div>
             </div>
@@ -460,7 +468,7 @@ body {
         <!-- Botones -->
         <div class="d-flex justify-content-end gap-2">
             <button type="button" class="btn btn-custom-primary" onclick="guardarFormulario()">Guardar</button>
-            <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-secondary">Volver</a>
+            <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente_id) }}" class="btn btn-secondary">Volver</a>
         </div>
     </form>
 </div>

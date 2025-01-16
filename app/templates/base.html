@@ -97,85 +97,136 @@
             background-color: var(--background-color);
             color: var(--text-color);
         }
-    </style>
-</head>
 
-<body>
-    <!-- Barra de Navegación -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        /* Estilos Alerta */
+        .custom-alert {
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-success i {
+            color: #155724;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .alert-danger i {
+            color: #721c24;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-color: #bee5eb;
+        }
+        .alert-info i {
+            color: #0c5460;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+        }
+        .alert-warning i {
+            color: #856404;
+        }
+        </style>
+    </head>
+
+    <body>
+        <!-- Barra de Navegación -->
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
-                <i class="bi bi-tooth"></i>DentAPP 1.1
+            <i class="bi bi-tooth"></i>DentAPP 1.1
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
-                            <i class="bi bi-house-door"></i> Inicio
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
+                    <i class="bi bi-house-door"></i> Inicio
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'main.listar_pacientes' %}active{% endif %}" href="{{ url_for('main.listar_pacientes') }}">
+                    <i class="bi bi-person-lines-fill"></i> Pacientes
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'main.listar_citas' %}active{% endif %}" href="{{ url_for('main.listar_citas') }}">
+                    <i class="bi bi-calendar-check"></i> Citas
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'main.generar_informe_doctor' %}active{% endif %}" href="{{ url_for('main.generar_informe_doctor', doctor_id=session.get('doctor_id')) }}">
+                    <i class="bi bi-bar-chart"></i> Reportes
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link disabled">
+                    <i class="bi bi-gear"></i> Configuración <span class="badge badge-warning">Próximamente</span>
+                </a>
+                </li>
+                {% if session.get('doctor_id') %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i> Mi Perfil
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('main.detalle_doctor', doctor_id=session.get('doctor_id')) }}">
+                        Ver perfil
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.listar_pacientes' %}active{% endif %}" href="{{ url_for('main.listar_pacientes') }}">
-                            <i class="bi bi-person-lines-fill"></i> Pacientes
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="{{ url_for('main.cerrar_sesion') }}">
+                        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.listar_citas' %}active{% endif %}" href="{{ url_for('main.listar_citas') }}">
-                            <i class="bi bi-calendar-check"></i> Citas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.generar_informe_doctor' %}active{% endif %}" href="{{ url_for('main.generar_informe_doctor', doctor_id=session.get('doctor_id')) }}">
-                            <i class="bi bi-bar-chart"></i> Reportes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">
-                            <i class="bi bi-gear"></i> Configuración <span class="badge badge-warning">Próximamente</span>
-                        </a>
-                    </li>
-                    {% if session.get('doctor_id') %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> Mi Perfil
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ url_for('main.detalle_doctor', doctor_id=session.get('doctor_id')) }}">
-                                        Ver perfil
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="{{ url_for('main.cerrar_sesion') }}">
-                                        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    {% endif %}
-                </ul>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
             </div>
         </div>
-    </nav>
-    
-    <!-- Mensaje Flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
+        </nav>
+        
+        <!-- Mensaje Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="container mt-4">
-                {% for category, message in messages %}
-                    <div id="flashMessage" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
+            {% for category, message in messages %}
+                <div id="flashMessage" class="alert alert-{{ category }} alert-dismissible fade show custom-alert" role="alert">
+                {% if category == 'success' %}
+                    <i class="bi bi-check-circle-fill"></i>
+                {% elif category == 'danger' %}
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                {% elif category == 'info' %}
+                    <i class="bi bi-info-circle-fill"></i>
+                {% elif category == 'warning' %}
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                {% endif %}
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
             </div>
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
     <!-- Contenido Principal -->
     <div class="container-fluid">
@@ -199,16 +250,18 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <!-- Script de configuración -->
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    
     <script>
-        // Configuración para que el mensaje desaparezca automáticamente después de 5 segundos
+        // Configuración para que los mensajes flash desaparezcan automáticamente
         setTimeout(() => {
-            const flashMessage = document.getElementById('flashMessage');
-            if (flashMessage) {
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(flashMessage => {
                 const alert = bootstrap.Alert.getOrCreateInstance(flashMessage); // Obtén la instancia de Bootstrap Alert
                 alert.close(); // Cierra el mensaje
-            }
+            });
         }, 5000); // 5000 ms = 5 segundos
     </script>
+    
 </body>
 
 </html>

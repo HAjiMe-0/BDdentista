@@ -3,7 +3,19 @@
 {% block title %}Dashboard - Bienvenido{% endblock %}
 
 {% block content %}
-<div class="container py-5" style="background-color: #ffffff;">
+<style>
+    :root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+    }
+    body {
+    background-color: var(--color-light-mint);
+    }
+</style>
+<div class="container py-5" style="background-color:transparent;">
     <!-- Título -->
     <h1 class="text-center mb-4" style="color: #539091;">Perfil del Doctor</h1>
     

@@ -1,34 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
+    <style>
+        :root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+}
+
+body {
+    background-color: var(--color-light-mint);
+}
+    </style>
     <!-- templates/cita/detail_cita.html -->
     <div class="container mt-5">
-        <h3 class="mb-4">Detalle de la Cita</h3>
-        <div class="card">
-            <div class="card-body">
-                <p><strong>Paciente:</strong> {{ cita.paciente.nombre }} {{ cita.paciente.paterno }}</p>
-                <p><strong>Doctor:</strong> {{ cita.doctor.nombre }}</p>
-                <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
-                <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
-                <p><strong>Estado:</strong> {{ cita.estado }}</p>
+        <h3 class="mb-4" style="color: #539091;">Detalle de la Cita</h3>
+        <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9;">
+            <div class="card-body" style="background-color: #ffffff;">
+                <p><strong style="color: #539091;">Paciente:</strong> {{ cita.paciente.nombre }} {{ cita.paciente.paterno }}</p>
+                <p><strong style="color: #539091;">Doctor:</strong> {{ cita.doctor.nombre }}</p>
+                <p><strong style="color: #539091;">Fecha:</strong> {{ cita.fecha }}</p>
+                <p><strong style="color: #539091;">Motivo:</strong> {{ cita.motivo }}</p>
+                <p><strong style="color: #539091;">Estado:</strong> {{ cita.estado }}</p>
                 <div class="mt-4">
-                    <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="btn btn-warning">Editar Cita</a>
+                    <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="btn" style="background-color: #68c3b7; color: #ffffff; margin-right: 5px;">Editar Cita</a>
                     <form method="POST" action="{{ url_for('main.eliminar_citaPC', cita_id=cita.cita_id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Eliminar Cita</button>
+                        <button type="submit" class="btn" style="background-color: #539091; color: #ffffff; margin-right: 5px;">Eliminar Cita</button>
                     </form>
-                    <a href="{{ url_for('main.detalle_paciente', paciente_id=cita.paciente.paciente_id) }}" class="btn btn-primary">Ver Paciente</a>
+                    <a href="{{ url_for('main.detalle_paciente', paciente_id=cita.paciente.paciente_id) }}" class="btn" style="background-color: #68c3b7; color: #ffffff;">Ver Paciente</a>
                 </div>
-                <div class="mt-4"></div>
+                <div class="mt-4">
                     <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
                         <input type="hidden" name="estado" value="Completado">
-                        <button type="submit" class="btn btn-success">Marcar como Completado</button>
+                        <button type="submit" class="btn" style="background-color: #68c3b7; color: #ffffff; margin-right: 5px;">Marcar como Completado</button>
                     </form>
                     <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
                         <input type="hidden" name="estado" value="Cancelado">
-                        <button type="submit" class="btn btn-secondary">Marcar como Cancelado</button>
+                        <button type="submit" class="btn" style="background-color: #cceae8; color: #539091; margin-right: 5px;">Marcar como Cancelado</button>
                     </form>
                     <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
                         <input type="hidden" name="estado" value="Pendiente">
-                        <button type="submit" class="btn btn-info">Marcar como Pendiente</button>
+                        <button type="submit" class="btn" style="background-color: #a8dcd9; color: #539091; margin-right: 5px;">Marcar como Pendiente</button>
                     </form>
                 </div>
             </div>

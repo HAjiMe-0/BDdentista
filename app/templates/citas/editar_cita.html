@@ -1,27 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>Editar Cita</h2>
+<style>
+        :root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+}
+
+body {
+    background-color: var(--color-light-mint);
+}
+</style>
+    <h2 style="color: #539091; margin-bottom: 2rem;">Editar Cita</h2>
     <!-- templates/cita/edit_cita.html -->
-    <form method="POST">
-        <div class="form-group">
-            <label for="fecha">Nueva Fecha</label>
-            <input type="datetime-local" name="fecha" class="form-control" value="{{ cita.fecha }}" required>
+    <form method="POST" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="fecha" style="color: #539091; display: block; margin-bottom: 0.5rem;">Nueva Fecha</label>
+            <input type="datetime-local" name="fecha" class="form-control" value="{{ cita.fecha }}" required 
+                   style="background-color: #cceae8; border: 1px solid #a8dcd9; width: 100%; padding: 0.5rem;">
         </div>
         
-        <div class="form-group">
-            <label for="motivo">Motivo</label>
-            <textarea name="motivo" class="form-control" required>{{ cita.motivo }}</textarea>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="motivo" style="color: #539091; display: block; margin-bottom: 0.5rem;">Motivo</label>
+            <textarea name="motivo" class="form-control" required 
+                      style="background-color: #cceae8; border: 1px solid #a8dcd9; width: 100%; padding: 0.5rem; min-height: 100px;">{{ cita.motivo }}</textarea>
         </div>
 
-        <div class="form-group">
-            <label for="estado">Estado</label>
-            <select name="estado" class="form-control" required>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="estado" style="color: #539091; display: block; margin-bottom: 0.5rem;">Estado</label>
+            <select name="estado" class="form-control" required 
+                    style="background-color: #cceae8; border: 1px solid #a8dcd9; width: 100%; padding: 0.5rem;">
                 <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
                 <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
                 <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <button type="submit" class="btn" 
+                style="background-color: #68c3b7; color: #ffffff; padding: 0.5rem 2rem; border: none; border-radius: 4px;">
+            Guardar Cambios
+        </button>
     </form>
 {% endblock %}
