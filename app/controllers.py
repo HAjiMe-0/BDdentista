@@ -381,7 +381,8 @@ def obtener_citas(year, month):
                 "id": cita.cita_id,
                 "fecha": cita.fecha.strftime('%Y-%m-%d'),
                 "paciente": f"{cita.paciente.nombre} {cita.paciente.paterno}",
-                "motivo": cita.motivo
+                "motivo": cita.motivo,
+                "estado": cita.estado
             } for cita in citas
         ]
         return jsonify(citas_serializadas)
@@ -436,7 +437,7 @@ def crear_citaPC():
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     pacientes = Paciente.query.filter_by(doctor_id=session['doctor_id']).all()
-    return render_template('citas/cr    ear_cita.html', pacientes=pacientes)
+    return render_template('citas/crear_cita.html', pacientes=pacientes)
 
 # Ruta para eliminar una cita
 @main_bp.route('/delete_cita/<int:cita_id>', methods=['POST'])
