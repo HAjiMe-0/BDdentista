@@ -3,19 +3,32 @@
 {% block title %}Dashboard - Bienvenido {% endblock %}
 
 {% block content %}
+    <style>
+        :root {
+    --color-white: #ffffff;
+    --color-light-mint: #cceae8;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+}
+
+body {
+    background-color: var(--color-light-mint);
+}
+    </style>
     <div class="container mt-5">
-        <h1 class="text-center">Generar Informe para el Doctor {{ doctor.nombre }}</h1>
-        <form action="{{ url_for('main.generar_informe_doctor', doctor_id=doctor.doctor_id) }}" method="POST">
+        <h1 class="text-center" style="color: #539091;">Generar Informe para el Doctor {{ doctor.paterno }}</h1>
+        <form action="{{ url_for('main.generar_informe_doctor', doctor_id=doctor.doctor_id) }}" method="POST" style="background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div class="form-group mb-3">
-                <label for="periodo">Seleccionar Tipo de Informe</label>
-                <select name="periodo" id="periodo" class="form-control" required>
+                <label for="periodo" style="color: #539091;">Seleccionar Tipo de Informe</label>
+                <select name="periodo" id="periodo" class="form-control" required style="background-color: #cceae8; border: 1px solid #a8dcd9;">
                     <option value="mensual">Mensual</option>
                     <option value="anual">Anual</option>
                 </select>
             </div>
             <div id="mes-selector" class="form-group mb-3">
-                <label for="mes">Seleccionar Mes</label>
-                <select name="mes" id="mes" class="form-control">
+                <label for="mes" style="color: #539091;">Seleccionar Mes</label>
+                <select name="mes" id="mes" class="form-control" style="background-color: #cceae8; border: 1px solid #a8dcd9;">
                     <option value="1">Enero</option>
                     <option value="2">Febrero</option>
                     <option value="3">Marzo</option>
@@ -31,10 +44,10 @@
                 </select>
             </div>
             <div class="form-group mb-3">
-                <label for="año">Seleccionar Año</label>
-                <input type="number" name="año" id="año" class="form-control" min="2000" max="{{ datetime.utcnow().year }}" value="{{ datetime.utcnow().year }}" required>
+                <label for="año" style="color: #539091;">Seleccionar Año</label>
+                <input type="number" name="año" id="año" class="form-control" min="2000" max="{{ datetime.utcnow().year }}" value="{{ datetime.utcnow().year }}" required style="background-color: #cceae8; border: 1px solid #a8dcd9;">
             </div>
-            <button type="submit" class="btn btn-primary">Generar Informe</button>
+            <button type="submit" class="btn" style="background-color: #68c3b7; color: #ffffff;">Generar Informe</button>
         </form>
     </div>
     <script>

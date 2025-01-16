@@ -3,11 +3,125 @@
 {% block title %}Dashboard - Editar Doctor{% endblock %}
 
 {% block content %}
+<style>
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+    }
+
+    body {
+        background-color: var(--color-light-mint);
+    }
+
+    .form-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .form-container .form-group label {
+        color: var(--color-dark-teal);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-container .form-group input {
+        border: 1px solid var(--color-mint);
+        padding: 0.8rem;
+        border-radius: 0.375rem;
+        background-color: var(--color-white);
+        transition: all 0.3s ease;
+    }
+
+    .form-container .form-group input:focus {
+        outline: none;
+        border-color: var(--color-teal);
+        box-shadow: 0 0 5px var(--color-teal);
+    }
+
+    .form-container .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-mint);
+        background-color: var(--color-light-mint);
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        background-color: var(--color-teal);
+        color: var(--color-white);
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-actions button:hover,
+    .form-actions a:hover {
+        background-color: var(--color-dark-teal);
+    }
+
+    h1 {
+        color: var(--color-dark-teal);
+    }
+</style>
+
 <div class="container py-5">
-    <h1 class="text-center mb-4" style="color: #539091;">Editar Perfil del Doctor</h1>
+    <h1 class="text-center mb-4">Editar Perfil del Doctor</h1>
     
     <!-- Formulario -->
     <form method="post" class="shadow-sm p-4 rounded" style="background-color: #ffffff; border: 1px solid #a8dcd9;">
+        <div class="form-container">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" value="{{ doctor.nombre }}" required>
+            </div>
+            <div class="form-group">
+                <label for="paterno">Apellido Paterno:</label>
+                <input type="text" id="paterno" name="paterno" class="form-control" value="{{ doctor.paterno or '' }}">
+            </div>
+            <div class="form-group">
+                <label for="materno">Apellido Materno:</label>
+                <input type="text" id="materno" name="materno" class="form-control" value="{{ doctor.materno or '' }}">
+            </div>
+            <div class="form-group">
+                <label for="ci">Cédula de Identidad (CI):</label>
+                <input type="number" id="ci" name="ci" class="form-control" value="{{ doctor.ci }}" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ doctor.fecha_nacimiento }}" required>
+            </div>
+            <div class="form-group">
+                <label for="especialidad">Especialidad:</label>
+                <input type="text" id="especialidad" name="especialidad" class="form-control" value="{{ doctor.especialidad }}">
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" class="form-control" value="{{ doctor.telefono }}">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ doctor.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="contraseña">Contraseña:</label>
+                <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Nueva contraseña (opcional)">
+            </div>
         <div class="mb-4">
             <label for="nombre" class="form-label" style="color: #539091; font-weight: 600;">Nombre:</label>
             <input type="text" 
@@ -123,22 +237,10 @@
             });
         </script>
         
-        <div class="text-center" style="background-color: #cceae8; padding: 1.5rem; margin: 1rem -1.5rem -1rem -1.5rem; border-radius: 0 0 0.375rem 0.375rem;">
-            <button type="submit" 
-                    class="btn px-4 py-2 me-2" 
-                    style="background-color: #68c3b7; color: #ffffff; border: none;">
-                Actualizar
-            </button>
-            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}" 
-               class="btn px-4 py-2" 
-               style="background-color: #539091; color: #ffffff; border: none;">
-                Volver
-            </a>
-            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}" 
-               class="btn px-4 py-2" 
-               style="background-color: #539091; color: #ffffff; border: none;">
-                Cancelar
-            </a>
+        <div class="form-actions">
+            <button type="submit">Actualizar</button>
+            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}">Volver</a>
+            <a href="{{ url_for('main.detalle_doctor', doctor_id=doctor.doctor_id) }}">Cancelar</a>
         </div>
     </form>
 </div>

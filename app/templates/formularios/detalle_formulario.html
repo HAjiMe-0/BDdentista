@@ -1,76 +1,141 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Detalles del Formulario Médico</h2>
+<style>
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+    }
+    body {
+        background-color: var(--color-light-mint);
+    }
+    .qa-columns {
+        column-count: 2;
+        column-gap: 2rem;
+        padding: 1rem;
+    }
+    .qa-item {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+    .collapse-btn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        border: none;
+        background: none;
+        padding: 0;
+        color: #539091;
+    }
+    .collapse-btn::after {
+        content: '▼';
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+    .collapse-btn.collapsed::after {
+        content: '▶';
+    }
+    @media (max-width: 768px) {
+        .qa-columns {
+            column-count: 1;
+        }
+    }
+</style>
+<div class="container py-4">
+    <h2 style="color: #539091; margin-bottom: 2rem;text-align: center;">Detalles del Formulario Médico</h2>
 
-<!-- Información del paciente -->
-<h3>Paciente:</h3>
-<p><strong>Nombre:</strong> {{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</p>
-<p><strong>Cédula:</strong> {{ paciente.ci }}</p>
-<p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
+    <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9; border-radius: 15px; margin-bottom: 2rem;">
+        <!-- Información del paciente -->
+        <div class="card-body">
+            <h3 style="color: #539091; font-size: 1.3rem;">Paciente:</h3>
+            <p><strong style="color: #539091;">Nombre:</strong> {{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</p>
+            <p><strong style="color: #539091;">Cédula:</strong> {{ paciente.ci }}</p>
+            <p><strong style="color: #539091;">Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
 
-<h3>Formulario Médico:</h3>
-<p><strong>Fecha de Creación:</strong> {{ formulario.fecha }}</p>
-<p><strong>Observaciones:</strong> {{ formulario.pregunta_respuesta['observaciones'] }}</p>
+            <h3 style="color: #539091; font-size: 1.3rem; margin-top: 1.5rem;">Formulario Médico:</h3>
+            <p><strong style="color: #539091;">Fecha de Creación:</strong> {{ formulario.fecha }}</p>
+            <p><strong style="color: #539091;">Observaciones:</strong> {{ formulario.pregunta_respuesta['observaciones'] }}</p>
+        </div>
+    </div>
 
-<h3>Preguntas y Respuestas:</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>PREGUNTA</th>
-            <th>RESPUESTA</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pregunta, key in [
-            ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
-            ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
-            ("¿A qué es alérgico?", "alergias"),
-            ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
-            ("¿Le falta aire después del ejercicio?", "falta_aire"),
-            ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
-            ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
-            ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
-            ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
-            ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
-            ("¿Cuál?", "detalle_reacciones_medicamentos"),
-            ("Acostumbra:", "costumbres[]"),
-            ("¿Tiene algún problema con:", "problemas[]"),
-            ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
-            ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
-            ("¿Cuántas semanas?", "semanas_embarazo"),
-            ("Observaciones:", "observaciones"),
-            ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
-            ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
-        ] %}
-        <tr>
-            <td>{{ pregunta }}</td>
-            <td>
-                {% set respuesta = formulario.pregunta_respuesta.get(key, "No especificado") %}
-                {% if respuesta is string %}
-                    {{ respuesta }}
-                {% elif respuesta is iterable and not respuesta is string %}
-                    <ul>
-                    {% for item in respuesta %}
-                        <li>{{ item }}</li>
+    <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9; border-radius: 15px; margin-bottom: 2rem;">
+        <div class="card-body">
+            <button class="collapse-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#preguntasRespuestas" aria-expanded="false" aria-controls="preguntasRespuestas">
+                <h3 style="color: #539091; font-size: 1.3rem; margin-bottom: 0;">Preguntas y Respuestas:</h3>
+            </button>
+            <div class="collapse" id="preguntasRespuestas">
+                <div class="qa-columns mt-3">
+                    {% for pregunta, key in [
+                        ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+                        ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+                        ("¿A qué es alérgico?", "alergias"),
+                        ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+                        ("¿Le falta aire después del ejercicio?", "falta_aire"),
+                        ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+                        ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+                        ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+                        ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+                        ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+                        ("¿Cuál?", "detalle_reacciones_medicamentos"),
+                        ("Acostumbra:", "costumbres[]"),
+                        ("¿Tiene algún problema con:", "problemas[]"),
+                        ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+                        ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+                        ("¿Cuántas semanas?", "semanas_embarazo"),
+                        ("Observaciones:", "observaciones"),
+                        ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+                        ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
+                    ] %}
+                    <div class="qa-item">
+                        <p style="color: #539091; font-weight: bold; margin-bottom: 0.5rem;">{{ pregunta }}</p>
+                        {% set respuesta = formulario.pregunta_respuesta.get(key, "No especificado") %}
+                        {% if respuesta is string %}
+                            <p style="margin-bottom: 1rem;">{{ respuesta }}</p>
+                        {% elif respuesta is iterable and not respuesta is string %}
+                            <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 1rem;">
+                            {% for item in respuesta %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="margin-bottom: 1rem;">{{ respuesta }}</p>
+                        {% endif %}
+                    </div>
                     {% endfor %}
-                    </ul>
-                {% else %}
-                    {{ respuesta }}
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- Botón para exportar el formulario a PDF -->
-<a href="{{ url_for('main.listar_formulario', paciente_id=paciente_id) }}" class="btn btn-secondary">Volver</a>
-<a href="{{ url_for('main.exportar_formulario_pdf2', paciente_id=paciente.paciente_id, historial_id=formulario.historial_id) }}" class="btn btn-primary">Exportar PDF</a>
-<!-- Botón Editar -->
-<a href="{{ url_for('main.editar_formulario', historial_id=formulario.historial_id) }}" class="btn btn-warning">Editar</a>
-<!-- Botón Eliminar -->
-<form action="{{ url_for('main.eliminar_formulario', historial_id=formulario.historial_id) }}" method="POST" style="display:inline;">
-    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de que desea eliminar este formulario médico?')">Eliminar</button>
-</form>
+    <!-- Botones de acción -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.listar_formulario', paciente_id=paciente_id) }}" 
+           class="btn" 
+           style="background-color: #cceae8; color: #539091; margin-right: 10px;">Volver</a>
+        
+        <a href="{{ url_for('main.exportar_formulario_pdf2', paciente_id=paciente.paciente_id, historial_id=formulario.historial_id) }}" 
+           class="btn" 
+           style="background-color: #68c3b7; color: #ffffff; margin-right: 10px;">Exportar PDF</a>
+        
+        <a href="{{ url_for('main.editar_formulario', historial_id=formulario.historial_id) }}" 
+           class="btn" 
+           style="background-color: #a8dcd9; color: #539091; margin-right: 10px;">Editar</a>
+        
+        <form action="{{ url_for('main.eliminar_formulario', historial_id=formulario.historial_id) }}" 
+              method="POST" 
+              style="display:inline;">
+            <button type="submit" 
+                    class="btn" 
+                    style="background-color: #539091; color: #ffffff;"
+                    onclick="return confirm('¿Está seguro de que desea eliminar este formulario médico?')">
+                Eliminar
+            </button>
+        </form>
+    </div>
+</div>
 {% endblock %}

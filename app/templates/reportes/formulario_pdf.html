@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Historial Clínico</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <style>
-        /* General Styles */
+        /* General styles from generar_reportes.html */
         :root {
             --background-color: #cceae8;
             --primary-color: #539091;
@@ -36,7 +37,36 @@
             font-size: 1.5rem;
         }
 
-        /* Table Styles */
+        /* Form styles from generar_reportes.html */
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            background-color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        /* Table styles from your provided HTML */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -69,7 +99,7 @@
             background-color: rgba(168, 220, 217, 0.2);
         }
 
-        /* List Styles */
+        /* List styles from your provided HTML */
         ul {
             background-color: #ffffff;
             border-radius: 8px;
@@ -133,31 +163,7 @@
             <td>Cédula de Identidad</td>
             <td>{{ paciente.ci }}</td>
         </tr>
-        <tr>
-            <td>Fecha de Nacimiento</td>
-            <td>{{ paciente.fecha_nacimiento }}</td>
-        </tr>
-        <tr>
-            <td>Estado Civil</td>
-            <td>{{ paciente.estado_civil }}</td>
-        </tr>
-        <tr>
-            <td>Ocupación</td>
-            <td>{{ paciente.ocupacion }}</td>
-        </tr>
-        <tr>
-            <td>Dirección</td>
-            <td>{{ paciente.direccion }}</td>
-        </tr>
-        <tr>
-            <td>Teléfono</td>
-            <td>{{ paciente.telefono }}</td>
-        </tr>
-        <tr>
-            <td>Celular</td>
-            <td>{{ paciente.celular }}</td>
-        </tr>
-    </table>
+        </table>
 
     <h3>Antecedentes Médicos</h3>
     <ul>

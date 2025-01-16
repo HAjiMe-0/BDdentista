@@ -520,29 +520,58 @@ def crear_tratamiento(paciente_id):
 @login_requerido
 def editar_tratamiento(tratamiento_id):
     tratamiento = Tratamiento.query.get_or_404(tratamiento_id)
+    
+    # Verificar permisos del doctor
     if tratamiento.paciente.doctor_id != session['doctor_id']:
         flash('No tienes permiso para editar este tratamiento.', 'error')
         return redirect(url_for('main.ver_tratamiento'))
-
+    
     if request.method == 'POST':
-        tratamiento.nombre = request.form['nombre']
-        tratamiento.costo_total = float(request.form['costo_total'])
-        tratamiento.monto_pagado = float(request.form.get('monto_pagado', tratamiento.monto_pagado))
-        tratamiento.saldo = tratamiento.costo_total - tratamiento.monto_pagado
-        tratamiento.fecha_inicio = datetime.strptime(request.form['fecha_inicio'], '%Y-%m-%d')
-        tratamiento.fecha_fin = request.form.get('fecha_fin')
-        if tratamiento.fecha_fin:
-            tratamiento.fecha_fin = datetime.strptime(tratamiento.fecha_fin, '%Y-%m-%d')
-        tratamiento.estado = request.form['estado']
-        tratamiento.pieza_dental = request.form.get('pieza_dental')
-        tratamiento.diagnostico = request.form.get('diagnostico')
-        tratamiento.tratamiento_descripcion = request.form.get('tratamiento_descripcion')
-        tratamiento.observaciones = request.form.get('observaciones')
-        db.session.commit()
-        flash('Tratamiento actualizado exitosamente.', 'success')
-        return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
-
+        try:
+            # Actualizar campos básicos
+            tratamiento.nombre = request.form['nombre'].strip()
+            tratamiento.costo_total = float(request.form['costo_total'])
+            tratamiento.monto_pagado = float(request.form.get('monto_pagado', tratamiento.monto_pagado))
+            tratamiento.saldo = tratamiento.costo_total - tratamiento.monto_pagado
+            
+            # Validar y actualizar fechas
+            fecha_inicio = request.form.get('fecha_inicio')
+            fecha_fin = request.form.get('fecha_fin')
+            
+            if fecha_inicio:
+                tratamiento.fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+            else:
+                tratamiento.fecha_inicio = None
+            
+            if fecha_fin:
+                tratamiento.fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+            else:
+                tratamiento.fecha_fin = None
+            
+            # Actualizar otros campos
+            tratamiento.estado = request.form['estado'].strip()
+            tratamiento.pieza_dental = request.form.get('pieza_dental', '').strip()
+            tratamiento.diagnostico = request.form.get('diagnostico', '').strip()
+            tratamiento.tratamiento_descripcion = request.form.get('tratamiento_descripcion', '').strip()
+            tratamiento.observaciones = request.form.get('observaciones', '').strip()
+            
+            # Guardar cambios en la base de datos
+            db.session.commit()
+            flash('Tratamiento actualizado exitosamente.', 'success')
+            return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento_id))
+        
+        except ValueError as e:
+            # Manejar errores en las conversiones de datos
+            db.session.rollback()
+            flash(f'Error en los datos ingresados: {str(e)}', 'error')
+        except Exception as e:
+            # Manejar otros errores
+            db.session.rollback()
+            flash(f'Ocurrió un error al actualizar el tratamiento: {str(e)}', 'error')
+    
+    # Renderizar la plantilla con los datos del tratamiento
     return render_template('tratamientos/editar_tratamiento.html', tratamiento=tratamiento)
+
 
 # Eliminar tratamiento
 @main_bp.route('/tratamiento/<int:tratamiento_id>/eliminar', methods=['POST'])
@@ -882,13 +911,40 @@ def generar_informe_doctor(doctor_id):
         elements = []
         styles = getSampleStyleSheet()
 
+        # Estilos personalizados
+        title_style = styles['Title']
+        title_style.fontSize = 20
+        title_style.leading = 24
+        title_style.textColor = colors.black
+        
+        heading_style = styles['Heading2']
+        heading_style.textColor = colors.black
+        heading_style.fontSize = 14
+        heading_style.leading = 18
+
+        normal_style = styles['BodyText']
+        normal_style.fontSize = 10
+        normal_style.leading = 14
+        
+        table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.grey)
+        ])
+        
         # Encabezado
-        title = Paragraph(f"Reporte General - Dr. {doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}", styles['Title'])
+        title = Paragraph(f"Reporte General - Dr. {doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}", title_style)
         elements.append(title)
         elements.append(Spacer(1, 12))
+        elements.append(Paragraph("<hr/>", styles['BodyText']))
 
         # Información del doctor
         doctor_info = [
+            ["Datos:"],
             ["Nombre:", f"{doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}"],
             ["Especialidad:", doctor.especialidad or "No especificada"],
             ["CI:", doctor.ci],
@@ -897,11 +953,13 @@ def generar_informe_doctor(doctor_id):
             ["Total de pacientes asignados:", len(pacientes)],
             ["Ingresos totales generados:", f"${ingresos_facturados:.2f}"]
         ]
-        elements.append(Table(doctor_info, colWidths=[150, 350]))
+        doctor_info_table = Table(doctor_info, colWidths=[150, 350])
+        doctor_info_table.setStyle(table_style)
+        elements.append(doctor_info_table)
         elements.append(Spacer(1, 12))
 
         # Lista de pacientes
-        elements.append(Paragraph("Lista de Pacientes", styles['Heading2']))
+        elements.append(Paragraph("Lista de Pacientes", heading_style))
         pacientes_data = [[
             "Nombre Completo", "CI", "Fecha de Nacimiento", "Teléfono/Celular"
         ]] + [
@@ -912,11 +970,13 @@ def generar_informe_doctor(doctor_id):
                 p.telefono or p.celular or "No especificado"
             ] for p in pacientes
         ]
-        elements.append(Table(pacientes_data, colWidths=[200, 100, 150, 150]))
+        pacientes_table = Table(pacientes_data, colWidths=[200, 100, 150, 150])
+        pacientes_table.setStyle(table_style)
+        elements.append(pacientes_table)
         elements.append(Spacer(1, 12))
 
         # Resumen de tratamientos
-        elements.append(Paragraph("Resumen de Tratamientos", styles['Heading2']))
+        elements.append(Paragraph("Resumen de Tratamientos", heading_style))
         tratamientos_info = [
             ["Total Tratamientos:", nro_tratamientos],
             ["En Progreso:", tratamientos_en_progreso],
@@ -926,27 +986,33 @@ def generar_informe_doctor(doctor_id):
             ["Monto Pagado:", f"${ingresos_pagados:.2f}"],
             ["Saldo Pendiente:", f"${saldo_pendiente:.2f}"]
         ]
-        elements.append(Table(tratamientos_info, colWidths=[200, 150]))
+        tratamientos_table = Table(tratamientos_info, colWidths=[200, 150])
+        tratamientos_table.setStyle(table_style)
+        elements.append(tratamientos_table)
         elements.append(Spacer(1, 12))
 
         # Resumen de citas
-        elements.append(Paragraph("Resumen de Citas Médicas", styles['Heading2']))
+        elements.append(Paragraph("Resumen de Citas Médicas", heading_style))
         citas_info = [
             ["Total de Citas:", len(citas)],
             ["Pendientes:", nro_citas_pendientes],
             ["Completadas:", nro_citas_completadas],
             ["Canceladas:", nro_citas_canceladas],
         ]
-        elements.append(Table(citas_info, colWidths=[200, 150]))
+        citas_table = Table(citas_info, colWidths=[200, 150])
+        citas_table.setStyle(table_style)
+        elements.append(citas_table)
         elements.append(Spacer(1, 12))
 
         # Estadísticas generales
-        elements.append(Paragraph("Estadísticas Generales", styles['Heading2']))
+        elements.append(Paragraph("Estadísticas Generales", heading_style))
         estadisticas_info = [
             ["Promedio de pacientes atendidos/mes:", f"{nro_pacientes:.2f}"],
             ["Ingresos promedio por tratamiento:", f"${ingresos_facturados / nro_tratamientos:.2f}" if nro_tratamientos else "$0.00"]
         ]
-        elements.append(Table(estadisticas_info, colWidths=[250, 200]))
+        estadisticas_table = Table(estadisticas_info, colWidths=[250, 200])
+        estadisticas_table.setStyle(table_style)
+        elements.append(estadisticas_table)
         elements.append(Spacer(1, 12))
 
         # Construcción del PDF
