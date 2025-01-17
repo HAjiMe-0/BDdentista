@@ -278,16 +278,94 @@ body {
                                 
                                 <div class="mb-3">
                                     <label for="enfermedades" class="form-label">2. ¿Ha tenido alguna de las siguientes enfermedades?</label>
-                                    <!-- First half of checkboxes -->
+                                    
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Fiebre reumática" id="fiebreReumatica">
                                         <label class="form-check-label" for="fiebreReumatica">Fiebre reumática</label>
                                     </div>
-                                    <!-- Add first half of disease checkboxes here -->
-                                </div>
+                                    <!-- Checkbox para Cardiopatía -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Cardiopatía" id="cardiopatia">
+                                        <label class="form-check-label" for="cardiopatia">Sufre de alguna cardiopatía</label>
+                                    </div>
                                 
+                                    <!-- Detalle Cardiopatía -->
+                                    <div class="mb-3" id="detalleCardiopatiaDiv" style="display: none;">
+                                        <label for="detalle_cardiopatia" class="form-label">Detalle Cardiopatía (opcional):</label>
+                                        <textarea class="form-control" id="detalle_cardiopatia" name="detalle_cardiopatia"></textarea>
+                                    </div>
+                                
+                                    <!-- Checkbox para Enfermedades Respiratorias -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades Respiratorias" id="enfermedadesRespiratorias">
+                                        <label class="form-check-label" for="enfermedadesRespiratorias">Enfermedades respiratorias</label>
+                                    </div>
+                                
+                                    <!-- Detalle Enfermedades Respiratorias -->
+                                    <div class="mb-3" id="detalleRespiratoriasDiv" style="display: none;">
+                                        <label for="detalle_respiratorias" class="form-label">Detalle Enfermedades Respiratorias (opcional):</label>
+                                        <textarea class="form-control" id="detalle_respiratorias" name="detalle_respiratorias"></textarea>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades Renales" id="enfermedadesrenales">
+                                        <label class="form-check-label" for="enfermedadesrenales">Enfermedades Renales</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Asma" id="asma">
+                                        <label class="form-check-label" for="asma">Asma</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Mareos" id="mareos">
+                                        <label class="form-check-label" for="mareos">Mareos</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Diabetes" id="diabetes">
+                                        <label class="form-check-label" for="diabetes">Diabetes</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Artritis" id="artritis">
+                                        <label class="form-check-label" for="artritis">Artritis</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Úlcera gástrica" id="ulceraGastrica">
+                                        <label class="form-check-label" for="ulceraGastrica">Úlcera gástrica</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Tuberculosis" id="tuberculosis">
+                                        <label class="form-check-label" for="tuberculosis">Tuberculosis</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades venéreas" id="enfermedadesVeneras">
+                                        <label class="form-check-label" for="enfermedadesVeneras">Enfermedades venéreas</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Presión alta" id="presionAlta">
+                                        <label class="form-check-label" for="presionAlta">Presión alta</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Presión baja" id="presionBaja">
+                                        <label class="form-check-label" for="presionBaja">Presión baja</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Hepatitis" id="hepatitis">
+                                        <label class="form-check-label" for="hepatitis">Hepatitis</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Sinusitis" id="sinusitis">
+                                        <label class="form-check-label" for="sinusitis">Sinusitis</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="VIH(SIDA)" id="vihSida">
+                                        <label class="form-check-label" for="vihSida">VIH(SIDA)</label>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3" style="margin-bottom: 0;">
+                                    <label class="form-label" for="alergias">3. ¿Tiene alergias? Especifique:</label>
+                                    <input class="form-control" type="text" name="alergias" id="alergias" placeholder="Describa sus alergias" style="margin-top: 0;">
+                                </div>
                                 <div class="mb-3">
-                                    <label class="form-label">3. ¿Siente dolor en el tórax después de hacer ejercicio?</label>
+                                    <label class="form-label">4. ¿Siente dolor en el tórax después de hacer ejercicio?</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="dolor_torax" value="Sí" id="dolorToraxSi">
                                         <label class="form-check-label" for="dolorToraxSi">Sí</label>
@@ -299,7 +377,7 @@ body {
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label">4. ¿Le falta aire después del ejercicio?</label>
+                                    <label class="form-label">5. ¿Le falta aire después del ejercicio?</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="falta_aire" value="Sí" id="faltaAireSi">
                                         <label class="form-check-label" for="faltaAireSi">Sí</label>
@@ -311,7 +389,7 @@ body {
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label">5. ¿Ha sangrado de forma anormal después de una extracción?</label>
+                                    <label class="form-label">6. ¿Ha sangrado de forma anormal después de una extracción?</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="sangrado_anormal" value="Sí" id="sangradoAnormalSi">
                                         <label class="form-check-label" for="sangradoAnormalSi">Sí</label>
@@ -322,7 +400,7 @@ body {
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">6. ¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?</label>
+                                    <label class="form-label">7. ¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="problema_odontologico" value="Sí" id="problemaOdontologicoSi">
                                         <label class="form-check-label" for="problemaOdontologicoSi">Sí</label>
@@ -333,7 +411,7 @@ body {
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">7. ¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?</label>
+                                    <label class="form-label">8. ¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?</label>
                                     <div class="form-check">
                                     <input class="form-check-input" type="radio" name="problema_no_odontologico" value="Sí" id="problemaNoOdontologicoSi">
                                     <label class="form-check-label" for="problemaNoOdontologicoSi">Sí</label>
@@ -344,7 +422,7 @@ body {
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">8. ¿Está tomando algún tipo de medicamento o fármaco?</label>
+                                    <label class="form-label">9. ¿Está tomando algún tipo de medicamento o fármaco?</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="medicamento" value="Sí" id="medicamentoSi">
                                         <label class="form-check-label" for="medicamentoSi">Sí</label>
@@ -358,11 +436,8 @@ body {
                             
                             <!-- Column 2 -->
                             <div>
-                        
-                            
-                        
                         <div class="mb-3">
-                            <label class="form-label">9. ¿Ha tenido reacciones adversas a medicamentos?</label>
+                            <label class="form-label">10. ¿Ha tenido reacciones adversas a medicamentos?</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reacciones_medicamentos" value="Sí" id="reaccionesMedicamentosSi">
                                 <label class="form-check-label" for="reaccionesMedicamentosSi">Sí</label>
@@ -376,7 +451,7 @@ body {
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">10. Acostumbra:</label>
+                            <label class="form-label">11. Acostumbra:</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="costumbres[]" value="Fumar" id="costumbreFumar">
                                 <label class="form-check-label" for="costumbreFumar">Fumar</label>
@@ -408,7 +483,7 @@ body {
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">11. ¿Tiene algún problema con:</label>
+                            <label class="form-label">12. ¿Tiene algún problema con:</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="problemas[]" value="Riñones" id="problemasRinones">
                                 <label class="form-check-label" for="problemasRinones">Riñones</label>
@@ -432,7 +507,7 @@ body {
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">12. ¿Ud. ha tenido en los últimos 14 días:</label>
+                            <label class="form-label">13. ¿Ud. ha tenido en los últimos 14 días:</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Problemas respiratorios" id="ultimos14Respiratorios">
                                 <label class="form-check-label" for="ultimos14Respiratorios">Problemas respiratorios</label>
@@ -453,7 +528,7 @@ body {
                                 <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Viajes a lugares de riesgo COVID-19" id="ultimos14Viajes">
                                 <label class="form-check-label" for="ultimos14Viajes">Viajes a lugares de riesgo COVID-19</label>
                             </div>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -553,5 +628,27 @@ body {
         }
     }
 </script>
+<script>
+    // Mostrar detalles de Cardiopatía cuando el checkbox sea marcado
+    document.getElementById("cardiopatia").addEventListener("change", function() {
+        var detalleCardiopatiaDiv = document.getElementById("detalleCardiopatiaDiv");
+        if (this.checked) {
+            detalleCardiopatiaDiv.style.display = "block";
+        } else {
+            detalleCardiopatiaDiv.style.display = "none";
+        }
+    });
+
+    // Mostrar detalles de Enfermedades Respiratorias cuando el checkbox sea marcado
+    document.getElementById("enfermedadesRespiratorias").addEventListener("change", function() {
+        var detalleRespiratoriasDiv = document.getElementById("detalleRespiratoriasDiv");
+        if (this.checked) {
+            detalleRespiratoriasDiv.style.display = "block";
+        } else {
+            detalleRespiratoriasDiv.style.display = "none";
+        }
+    });
+</script>
+
 
 {% endblock %}

@@ -733,9 +733,6 @@ def generar_pdf_tratamiento(tratamiento_id):
 
 #Gestion de Formularios Medicos
 
-from pytz import timezone  # Importa la librería pytz para trabajar con zonas horarias
-from datetime import datetime
-
 # Crear formulario médico
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])
 @login_requerido
@@ -1080,6 +1077,8 @@ def listar_formulario(paciente_id):
     formularios = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).all()
     return render_template('formularios/listar_formulario.html', paciente=paciente, formularios=formularios,)
 
+from datetime import datetime
+
 # Exportar formulario médico a PDF - Nueva versión
 @main_bp.route('/paciente/<int:paciente_id>/formulario/<int:historial_id>/pdf', methods=['GET'])
 @login_requerido
@@ -1109,6 +1108,13 @@ def exportar_formulario_pdf2(paciente_id, historial_id):
     <b>Fecha de Nacimiento:</b> {paciente.fecha_nacimiento}
     """
     elements.append(Paragraph(paciente_info, styles['Normal']))
+
+    # Fecha de creación del formulario
+    fecha_creacion = formulario.fecha.strftime('%Y-%m-%d %H:%M:%S')
+    fecha_creacion_info = f"""
+    <b>Fecha de Creación del Formulario:</b> {fecha_creacion}
+    """
+    elements.append(Paragraph(fecha_creacion_info, styles['Normal']))
     elements.append(Spacer(1, 12))
 
     # Ordenar y estructurar datos del formulario
@@ -1161,7 +1167,15 @@ def exportar_formulario_pdf2(paciente_id, historial_id):
     doc.build(elements)
     buffer.seek(0)
 
-    return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}_Historial_{historial_id}.pdf', mimetype='application/pdf')
+    # Obtener la fecha actual en formato YYYY-MM-DD
+    fecha_actual = datetime.now().strftime('%Y-%m-%d')
+
+    # Formatear el nombre del archivo con la fecha de creación del formulario
+    nombre_archivo = f"Formulario_Medico_{paciente.nombre}_{paciente.paterno}_{fecha_actual}.pdf"
+
+    # Devolver el archivo con el nuevo nombre
+    return send_file(buffer, as_attachment=True, download_name=nombre_archivo, mimetype='application/pdf')
+
 
 # Controlador para eliminar el formulario médico
 @main_bp.route('/formulario/<int:historial_id>/eliminar', methods=['POST'])

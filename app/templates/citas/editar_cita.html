@@ -135,11 +135,6 @@
                 <textarea name="motivo" id="motivo" class="form-control" required>{{ cita.motivo }}</textarea>
             </div>
 
-            <div class="form-group">
-                <label class="form-label fw-bold" for="observaciones">Observaciones</label>
-                <textarea name="observaciones" id="observaciones" class="form-control">{{ cita.observaciones if cita.observaciones else '' }}</textarea>
-            </div>
-
             <div class="button-container">
                 <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" class="btn btn-back">Volver</a>
                 <button type="submit" class="btn btn-save">Guardar Cambios</button>
