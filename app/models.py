@@ -69,5 +69,5 @@ class Cita(db.Model):
 class FormularioMedico(db.Model):
     historial_id = db.Column(db.Integer, primary_key=True)
     paciente_id = db.Column(db.Integer, db.ForeignKey('paciente.paciente_id'), nullable=False)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     pregunta_respuesta = db.Column(db.JSON, nullable=False)

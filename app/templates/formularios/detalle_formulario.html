@@ -176,9 +176,9 @@
             <h4>Fechas</h4>
             <div class="info-item">
                 <span class="info-label">Fecha de Creación:</span>
-                <span>{{ formulario.fecha }}</span>
+                <span>{{ formulario.fecha.strftime('%Y-%m-%d %H:%M:%S') }}</span>
             </div>
-        </div>
+        </div>        
 
         <div class="info-card">
             <h4>Observaciones</h4>

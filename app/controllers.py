@@ -733,27 +733,42 @@ def generar_pdf_tratamiento(tratamiento_id):
 
 #Gestion de Formularios Medicos
 
+from pytz import timezone  # Importa la librería pytz para trabajar con zonas horarias
+from datetime import datetime
+
 # Crear formulario médico
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])
 @login_requerido
 def crear_formulario_medico(paciente_id):
-                paciente = Paciente.query.get_or_404(paciente_id)
-                if paciente.doctor_id != session['doctor_id']:
-                    flash('No tienes permiso para crear un formulario médico para este paciente.', 'error')
-                    return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+    paciente = Paciente.query.get_or_404(paciente_id)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para crear un formulario médico para este paciente.', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
-                if request.method == 'POST':
-                    pregunta_respuesta = {key: value for key, value in request.form.items() if key.startswith('pregunta_')}
-                    pregunta_respuesta_json = json.dumps(pregunta_respuesta)
-                    nuevo_formulario = FormularioMedico(paciente_id=paciente_id, pregunta_respuesta=pregunta_respuesta_json, fecha=datetime.now())
-                    db.session.add(nuevo_formulario)
-                    db.session.commit()
-                    flash('Formulario médico creado exitosamente.', 'success')
-                    return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+    if request.method == 'POST':
+        # Obtener las preguntas y respuestas del formulario
+        pregunta_respuesta = {key: value for key, value in request.form.items() if key.startswith('pregunta_')}
+        pregunta_respuesta_json = json.dumps(pregunta_respuesta)
 
-                return render_template('formularios/crear_formulario.html', paciente=paciente, paciente_id=paciente_id)
+        # Obtener la fecha y hora actual con la zona horaria de Bolivia
+        bolivia_tz = timezone('America/La_Paz')
+        fecha_actual = datetime.now(bolivia_tz)
 
-#Guardar historial medico
+        # Crear el nuevo formulario médico con la fecha ajustada
+        nuevo_formulario = FormularioMedico(
+            paciente_id=paciente_id,
+            pregunta_respuesta=pregunta_respuesta_json,
+            fecha=fecha_actual
+        )
+        db.session.add(nuevo_formulario)
+        db.session.commit()
+        flash('Formulario médico creado exitosamente.', 'success')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+    return render_template('formularios/crear_formulario.html', paciente=paciente, paciente_id=paciente_id)
+
+
+# Guardar historial medico
 @main_bp.route('/guardar_historial', methods=['POST'])
 @login_requerido
 def guardar_historial():
@@ -775,10 +790,15 @@ def guardar_historial():
             flash('Paciente no encontrado', 'error')
             return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
 
+        # Obtener la fecha y hora actual con la zona horaria de Bolivia
+        bolivia_tz = timezone('America/La_Paz')
+        fecha_actual = datetime.now(bolivia_tz)
+
         # Crear el historial médico
         nuevo_historial = FormularioMedico(
             paciente_id=paciente_id,
-            pregunta_respuesta=pregunta_respuesta
+            pregunta_respuesta=pregunta_respuesta,
+            fecha=fecha_actual  # Asegúrate de pasar la fecha ajustada
         )
         db.session.add(nuevo_historial)
         db.session.commit()
