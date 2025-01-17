@@ -360,9 +360,21 @@ body {
                                     </div>
                                     </div>
                                 </div>
-                                <div class="mb-3" style="margin-bottom: 0;">
-                                    <label class="form-label" for="alergias">3. ¿Tiene alergias? Especifique:</label>
-                                    <input class="form-control" type="text" name="alergias" id="alergias" placeholder="Describa sus alergias" style="margin-top: 0;">
+                                <div class="mb-3">
+                                    <label class="form-label">3. ¿Tiene alergias?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="alergias_opcion" value="Sí" id="alergiasSi" onclick="mostrarEspecificarAlergias(true)">
+                                        <label class="form-check-label" for="alergiasSi">Sí</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="alergias_opcion" value="No" id="alergiasNo" onclick="mostrarEspecificarAlergias(false)">
+                                        <label class="form-check-label" for="alergiasNo">No</label>
+                                    </div>
+                                    <!-- Campo de texto solo si selecciona "Sí" -->
+                                    <div id="campoEspecificarAlergias" style="display: none; margin-top: 10px;">
+                                        <label class="form-label">Por favor, especifique las alergias:</label>
+                                        <input class="form-control" type="text" name="alergias" id="alergias" placeholder="Describa sus alergias">
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">4. ¿Siente dolor en el tórax después de hacer ejercicio?</label>
@@ -648,6 +660,17 @@ body {
             detalleRespiratoriasDiv.style.display = "none";
         }
     });
+</script>
+<script>
+    function mostrarEspecificarAlergias(mostrar) {
+        const campo = document.getElementById('campoEspecificarAlergias');
+        if (mostrar) {
+            campo.style.display = 'block';
+        } else {
+            campo.style.display = 'none';
+            document.getElementById('alergias').value = ''; // Limpiar el campo si se selecciona "No"
+        }
+    }
 </script>
 
 
