@@ -55,6 +55,10 @@ body {
                 <div class="col-auto p-4 text-end">
                     <span class="badge bg-success mb-2">Paciente Activo</span>
                     <p class="small text-muted mb-0">Último control: 15/03/2024</p>
+                    <!-- Botón Eliminar -->
+                    <form action="{{ url_for('main.eliminar_paciente', paciente_id=paciente.paciente_id) }}" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este paciente? Esta acción no se puede deshacer.')">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
                 </div>
             </div>
         </div>

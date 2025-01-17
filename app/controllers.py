@@ -25,6 +25,7 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet ,ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
+from pytz import timezone
 
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
@@ -162,6 +163,7 @@ def editar_doctor(doctor_id):
 
 
 # Gestión de pacientes
+#Listar Pacientes
 @main_bp.route('/pacientes')
 @login_requerido
 def listar_pacientes():
@@ -191,7 +193,6 @@ def listar_pacientes():
     )
 
 #Buscar Paciente
-
 @main_bp.route('/pacientes/buscar', methods=['GET', 'POST'])
 @login_requerido
 def buscar_pacientes():
@@ -243,8 +244,8 @@ def crear_paciente():
         flash('Paciente creado exitosamente.', 'success')
         return redirect(url_for('main.listar_pacientes'))
     return render_template('pacientes/crear_paciente.html')
-#Detalle del Paciente
 
+#Detalle del Paciente
 @main_bp.route('/paciente/<int:paciente_id>')
 @login_requerido
 def detalle_paciente(paciente_id):
@@ -284,6 +285,7 @@ def editar_paciente(paciente_id):
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
     return render_template('pacientes/editar_paciente.html', paciente=paciente)
+
 #Eliminar Paciente
 @main_bp.route('/paciente/<int:paciente_id>/eliminar', methods=['POST'])
 @login_requerido
@@ -297,6 +299,7 @@ def eliminar_paciente(paciente_id):
     db.session.commit()
     flash('Paciente eliminado exitosamente.', 'success')
     return redirect(url_for('main.listar_pacientes'))
+
 
 # Gestión de citas
 #Listar Citas
@@ -352,9 +355,10 @@ def editar_cita(cita_id):
         cita.estado = request.form['estado']
         db.session.commit()
         flash('Cita actualizada exitosamente.', 'success')
-        return redirect(url_for('main.listar_citas'))
+        return redirect(url_for('main.detalle_paciente', paciente_id=cita.paciente_id))  
 
     return render_template('citas/editar_cita.html', cita=cita)
+
 #Eliminar Citas
 @main_bp.route('/cita/<int:cita_id>/eliminar', methods=['POST'])
 @login_requerido
