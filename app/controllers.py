@@ -165,6 +165,8 @@ def editar_doctor(doctor_id):
 @main_bp.route('/pacientes')
 @login_requerido
 def listar_pacientes():
+
+
     doctor_id = session.get('doctor_id')  # Usar `get` para evitar errores si no existe la clave
     if not doctor_id:
         # Manejo del caso en que `doctor_id` no está en la sesión
@@ -374,7 +376,8 @@ def obtener_citas(year, month):
     try:
         doctor_id = session.get('doctor_id')
         if not doctor_id:
-            return jsonify({"error": "No autorizado"}), 401
+            flash('No tienes permiso para ver estas citas.', 'error')
+            return redirect(url_for('main.dashboard'))
 
         citas = Cita.query.filter(
             Cita.doctor_id == doctor_id,
@@ -393,7 +396,9 @@ def obtener_citas(year, month):
         ]
         return jsonify(citas_serializadas)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        flash(f'Error al obtener las citas: {str(e)}', 'error')
+
+    
 # Ruta para crear una cita (Para paciente espacifoco)
 @main_bp.route('/paciente/<int:paciente_id>/cita/crear', methods=['GET', 'POST'])
 @login_requerido

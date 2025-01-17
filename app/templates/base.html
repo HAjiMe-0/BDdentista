@@ -20,6 +20,7 @@
 
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/dental_tooth_icon_149293.ico') }}" type="image/x-icon">
 
     <style>
         :root {
@@ -147,7 +148,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
-            <i class="bi bi-tooth"></i>DentAPP 1.1
+            <i class="bi bi-tooth" style="font-size: 1.5rem;"></i> <span style="font-size: 1.25rem;">DentAPP 1.1</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -155,7 +156,7 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
                     <i class="bi bi-house-door"></i> Inicio
                 </a>
@@ -175,11 +176,7 @@
                     <i class="bi bi-bar-chart"></i> Reportes
                 </a>
                 </li>
-                <li class="nav-item">
-                <a class="nav-link disabled">
-                    <i class="bi bi-gear"></i> Configuración <span class="badge badge-warning">Próximamente</span>
-                </a>
-                </li>
+                
                 {% if session.get('doctor_id') %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
