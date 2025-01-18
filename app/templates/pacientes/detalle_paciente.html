@@ -190,32 +190,13 @@ body {
                 </div>
                 <div class="col-auto p-4 text-end">
                     <span class="badge bg-success mb-2">Paciente Activo</span>
-                    <p class="small text-muted mb-0">Último control: 15/03/2024</p>
+                    <br>
                     <!-- Botón Editar -->
                     <a href="{{ url_for('main.editar_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-warning mb-2">Editar</a>
                     <!-- Botón Eliminar -->
                     <form action="{{ url_for('main.eliminar_paciente', paciente_id=paciente.paciente_id) }}" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este paciente? Esta acción no se puede deshacer.')">
                     <button type="submit" class="btn-view">Eliminar</button>
                 </form>
-
-                <!-- Botones de acción -->
-                <div class="col-auto p-4 d-flex flex-column align-items-end">
-                    <span class="badge bg-success mb-3">Paciente Activo</span>
-                    
-                    <a href="{{ url_for('main.editar_paciente', paciente_id=paciente.paciente_id) }}" 
-                       class="btn-edit mb-2">
-                        <i class="fas fa-edit me-2"></i>Editar
-                    </a>
-
-                    <form action="{{ url_for('main.eliminar_paciente', paciente_id=paciente.paciente_id) }}" 
-                          method="POST" 
-                          onsubmit="return confirm('¿Está seguro de que desea eliminar este paciente? Esta acción no se puede deshacer.');"
-                          style="width: 100%;">
-                        <button type="submit" class="btn-delete">
-                            <i class="fas fa-trash-alt me-2"></i>Eliminar
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
@@ -380,157 +361,8 @@ body {
                     </div>
                     {% endif %}
                 </div>
-            <div class="card-header border-0 bg-white pt-4 pb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-clipboard-list text-primary me-2"></i>
-                    <h2 class="h5 mb-0">Tratamientos</h2>
-                </div>
-                <div>
-                    <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" 
-                    class="btn-view me-2">
-                    <i class="fas fa-plus me-2"></i>Nuevo Tratamiento
-                    </a>
-                    <button class="btn-view" id="toggleTratamientos">
-                    Ver Finalizados
-                    </button>
-                </div>
-                </div>
-            </div>
-            <div class="card-body" id="tratamientosActivos">
-                {% if tratamientos_activos %}
-                <div class="table-responsive">
-                <table class="table align-middle table-hover">
-                    <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4">Tratamiento</th>
-                        <th>Estado</th>
-                        <th>Monto</th>
-                        <th class="text-end pe-4">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for tratamiento in tratamientos_activos %}
-                    <tr>
-                        <td class="ps-4">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-tooth text-primary me-3"></i>
-                            <div>
-                            <strong class="d-block">{{ tratamiento.nombre }}</strong>
-                            <small class="text-muted">Inicio: {{ tratamiento.fecha_inicio }}</small>
-                            </div>
-                        </div>
-                        </td>
-                        <td>
-                        <span class="badge {% if tratamiento.estado == 'Completado' %}bg-success{% elif tratamiento.estado == 'En Progreso' %}bg-warning{% else %}bg-secondary{% endif %}">
-                            {{ tratamiento.estado }}
-                        </span>
-                        </td>
-                        <td>
-                        <div class="d-flex flex-column">
-                            <strong>Bs{{ tratamiento.costo_total }}</strong>
-                            <small class="text-success">Pagado: Bs{{ tratamiento.monto_pagado }}</small>
-                        </div>
-                        </td>
-                        <td class="text-end pe-4">
-                        <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
-                            class="btn-view">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                </div>
-                {% else %}
-                <div class="text-center py-5">
-                <h3 class="h5 text-muted">No hay tratamientos registrados</h3>
-                <p class="text-muted mb-0">Comienza agregando un nuevo tratamiento</p>
-                </div>
-                {% endif %}
-                <!-- Paginación Tratamientos Activos -->
-                <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% for page_num in pagination_tratamientos_activos.iter_pages() %}
-                    {% if page_num %}
-                    <li class="page-item {% if page_num == pagination_tratamientos_activos.page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id, page_tratamientos=page_num) }}">{{ page_num }}</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">…</span></li>
-                    {% endif %}
-                    {% endfor %}
-                </ul>
-                </nav>
-            </div>
-            <div class="card-body d-none" id="tratamientosFinalizados">
-                {% if tratamientos_finalizados %}
-                <div class="table-responsive">
-                <table class="table align-middle table-hover">
-                    <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4">Tratamiento</th>
-                        <th>Estado</th>
-                        <th>Monto</th>
-                        <th class="text-end pe-4">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for tratamiento in tratamientos_finalizados %}
-                    <tr>
-                        <td class="ps-4">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-tooth text-primary me-3"></i>
-                            <div>
-                            <strong class="d-block">{{ tratamiento.nombre }}</strong>
-                            <small class="text-muted">Inicio: {{ tratamiento.fecha_inicio }}</small>
-                            </div>
-                        </div>
-                        </td>
-                        <td>
-                        <span class="badge bg-success">
-                            {{ tratamiento.estado }}
-                        </span>
-                        </td>
-                        <td>
-                        <div class="d-flex flex-column">
-                            <strong>Bs{{ tratamiento.costo_total }}</strong>
-                            <small class="text-success">Pagado: Bs{{ tratamiento.monto_pagado }}</small>
-                        </div>
-                        </td>
-                        <td class="text-end pe-4">
-                        <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
-                            class="btn-view">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                </div>
-                {% else %}
-                <div class="text-center py-5">
-                <h3 class="h5 text-muted">No hay tratamientos registrados</h3>
-                <p class="text-muted mb-0">Comienza agregando un nuevo tratamiento</p>
-                </div>
-                {% endif %}
-                <!-- Paginación Tratamientos Finalizados -->
-                <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% for page_num in pagination_tratamientos_finalizados.iter_pages() %}
-                    {% if page_num %}
-                    <li class="page-item {% if page_num == pagination_tratamientos_finalizados.page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id, page_tratamientos=page_num) }}">{{ page_num }}</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">…</span></li>
-                    {% endif %}
-                    {% endfor %}
-                </ul>
-                </nav>
-            </div>
+            
+            
             </div>
 
             <!-- Próximas Citas -->
@@ -588,73 +420,7 @@ body {
                     </div>
                     {% endif %}
                 </div>
-            <div class="card-header border-0 bg-white pt-4 pb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-calendar-alt text-primary me-2"></i>
-                    <h2 class="h5 mb-0">Próximas Citas</h2>
-                </div>
-                <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
-                   class="btn-view">
-                    <i class="fas fa-plus me-2"></i>Nueva Cita
-                </a>
-                </div>
-            </div>
-            <div class="card-body">
-                {% if citas %}
-                <div class="table-responsive">
-                <table class="table align-middle table-hover">
-                    <tbody>
-                    {% for cita in citas %}
-                    <tr>
-                        <td class="ps-4">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-light p-3 me-3">
-                            <i class="fas fa-calendar-day text-primary"></i>
-                            </div>
-                            <div>
-                            <strong class="d-block">{{ cita.motivo }}</strong>
-                            <small class="text-muted">{{ cita.fecha }}</small>
-                            </div>
-                        </div>
-                        </td>
-                        <td class="text-end pe-4">
-                        <span class="badge {% if cita.estado == 'Completada' %}bg-success{% elif cita.estado == 'Pendiente' %}bg-warning{% else %}bg-secondary{% endif %}">
-                            {{ cita.estado }}
-                        </span>
-                        </td>
-                        <td class="text-end pe-4">
-                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" 
-                            class="btn-view">
-                            <i class="bi bi-eye"></i> Ver
-                        </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                </div>
-                {% else %}
-                <div class="text-center py-4">
-                <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No hay citas programadas</p>
-                </div>
-                {% endif %}
-                <!-- Paginación Citas -->
-                <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% for page_num in pagination_citas.iter_pages() %}
-                    {% if page_num %}
-                    <li class="page-item {% if page_num == pagination_citas.page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id, page_citas=page_num) }}">{{ page_num }}</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">…</span></li>
-                    {% endif %}
-                    {% endfor %}
-                </ul>
-                </nav>
-            </div>
+            
             </div>
         </div>
 
@@ -735,86 +501,6 @@ body {
                         <br>
                     </div>
                 </div>
-            <div class="accordion-item">
-            <h2 class="accordion-header" id="headingFormulario">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#collapseFormulario" aria-expanded="false" 
-                aria-controls="collapseFormulario">
-                Formulario Médico
-            </button>
-            </h2>
-            <div class="accordion-body">
-            <div class="d-flex justify-content-end mb-3">
-                <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
-                   class="btn-view me-2">
-                <i class="fas fa-download me-2"></i>Exportar PDF
-                </a>
-                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                   class="btn-view me-2">
-                <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
-                </a>
-                <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
-                   class="btn-view">
-                Historial Formularios
-                </a>
-            </div>
-            <div id="collapseFormulario" class="accordion-collapse collapse" 
-                 aria-labelledby="headingFormulario" data-bs-parent="#formularioMedicoAccordion">
-                <div class="accordion-body">
-                {% if formulario_medico %}
-                <div class="qa-columns">
-                {% for pregunta, key in [
-                ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
-                ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
-                ("¿A qué es alérgico?", "alergias"),
-                ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
-                ("¿Le falta aire después del ejercicio?", "falta_aire"),
-                ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
-                ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
-                ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
-                ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
-                ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
-                ("¿Cuál?", "detalle_reacciones_medicamentos"),
-                ("Acostumbra:", "costumbres[]"),
-                ("¿Tiene algún problema con:", "problemas[]"),
-                ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
-                ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
-                ("¿Cuántas semanas?", "semanas_embarazo"),
-                ("Observaciones:", "observaciones"),
-                ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
-                ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
-                ] %}
-                <div class="qa-item">
-                <p class="info-label">{{ pregunta }}</p>
-                {% set respuesta = formulario_medico.pregunta_respuesta.get(key, "No especificado") %}
-                {% if respuesta is string %}
-                <p>{{ respuesta }}</p>
-                {% elif respuesta is iterable and not respuesta is string %}
-                <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 0;">
-                    {% for item in respuesta %}
-                    <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p>{{ respuesta }}</p>
-                {% endif %}
-                </div>
-                {% endfor %}
-                </div>
-                {% else %}
-                <div class="text-center py-4">
-                <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
-                <p class="text-muted mb-3">No hay formulario médico registrado</p>
-                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                   class="btn-view">
-                <i class="fas fa-plus-circle me-2"></i>Crear Formulario
-                </a>
-                </div>
-                {% endif %}
-                </div>
-            </div>
-            </div>
-            </div>
             </div>
         </div>
         
