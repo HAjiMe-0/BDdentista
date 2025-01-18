@@ -5,6 +5,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
     :root {
+        
         --color-white: #ffffff;
         --color-light-mint: #cceae8;
         --color-mint: #a8dcd9;
@@ -141,23 +142,23 @@
                 <div class="form-group">
                     <label for="fecha" class="form-label">Fecha y Hora</label>
                     <input type="datetime-local" 
-                           name="fecha" 
-                           class="form-control" 
-                           required>
+                        name="fecha" 
+                        class="form-control" 
+                        required>
                 </div>
                 
                 <div class="form-group">
                     <label for="motivo" class="form-label">Motivo de la Cita</label>
                     <textarea name="motivo" 
-                          class="form-control" 
-                          rows="3" 
-                          required
-                          placeholder="Describe el motivo de la cita..."></textarea>
+                        class="form-control" 
+                        rows="3" 
+                        required
+                        placeholder="Describe el motivo de la cita..."></textarea>
                 </div>
                 
                 <div class="button-container">
                     <button type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-secondary">Volver</button>
+                    <a href="{{ url_for('main.listar_citas') }}" class="btn btn-secondary">Volver</a>
                 </div>
             </form>
         </div>

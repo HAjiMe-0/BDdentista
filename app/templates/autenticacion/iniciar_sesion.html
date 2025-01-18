@@ -25,6 +25,31 @@
             backdrop-filter: blur(5px);
             background-image: var(--background-image);
         }
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .page-wrapper {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            top: -25%;
+            left: -25%;
+            animation: pulse 15s infinite;
+        }
 
         .login-container {
             min-height: 100vh;
@@ -104,10 +129,7 @@
             margin-bottom: 0;
         }
 
-        .input-group {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
+        
 
         .form-control {
             border-radius: 12px;
@@ -146,7 +168,6 @@
             color: #94a3b8;
             pointer-events: none;
             transition: all 0.3s ease;
-            background: transparent;
         }
 
         .form-control:focus ~ .floating-label,
@@ -378,13 +399,13 @@
             {% endwith %}            
 
             <form method="POST" action="{{ url_for('main.iniciar_sesion') }}">
-                <div class="input-group">
+                <div class="input-wrapper form-grid-full">
                     <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
                     <i class="fas fa-envelope input-icon"></i>
                     <label class="floating-label">Correo electrónico</label>
                 </div>
 
-                <div class="input-group">
+                <div class="input-wrapper form-grid-full">
                     <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder=" " required>
                     <i class="fas fa-lock input-icon"></i>
                     <label class="floating-label">Contraseña</label>

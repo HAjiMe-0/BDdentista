@@ -156,9 +156,9 @@
                 <div class="qa-item">
                     <label class="form-label">{{ pregunta }}</label>
                     <input type="text" 
-                           name="{{ key }}" 
-                           value="{{ formulario.pregunta_respuesta.get(key, '') }}" 
-                           class="form-control">
+                            name="{{ key }}" 
+                            value="{{ formulario.pregunta_respuesta.get(key, '') }}" 
+                            class="form-control">
                 </div>
                 {% endfor %}
             </div>
@@ -169,7 +169,7 @@
                 Guardar Cambios
             </button>
             <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}" 
-               class="btn btn-secondary">
+            class="btn btn-secondary">
                 Cancelar
             </a>
         </div>

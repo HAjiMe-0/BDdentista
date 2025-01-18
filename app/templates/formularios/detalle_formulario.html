@@ -237,17 +237,17 @@
 
     <div class="button-container">
         <a href="{{ url_for('main.listar_formulario', paciente_id=paciente_id) }}" 
-           class="btn btn-return">Volver</a>
+            class="btn btn-return">Volver</a>
         
         <a href="{{ url_for('main.exportar_formulario_pdf2', paciente_id=paciente.paciente_id, historial_id=formulario.historial_id) }}" 
-           class="btn btn-cancel">Exportar PDF</a>
+            class="btn btn-cancel">Exportar PDF</a>
         
         <a href="{{ url_for('main.editar_formulario', historial_id=formulario.historial_id) }}" 
-           class="btn btn-edit">Editar</a>
+            class="btn btn-edit">Editar</a>
         
         <form action="{{ url_for('main.eliminar_formulario', historial_id=formulario.historial_id) }}" 
-              method="POST" 
-              style="display:inline;">
+                method="POST" 
+                style="display:inline;">
             <button type="submit" 
                     class="btn btn-delete"
                     onclick="return confirm('¿Está seguro de que desea eliminar este formulario médico?')">

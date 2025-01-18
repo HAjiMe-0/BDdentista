@@ -32,15 +32,17 @@ body {
 .custom-header {
     background: var(--color-dark-teal);
     color: var(--color-white);
-    padding: 1.5rem;
+    padding: 2rem; /* Aumenta el relleno para más espacio */
     text-align: center;
-    font-size: 1.75rem;
+    font-size: 2rem; /* Aumenta el tamaño de la fuente */
     font-weight: 500;
     letter-spacing: 0.5px;
     margin: 0;
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
+    word-wrap: break-word; /* Asegura que el texto largo se ajuste */
 }
+
 
 .custom-content {
     padding: 2rem;
@@ -167,7 +169,7 @@ body {
                                 <td>{{ formulario.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</td>
                                 <td>
                                     <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}" 
-                                       class="btn btn-view btn-sm">
+                                        class="btn btn-view btn-sm">
                                         <i class="fas fa-eye me-1"></i> Ver
                                     </a>
                                 </td>
@@ -186,11 +188,11 @@ body {
 
             <div class="text-center mt-4">
                 <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                   class="btn btn-add">
+                    class="btn btn-add">
                     <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
                 </a>
                 <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" 
-                   class="btn btn-back">
+                    class="btn btn-back">
                     Volver al detalle del paciente
                 </a>
             </div>
