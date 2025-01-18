@@ -4,58 +4,339 @@
 
 {% block content %}
 <style>
-    :root {
+:root {
     --color-white: #ffffff;
-    --color-light-mint: #cceae8;
+    --color-light-mint: #f0f9f8;
     --color-mint: #a8dcd9;
     --color-teal: #68c3b7;
     --color-dark-teal: #539091;
+    --color-gray-100: #f8f9fa;
+    --color-gray-200: #e9ecef;
+    --color-gray-300: #dee2e6;
+    --color-gray-400: #ced4da;
+    --color-gray-500: #adb5bd;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --transition-base: all 0.3s ease;
+    --background-image: url("/static/img/fondo_dental7.jpg");
 }
 
 body {
     background-color: var(--color-light-mint);
+    background-image: linear-gradient(135deg, rgba(168, 220, 217, 0.1) 0%, rgba(104, 195, 183, 0.1) 100%);
+    color: #2d3436;
+    background-image: var(--background-image);
+}
+
+.profile-header {
+    background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-dark-teal) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 24px rgba(83, 144, 145, 0.15);
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.profile-avatar {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.profile-avatar i {
+    font-size: 3rem;
+    color: var(--color-teal);
+}
+
+.profile-info {
+    flex-grow: 1;
+    color: white;
+}
+
+.profile-name {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.profile-id {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.profile-status {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: white;
+    backdrop-filter: blur(4px);
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.btn-profile {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-edit {
+    background: #ffd43b;
+    color: #000;
+}
+
+.btn-edit:hover {
+    background: #fcc419;
+    transform: translateY(-2px);
+}
+
+.btn-delete {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    backdrop-filter: blur(4px);
+}
+
+.btn-delete:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Card Styles */
+.card {
+    border-radius: 16px;
+    transition: var(--transition-base);
+    border: none;
+    background: var(--color-white);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--color-gray-200);
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Buttons */
+.btn-view {
+    background: linear-gradient(135deg, var(--color-teal), var(--color-dark-teal));
+    border-radius: 12px;
+    padding: 0.625rem 1.5rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-white);
+    text-decoration: none;
+    border: none;
+    transition: var(--transition-base);
+}
+
+.btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: var(--color-white);
+}
+
+.btn-view.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+/* Tables */
+.table {
+    margin-bottom: 0;
+}
+
+.table > :not(caption) > * > * {
+    padding: 1rem 1.5rem;
+}
+
+.table tbody tr {
+    transition: var(--transition-base);
+}
+
+.table tbody tr:hover {
+    background-color: var(--color-gray-100);
+}
+
+/* Medical Form Section */
+.accordion-button {
+    padding: 1.25rem 1.5rem;
+    background: var(--color-gray-100);
+    font-weight: 500;
+}
+
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(135deg, var(--color-teal), var(--color-dark-teal));
+    color: var(--color-white);
+}
+
+.qa-item {
+    background: var(--color-mint);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+}
+
+.qa-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Info Cards */
+.bg-light {
+    background-color: var(--color-gray-100) !important;
+}
+
+.info-card {
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: var(--color-white);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--color-gray-400);
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: var(--color-gray-500);
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-actions {
+        margin-left: 0;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .profile-avatar {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.profile-avatar svg {
+    width: 60%;
+    height: 60%;
+    stroke: var(--color-teal); /* Changed from black to teal color */
+    stroke-width: 2;
+    fill: none;
+}
+    
+    .profile-name {
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table > :not(caption) > * > * {
+        padding: 0.75rem 1rem;
+    }
 }
 </style>
+
 <div class="container-fluid px-4 py-5">
-    <!-- Encabezado con breadcrumb -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ url_for('main.listar_pacientes') }}" class="text-decoration-none">Lista pacientes</a></li>
-                <li class="breadcrumb-item active">Detalle del Paciente</li>
-            </ol>
-        </nav>
-    </div>
-    <!-- Tarjeta Principal del Paciente -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-0">
-            <div class="row g-0">
-                <div class="col-auto p-4 border-end" style="background-color: var(--primary-color);">
-                    <div class="rounded-circle bg-white p-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                        <i class="fas fa-child fa-3x text-primary"></i>
-                    </div>
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-container">
+            <div class="profile-avatar">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="stroke: #68c3b7; fill: none; stroke-width: 1;">
+                    <circle cx="12" cy="7" r="5" style="stroke: #68c3b7; fill: none;"/>
+                    <path d="M3 21a9 9 0 0 1 18 0" style="stroke: #68c3b7; fill: none;"/>
+                </svg>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</h1>
+                <div class="profile-id">CI: {{ paciente.ci }}</div>
+                <div class="profile-status">
+                    <i class="fas fa-check-circle me-2"></i>Paciente Activo
                 </div>
-                
-                <div class="col p-4">
-                    <h1 class="h3 mb-2">{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</h1>
-                    <p class="text-muted mb-0">CI: {{ paciente.ci }}</p>
-                </div>
-                <div class="col-auto p-4 text-end">
-                    <span class="badge bg-success mb-2">Paciente Activo</span>
-                    <p class="small text-muted mb-0">Último control: 15/03/2024</p>
-                </div>
+            </div>
+            <div class="profile-actions">
+                <a href="{{ url_for('main.editar_paciente', paciente_id=paciente.paciente_id) }}" 
+                   class="btn-profile btn-edit">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </a>
+                <form action="{{ url_for('main.eliminar_paciente', paciente_id=paciente.paciente_id) }}" 
+                      method="POST" 
+                      style="display: inline;"
+                      onsubmit="return confirm('¿Está seguro de que desea eliminar este paciente? Esta acción no se puede deshacer.')">
+                    <button type="submit" class="btn-profile btn-delete">
+                        <i class="fas fa-trash-alt me-2"></i>Eliminar
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Sección Principal -->
+    <!-- Main Content -->
     <div class="row g-4">
-        <!-- Información Personal -->
+        <!-- Personal Information -->
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header border-0 bg-white pt-4 pb-3">
+            <div class="card h-100">
+                <div class="card-header">
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-user-circle text-primary me-2"></i>
+                        <i class="fas fa-user-circle me-2" style="color: var(--color-teal)"></i>
                         <h2 class="h5 mb-0">Información Personal</h2>
                     </div>
                 </div>
@@ -70,7 +351,7 @@ body {
                             'Ocupación': paciente.ocupacion
                         }.items() %}
                         <div class="col-12">
-                            <div class="bg-light rounded p-3">
+                            <div class="info-card">
                                 <small class="text-muted d-block mb-1">{{ key }}</small>
                                 <span class="fw-medium">{{ value or 'No especificado' }}</span>
                             </div>
@@ -81,22 +362,22 @@ body {
             </div>
         </div>
 
-        <!-- Tratamientos y Próximas Citas -->
+        <!-- Treatments and Appointments -->
         <div class="col-lg-8">
-            <!-- Tratamientos Activos -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header border-0 bg-white pt-4 pb-3">
+            <!-- Treatments -->
+            <div class="card">
+                <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-clipboard-list text-primary me-2"></i>
+                            <i class="fas fa-clipboard-list me-2" style="color: var(--color-teal)"></i>
                             <h2 class="h5 mb-0">Tratamientos</h2>
                         </div>
                         <div>
                             <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" 
-                                class="btn btn-sm btn-primary me-2">
+                               class="btn-view btn-sm">
                                 <i class="fas fa-plus me-2"></i>Nuevo Tratamiento
                             </a>
-                            <button class="btn btn-sm btn-outline-secondary" id="toggleTratamientos">
+                            <button class="btn-view btn-sm ms-2" id="toggleTratamientos">
                                 Ver Finalizados
                             </button>
                         </div>
@@ -105,24 +386,24 @@ body {
                 <div class="card-body" id="tratamientosActivos">
                     {% if tratamientos_activos %}
                     <div class="table-responsive">
-                        <table class="table align-middle table-hover">
-                            <thead class="bg-light">
+                        <table class="table align-middle">
+                            <thead>
                                 <tr>
-                                    <th class="ps-4">Tratamiento</th>
+                                    <th>Tratamiento</th>
                                     <th>Estado</th>
                                     <th>Monto</th>
-                                    <th class="text-end pe-4">Acciones</th>
+                                    <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for tratamiento in tratamientos_activos %}
                                 <tr>
-                                    <td class="ps-4">
+                                    <td>
                                         <div class="d-flex align-items-center">
-                                            <i class="fas fa-tooth text-primary me-3"></i>
+                                            <i class="fas fa-tooth me-3" style="color: var(--color-teal)"></i>
                                             <div>
-                                                <strong class="d-block">{{ tratamiento.nombre }}</strong>
-                                                <small class="text-muted">Inicio: {{ tratamiento.fecha_inicio }}</small>
+                                                <strong>{{ tratamiento.nombre }}</strong>
+                                                <small class="text-muted d-block">Inicio: {{ tratamiento.fecha_inicio }}</small>
                                             </div>
                                         </div>
                                     </td>
@@ -132,15 +413,15 @@ body {
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="d-flex flex-column">
+                                        <div>
                                             <strong>Bs{{ tratamiento.costo_total }}</strong>
-                                            <small class="text-success">Pagado: Bs{{ tratamiento.monto_pagado }}</small>
+                                            <small class="text-success d-block">Pagado: Bs{{ tratamiento.monto_pagado }}</small>
                                         </div>
                                     </td>
-                                    <td class="text-end pe-4">
+                                    <td class="text-end">
                                         <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
-                                            class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="fas fa-eye"></i>Ver
+                                           class="btn-view btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Ver
                                         </a>
                                     </td>
                                 </tr>
@@ -149,9 +430,13 @@ body {
                         </table>
                     </div>
                     {% else %}
-                    <div class="text-center py-5">
-                        <h3 class="h5 text-muted">No hay tratamientos registrados</h3>
-                        <p class="text-muted mb-0">Comienza agregando un nuevo tratamiento</p>
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No hay tratamientos registrados</p>
+                        <a href="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" 
+                            class="btn-view btn-sm">
+                            <i class="fas fa-plus me-2"></i>Agregar Tratamiento
+                        </a>
                     </div>
                     {% endif %}
                 </div>
@@ -192,8 +477,8 @@ body {
                                     </td>
                                     <td class="text-end pe-4">
                                         <a href="{{ url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id) }}" 
-                                            class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="fas fa-eye"></i>Ver
+                                            class="btn btn-view btn-sm">
+                                            <i class="fas fa-eye"></i> Ver
                                         </a>
                                     </td>
                                 </tr>
@@ -210,16 +495,16 @@ body {
                 </div>
             </div>
 
-            <!-- Próximas Citas -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header border-0 bg-white pt-4 pb-3">
+            <!-- Appointments -->
+            <div class="card mt-4">
+                <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-calendar-alt text-primary me-2"></i>
+                            <i class="fas fa-calendar-alt me-2" style="color: var(--color-teal)"></i>
                             <h2 class="h5 mb-0">Próximas Citas</h2>
                         </div>
                         <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
-                           class="btn btn-sm btn-primary">
+                           class="btn-view btn-sm">
                             <i class="fas fa-plus me-2"></i>Nueva Cita
                         </a>
                     </div>
@@ -227,30 +512,30 @@ body {
                 <div class="card-body">
                     {% if citas %}
                     <div class="table-responsive">
-                        <table class="table align-middle table-hover">
+                        <table class="table align-middle">
                             <tbody>
                                 {% for cita in citas %}
                                 <tr>
-                                    <td class="ps-4">
+                                    <td>
                                         <div class="d-flex align-items-center">
                                             <div class="rounded-circle bg-light p-3 me-3">
-                                                <i class="fas fa-calendar-day text-primary"></i>
+                                                <i class="fas fa-calendar-day" style="color: var(--color-teal)"></i>
                                             </div>
                                             <div>
-                                                <strong class="d-block">{{ cita.motivo }}</strong>
-                                                <small class="text-muted">{{ cita.fecha }}</small>
+                                                <strong>{{ cita.motivo }}</strong>
+                                                <small class="text-muted d-block">{{ cita.fecha }}</small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-end pe-4">
+                                    <td>
                                         <span class="badge {% if cita.estado == 'Completada' %}bg-success{% elif cita.estado == 'Pendiente' %}bg-warning{% else %}bg-secondary{% endif %}">
                                             {{ cita.estado }}
                                         </span>
                                     </td>
-                                    <td class="text-end pe-4">
+                                    <td class="text-end">
                                         <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" 
-                                            class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="bi bi-eye"></i> Ver
+                                           class="btn-view btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Ver
                                         </a>
                                     </td>
                                 </tr>
@@ -259,35 +544,59 @@ body {
                         </table>
                     </div>
                     {% else %}
-                    <div class="text-center py-4">
-                        <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">No hay citas programadas</p>
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>No hay citas programadas</p>
+                        <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
+                           class="btn-view btn-sm">
+                            <i class="fas fa-plus me-2"></i>Agendar Cita
+                        </a>
                     </div>
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Formulario Médico (Acordeón) -->
-        <div class="col-lg-12 mt-4">
+        <!-- Medical Form -->
+        <div class="col-12">
             <div class="accordion" id="formularioMedicoAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingFormulario">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
                                 data-bs-target="#collapseFormulario" aria-expanded="false" 
                                 aria-controls="collapseFormulario">
+                            <i class="fas fa-file-medical me-2"></i>
                             Formulario Médico
                         </button>
                     </h2>
-                    
                     <div id="collapseFormulario" class="accordion-collapse collapse" 
-                         aria-labelledby="headingFormulario" data-bs-parent="#formularioMedicoAccordion">
+                        aria-labelledby="headingFormulario" data-bs-parent="#formularioMedicoAccordion">
                         <div class="accordion-body">
                             {% if formulario_medico %}
-                            <div class="row g-3">
-                                {% for pregunta, respuesta in formulario_medico.pregunta_respuesta.items() %}
-                                <div class="col-md-6">
-                                    <div class="bg-light rounded p-3 h-100">
+                            <div class="row g-4">
+                                {% for pregunta, key in [
+                                    ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+                                    ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+                                    ("¿A qué es alérgico?", "alergias"),
+                                    ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+                                    ("¿Le falta aire después del ejercicio?", "falta_aire"),
+                                    ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+                                    ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+                                    ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+                                    ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+                                    ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+                                    ("¿Cuál?", "detalle_reacciones_medicamentos"),
+                                    ("Acostumbra:", "costumbres[]"),
+                                    ("¿Tiene algún problema con:", "problemas[]"),
+                                    ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+                                    ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+                                    ("¿Cuántas semanas?", "semanas_embarazo"),
+                                    ("Observaciones:", "observaciones"),
+                                    ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+                                    ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
+                                ] %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="qa-item">
                                         <small class="text-muted d-block mb-2">{{ pregunta }}</small>
                                         <p class="mb-0">{{ respuesta or 'No especificado' }}</p>
                                     </div>
@@ -295,38 +604,43 @@ body {
                                 {% endfor %}
                             </div>
                             {% else %}
-                            <div class="text-center py-4">
-                                <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
-                                <p class="text-muted mb-3">No hay formulario médico registrado</p>
-                                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                                   class="btn btn-primary">
-                                    <i class="fas fa-plus-circle me-2"></i>Crear Formulario
-                                </a>
+                            <div class="empty-state">
+                                <i class="fas fa-file-medical"></i>
+                                <p>No hay formulario médico registrado</p>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
+                                        class="btn-view btn-sm">
+                                        <i class="fas fa-plus-circle me-2"></i>Crear Formulario
+                                    </a>
+                                </div>
                             </div>
                             {% endif %}
                         </div>
-                        <div class="btn-group">
-                            <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
-                                class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-download me-2"></i>Exportar PDF
-                            </a>
-                            
-                            <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                                class="btn btn-sm btn-primary">
-                                <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
-                            </a>
-                            <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
-                                class="btn px-4 py-2" 
-                                    style="background-color: #68c3b7; color: #ffffff; border: none;">
-                                    Historial Formularios
-                            </a>
+                        {% if formulario_medico %}
+                        <div class="card-footer bg-white border-top p-3 text-center">
+                            <div class="btn-group">
+                                <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
+                                    class="btn-view btn-sm">
+                                    <i class="fas fa-download me-2"></i>Exportar PDF
+                                </a>
+                                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
+                                    class="btn-view btn-sm">
+                                    <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
+                                </a>
+                                <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
+                                    class="btn-view btn-sm">
+                                    <i class="fas fa-history me-2"></i>Historial
+                                </a>
+                            </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     document.getElementById('toggleTratamientos').addEventListener('click', function() {
         var activos = document.getElementById('tratamientosActivos');
@@ -342,6 +656,4 @@ body {
         }
     });
 </script>
-    </script>
 {% endblock %}
-

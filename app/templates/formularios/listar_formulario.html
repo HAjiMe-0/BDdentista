@@ -4,67 +4,199 @@
 
 {% block content %}
 <style>
-    :root {
-        --color-white: #ffffff;
-        --color-light-mint: #cceae8;
-        --color-mint: #a8dcd9;
-        --color-teal: #68c3b7;
-        --color-dark-teal: #539091;
-    }
-    body
-    {
-        background-color: var(--color-light-mint);
-    }
-</style>
-<div class="container py-5">
-    <h1 class="text-center mb-4" style="color: #539091;">Formularios Médicos de {{ paciente.nombre }} {{ paciente.paterno }}</h1>
-    
-    <!-- Tabla de formularios -->
-    <div class="table-responsive shadow-sm" style="border-radius: 15px; overflow: hidden;">
-        <table class="table table-bordered" style="background-color: #ffffff; border-color: #a8dcd9; margin-bottom: 0;">
-            <thead style="background-color: #cceae8; color: #539091;">
-                <tr>
-                    <th style="width: 10%;text-align: center;">#</th>
-                    <th style="width: 30%;text-align: center;">Fecha</th>
-                    <th style="width: 15%; text-align: center;">Opciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if formularios %}
-                    {% for formulario in formularios %}
-                    <tr>
-                        <td style="width: 10%;text-align: center;">{{ loop.index }}</td>
-                        <td style="width: 30%;text-align: center;">{{ formulario.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</td>
-                        <td style="width: 15%; text-align: center;">
-                            <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}"
-                                class="btn btn-sm"
-                                style="background-color: #68c3b7; color: #ffffff; width: 80px;">
-                                Ver
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center" style="color: #539091;">No se encontraron formularios médicos.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
+:root {
+    --color-white: #ffffff;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+    --background-image: url("/static/img/fondo_dental7.jpg");
+}
 
-    <!-- Botón para volver al detalle del paciente -->
-    <div class="text-center mt-4">
-        <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}"
-        class="btn px-4 py-2" 
-            style="background-color: #68c3b7; color: #ffffff; margin-right: 10px;">
-            <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
-        </a>
-        <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}"
-            class="btn px-4 py-2"
-            style="background-color: #539091; color: #ffffff;">
-            Volver al detalle del paciente
-        </a>
+body {
+    background: transparent;
+    font-family: 'Segoe UI', sans-serif;
+    background-attachment: fixed;
+    background-size: cover;
+    background-image: var(--background-image);
+}
+
+.custom-container {
+    background-color: var(--color-white);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(83, 144, 145, 0.15);
+    margin: 2rem auto;
+    max-width: 700px;
+    overflow: hidden;
+}
+
+.custom-header {
+    background: var(--color-dark-teal);
+    color: var(--color-white);
+    padding: 2rem; /* Aumenta el relleno para más espacio */
+    text-align: center;
+    font-size: 2rem; /* Aumenta el tamaño de la fuente */
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin: 0;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    word-wrap: break-word; /* Asegura que el texto largo se ajuste */
+}
+
+
+.custom-content {
+    padding: 2rem;
+}
+
+/* Table styling */
+.table-responsive {
+    background: var(--color-white);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(83, 144, 145, 0.08);
+    max-width: 600px;  /* Add this line */
+    margin: 0 auto;    /* Add this line */
+}
+
+.custom-table {
+    margin-bottom: 0;
+    border: none;
+}
+
+.custom-table thead {
+    background: linear-gradient(45deg, var(--color-dark-teal), var(--color-teal));
+}
+
+.custom-table thead th {
+    font-weight: 500;
+    padding: 1.25rem 1rem;
+    border: none;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.custom-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.custom-table tbody tr:hover {
+    background-color: rgba(204, 234, 232, 0.2);
+    transform: scale(1.01);
+}
+
+.custom-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(168, 220, 217, 0.2);
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Button styling */
+.btn-view {
+    background: linear-gradient(45deg, var(--color-teal), var(--color-mint));
+    border-radius: 12px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(104, 195, 183, 0.2);
+    color: var(--color-white);
+    text-decoration: none;
+    width: 80px;
+}
+
+.btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(104, 195, 183, 0.3);
+    color: var(--color-white);
+}
+
+.btn-add {
+    background: var(--color-teal);
+    padding: 0.75rem 2rem;
+    border-radius: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(83, 144, 145, 0.2);
+    color: var(--color-white);
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.btn-back {
+    background: var(--color-dark-teal);
+    padding: 0.75rem 2rem;
+    border-radius: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(83, 144, 145, 0.2);
+    color: var(--color-white);
+    text-decoration: none;
+}
+
+.btn-add:hover, .btn-back:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(83, 144, 145, 0.3);
+    color: var(--color-mint);
+}
+
+.empty-message {
+    padding: 3rem;
+    color: var(--color-dark-teal);
+    font-style: italic;
+    text-align: center;
+    font-size: 1.1rem;
+}
+</style>
+
+<div class="container mt-4">
+    <div class="custom-container">
+        <h2 class="custom-header">Formularios Médicos de {{ paciente.nombre }} {{ paciente.paterno }}</h2>
+        
+        <div class="custom-content">
+            <div class="table-responsive mt-4">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if formularios %}
+                            {% for formulario in formularios %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ formulario.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                                <td>
+                                    <a href="{{ url_for('main.detalle_formulario', historial_id=formulario.historial_id) }}" 
+                                        class="btn btn-view btn-sm">
+                                        <i class="fas fa-eye me-1"></i> Ver
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="empty-message">
+                                    No se encontraron formularios médicos.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
+                    class="btn btn-add">
+                    <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
+                </a>
+                <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" 
+                    class="btn btn-back">
+                    Volver al detalle del paciente
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

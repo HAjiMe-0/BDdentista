@@ -22,55 +22,43 @@
         <!-- Opciones del dashboard en contenedor transparente -->
         <div class="rounded-4" style="background-color: rgba(248, 249, 250, 0.1);">
             <div class="card-body py-5">
-                <div class="row">
-                    <!-- Gestión de Pacientes -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #d9f3f2;">
-                            <div class="card-body text-center">
-                                <i class="bi bi-person-lines-fill text-info display-1 mb-3"></i>
-                                <h5 class="card-title text-dark">Gestión de Pacientes</h5>
-                                <p class="card-text">Administra, edita y consulta la información de tus pacientes.</p>
-                                <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-outline-info">Ir a Pacientes</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gestión de Citas -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #e6f9f4;">
-                            <div class="card-body text-center">
-                                <i class="bi bi-calendar-check text-success display-1 mb-3"></i>
-                                <h5 class="card-title text-dark">Gestión de Citas</h5>
-                                <p class="card-text">Crea, edita y organiza las citas de tus pacientes.</p>
-                                <a href="{{ url_for('main.listar_citas') }}" class="btn btn-outline-success">Ir a Citas</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Reportes -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #f9f3e6;">
-                            <div class="card-body text-center">
-                                <i class="bi bi-bar-chart text-warning display-1 mb-3"></i>
-                                <h5 class="card-title text-dark">Reportes</h5>
-                                <p class="card-text">Visualización y generación de reportes detallados</p>
-                                <a href="{{ url_for('main.generar_informe_doctor', doctor_id=session.get('doctor_id')) }}" class="btn btn-outline-warning">Ir a Reportes</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Configuración -->
-                    <div class="col-md-3">
-                        <div class="card shadow-sm border-0 rounded-4" style="background-color: #f2e6f9;">
-                            <div class="card-body text-center">
-                                <i class="bi bi-gear text-danger display-1 mb-3"></i>
-                                <h5 class="card-title text-dark">Configuración</h5>
-                                <p class="card-text">Ajusta la configuración de tu perfil y preferencias <span class="badge bg-danger text-white">Próximamente</span></p>
-                                <button class="btn btn-outline-danger disabled">En desarrollo</button>
-                            </div>
-                        </div>
+            <div class="row">
+                <!-- Gestión de Pacientes -->
+                <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4" style="background-color: #d9f3f2;">
+                    <div class="card-body text-center">
+                    <i class="bi bi-person-lines-fill text-info display-1 mb-3"></i>
+                    <h5 class="card-title text-dark">Gestión de Pacientes</h5>
+                    <p class="card-text">Administra, edita y consulta la información de tus pacientes.</p>
+                    <a href="{{ url_for('main.listar_pacientes') }}" class="btn btn-outline-info">Ir a Pacientes</a>
                     </div>
                 </div>
+                </div>
+
+                <!-- Gestión de Citas -->
+                <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4" style="background-color: #e6f9f4;">
+                    <div class="card-body text-center">
+                    <i class="bi bi-calendar-check text-success display-1 mb-3"></i>
+                    <h5 class="card-title text-dark">Gestión de Citas</h5>
+                    <p class="card-text">Crea, edita y organiza las citas de tus pacientes.</p>
+                    <a href="{{ url_for('main.listar_citas') }}" class="btn btn-outline-success">Ir a Citas</a>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Reportes -->
+                <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4" style="background-color: #f9f3e6;">
+                    <div class="card-body text-center">
+                    <i class="bi bi-bar-chart text-warning display-1 mb-3"></i>
+                    <h5 class="card-title text-dark">Reportes</h5>
+                    <p class="card-text">Visualización y generación de reportes detallados</p>
+                    <a href="{{ url_for('main.generar_informe_doctor', doctor_id=session.get('doctor_id')) }}" class="btn btn-outline-warning">Ir a Reportes</a>
+                    </div>
+                </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>

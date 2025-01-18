@@ -7,3 +7,4 @@ flask_mail
 datetime
 weasyprint
 reportlab
+pytz

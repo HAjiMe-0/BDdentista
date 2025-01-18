@@ -1,6 +1,6 @@
 from flask import (Blueprint, render_template, request, redirect, url_for, session,
                    flash, jsonify, make_response, send_file)
-from sqlalchemy import cast, String
+from sqlalchemy import and_, cast, String, or_
 from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from app.models import db, Doctor, Paciente, Cita, Tratamiento, FormularioMedico
@@ -25,6 +25,7 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet ,ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
+from pytz import timezone
 
 main_bp = Blueprint('main', __name__)
 s = URLSafeTimedSerializer('clave_secreta')
@@ -162,9 +163,12 @@ def editar_doctor(doctor_id):
 
 
 # Gestión de pacientes
+#Listar Pacientes
 @main_bp.route('/pacientes')
 @login_requerido
 def listar_pacientes():
+
+
     doctor_id = session.get('doctor_id')  # Usar `get` para evitar errores si no existe la clave
     if not doctor_id:
         # Manejo del caso en que `doctor_id` no está en la sesión
@@ -189,7 +193,6 @@ def listar_pacientes():
     )
 
 #Buscar Paciente
-
 @main_bp.route('/pacientes/buscar', methods=['GET', 'POST'])
 @login_requerido
 def buscar_pacientes():
@@ -241,8 +244,8 @@ def crear_paciente():
         flash('Paciente creado exitosamente.', 'success')
         return redirect(url_for('main.listar_pacientes'))
     return render_template('pacientes/crear_paciente.html')
-#Detalle del Paciente
 
+#Detalle del Paciente
 @main_bp.route('/paciente/<int:paciente_id>')
 @login_requerido
 def detalle_paciente(paciente_id):
@@ -251,11 +254,25 @@ def detalle_paciente(paciente_id):
         flash('No tienes permiso para ver este paciente.', 'error')
         return redirect(url_for('main.listar_pacientes'))
 
-    tratamientos_activos = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='En Progreso').all()
-    tratamientos_finalizados = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='Finalizado').all()
-    citas = Cita.query.filter_by(paciente_id=paciente_id, estado='Pendiente').order_by(Cita.fecha.desc()).all()
+    page_tratamientos = request.args.get('page_tratamientos', 1, type=int)
+    page_citas = request.args.get('page_citas', 1, type=int)
+
+    tratamientos_activos_paginados = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='En Progreso').paginate(page=page_tratamientos, per_page=5)
+    tratamientos_finalizados_paginados = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='Finalizado').paginate(page=page_tratamientos, per_page=5)
+    citas_paginadas = Cita.query.filter_by(paciente_id=paciente_id, estado='Pendiente').order_by(Cita.fecha.desc()).paginate(page=page_citas, per_page=5)
     formulario_medico = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
-    return render_template('pacientes/detalle_paciente.html', paciente=paciente, tratamientos_activos=tratamientos_activos, tratamientos_finalizados=tratamientos_finalizados, citas=citas, formulario_medico=formulario_medico)
+
+    return render_template(
+        'pacientes/detalle_paciente.html', 
+        paciente=paciente, 
+        tratamientos_activos=tratamientos_activos_paginados.items, 
+        tratamientos_finalizados=tratamientos_finalizados_paginados.items, 
+        citas=citas_paginadas.items, 
+        formulario_medico=formulario_medico,
+        pagination_tratamientos_activos=tratamientos_activos_paginados,
+        pagination_tratamientos_finalizados=tratamientos_finalizados_paginados,
+        pagination_citas=citas_paginadas
+    )
 
 #Editar Paciente
 @main_bp.route('/paciente/<int:paciente_id>/editar', methods=['GET', 'POST'])
@@ -282,6 +299,7 @@ def editar_paciente(paciente_id):
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
     return render_template('pacientes/editar_paciente.html', paciente=paciente)
+
 #Eliminar Paciente
 @main_bp.route('/paciente/<int:paciente_id>/eliminar', methods=['POST'])
 @login_requerido
@@ -295,6 +313,7 @@ def eliminar_paciente(paciente_id):
     db.session.commit()
     flash('Paciente eliminado exitosamente.', 'success')
     return redirect(url_for('main.listar_pacientes'))
+
 
 # Gestión de citas
 #Listar Citas
@@ -350,9 +369,10 @@ def editar_cita(cita_id):
         cita.estado = request.form['estado']
         db.session.commit()
         flash('Cita actualizada exitosamente.', 'success')
-        return redirect(url_for('main.listar_citas'))
+        return redirect(url_for('main.detalle_paciente', paciente_id=cita.paciente_id))  
 
     return render_template('citas/editar_cita.html', cita=cita)
+
 #Eliminar Citas
 @main_bp.route('/cita/<int:cita_id>/eliminar', methods=['POST'])
 @login_requerido
@@ -374,7 +394,8 @@ def obtener_citas(year, month):
     try:
         doctor_id = session.get('doctor_id')
         if not doctor_id:
-            return jsonify({"error": "No autorizado"}), 401
+            flash('No tienes permiso para ver estas citas.', 'error')
+            return redirect(url_for('main.dashboard'))
 
         citas = Cita.query.filter(
             Cita.doctor_id == doctor_id,
@@ -393,7 +414,9 @@ def obtener_citas(year, month):
         ]
         return jsonify(citas_serializadas)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        flash(f'Error al obtener las citas: {str(e)}', 'error')
+
+    
 # Ruta para crear una cita (Para paciente espacifoco)
 @main_bp.route('/paciente/<int:paciente_id>/cita/crear', methods=['GET', 'POST'])
 @login_requerido
@@ -662,6 +685,7 @@ def cancelar_tratamiento(tratamiento_id):
     db.session.commit()
     flash('El tratamiento ha sido cancelado exitosamente.', 'success')
     return redirect(url_for('main.ver_tratamiento', tratamiento_id=tratamiento.tratamiento_id))
+
 # Exportar tratamiento a PDF
 @main_bp.route('/tratamiento/<int:tratamiento_id>/pdf', methods=['GET'])
 @login_requerido
@@ -699,7 +723,11 @@ def generar_pdf_tratamiento(tratamiento_id):
     ]
 
     # Crear tabla con la información del tratamiento
-    table = Table(tratamiento_info, colWidths=[150, 350])
+    table_data = []
+    for row in tratamiento_info:
+        table_data.append([Paragraph(cell, styles['Normal']) if isinstance(cell, str) else cell for cell in row])
+
+    table = Table(table_data, colWidths=[150, 350])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#000000")),
@@ -728,23 +756,35 @@ def generar_pdf_tratamiento(tratamiento_id):
 @main_bp.route('/paciente/<int:paciente_id>/formulario/crear', methods=['GET', 'POST'])
 @login_requerido
 def crear_formulario_medico(paciente_id):
-                paciente = Paciente.query.get_or_404(paciente_id)
-                if paciente.doctor_id != session['doctor_id']:
-                    flash('No tienes permiso para crear un formulario médico para este paciente.', 'error')
-                    return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+    paciente = Paciente.query.get_or_404(paciente_id)
+    if paciente.doctor_id != session['doctor_id']:
+        flash('No tienes permiso para crear un formulario médico para este paciente.', 'error')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
-                if request.method == 'POST':
-                    pregunta_respuesta = {key: value for key, value in request.form.items() if key.startswith('pregunta_')}
-                    pregunta_respuesta_json = json.dumps(pregunta_respuesta)
-                    nuevo_formulario = FormularioMedico(paciente_id=paciente_id, pregunta_respuesta=pregunta_respuesta_json, fecha=datetime.now())
-                    db.session.add(nuevo_formulario)
-                    db.session.commit()
-                    flash('Formulario médico creado exitosamente.', 'success')
-                    return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+    if request.method == 'POST':
+        # Obtener las preguntas y respuestas del formulario
+        pregunta_respuesta = {key: value for key, value in request.form.items() if key.startswith('pregunta_')}
+        pregunta_respuesta_json = json.dumps(pregunta_respuesta)
 
-                return render_template('formularios/crear_formulario.html', paciente=paciente, paciente_id=paciente_id)
+        # Obtener la fecha y hora actual con la zona horaria de Bolivia
+        bolivia_tz = timezone('America/La_Paz')
+        fecha_actual = datetime.now(bolivia_tz)
 
-#Guardar historial medico
+        # Crear el nuevo formulario médico con la fecha ajustada
+        nuevo_formulario = FormularioMedico(
+            paciente_id=paciente_id,
+            pregunta_respuesta=pregunta_respuesta_json,
+            fecha=fecha_actual
+        )
+        db.session.add(nuevo_formulario)
+        db.session.commit()
+        flash('Formulario médico creado exitosamente.', 'success')
+        return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
+
+    return render_template('formularios/crear_formulario.html', paciente=paciente, paciente_id=paciente_id)
+
+
+# Guardar historial medico
 @main_bp.route('/guardar_historial', methods=['POST'])
 @login_requerido
 def guardar_historial():
@@ -766,10 +806,15 @@ def guardar_historial():
             flash('Paciente no encontrado', 'error')
             return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
 
+        # Obtener la fecha y hora actual con la zona horaria de Bolivia
+        bolivia_tz = timezone('America/La_Paz')
+        fecha_actual = datetime.now(bolivia_tz)
+
         # Crear el historial médico
         nuevo_historial = FormularioMedico(
             paciente_id=paciente_id,
-            pregunta_respuesta=pregunta_respuesta
+            pregunta_respuesta=pregunta_respuesta,
+            fecha=fecha_actual  # Asegúrate de pasar la fecha ajustada
         )
         db.session.add(nuevo_historial)
         db.session.commit()
@@ -868,11 +913,13 @@ def exportar_formulario_pdf(paciente_id):
         flash(f'Error al generar el PDF: {str(e)}', 'error')
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
+
 @main_bp.route('/doctor/<int:doctor_id>/informe', methods=['GET', 'POST'])
 @login_requerido
 def generar_informe_doctor(doctor_id):
+    # Verificar si el doctor tiene permiso
     doctor = Doctor.query.get_or_404(doctor_id)
-    if doctor.doctor_id != session['doctor_id']:
+    if doctor.doctor_id != session.get('doctor_id'):
         flash('No tienes permiso para generar informes para este doctor.', 'error')
         return redirect(url_for('main.dashboard'))
     
@@ -881,18 +928,22 @@ def generar_informe_doctor(doctor_id):
     mes = int(request.form.get('mes', datetime.now().month))
     año = int(request.form.get('año', datetime.now().year))
 
-    # Filtrar datos según el periodo
+    # Calcular rango de fechas
     inicio = datetime(año, mes, 1) if periodo == 'mensual' else datetime(año, 1, 1)
     fin = (datetime(año, mes + 1, 1) if mes < 12 else datetime(año + 1, 1, 1)) if periodo == 'mensual' else datetime(año + 1, 1, 1)
 
     # Consultas a la base de datos
     citas = Cita.query.filter(Cita.doctor_id == doctor_id, Cita.fecha >= inicio, Cita.fecha < fin).all()
-    tratamientos = Tratamiento.query.filter(Tratamiento.paciente_id.in_(
-        [p.paciente_id for p in Paciente.query.filter_by(doctor_id=doctor_id).all()]
-    )).all()
     pacientes = Paciente.query.filter_by(doctor_id=doctor_id).all()
+    tratamientos = Tratamiento.query.filter(
+        Tratamiento.paciente_id.in_([p.paciente_id for p in pacientes]),
+        or_(
+            and_(Tratamiento.fecha_inicio >= inicio, Tratamiento.fecha_inicio < fin),
+            and_(Tratamiento.fecha_fin >= inicio, Tratamiento.fecha_fin < fin)
+        )
+    ).all()
 
-    # Datos del informe
+    # Resumen de datos
     nro_pacientes = len(set(cita.paciente_id for cita in citas))
     nro_citas_pendientes = len([c for c in citas if c.estado == 'Pendiente'])
     nro_citas_completadas = len([c for c in citas if c.estado == 'Realizada'])
@@ -927,21 +978,20 @@ def generar_informe_doctor(doctor_id):
         normal_style.fontSize = 10
         normal_style.leading = 14
         
-        table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-        ('GRID', (0, 0), (-1, -1), 1, colors.grey)
-        ])
-        
+        table_style = [
+            ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('GRID', (0, 0), (-1, -1), 1, colors.grey)
+        ]
+
         # Encabezado
-        title = Paragraph(f"Reporte General - Dr. {doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}", title_style)
-        elements.append(title)
+        tipo_informe = f"{'Mensual' if periodo == 'mensual' else 'Anual'} {inicio.strftime('%B %Y') if periodo == 'mensual' else inicio.year}"
+        elements.append(Paragraph(f"Informe {tipo_informe}", title_style))
         elements.append(Spacer(1, 12))
-        elements.append(Paragraph("<hr/>", styles['BodyText']))
 
         # Información del doctor
         doctor_info = [
@@ -962,12 +1012,11 @@ def generar_informe_doctor(doctor_id):
         # Lista de pacientes
         elements.append(Paragraph("Lista de Pacientes", heading_style))
         pacientes_data = [[
-            "Nombre Completo", "CI", "Fecha de Nacimiento", "Teléfono/Celular"
+            "Nombre Completo", "CI", "Teléfono/Celular"
         ]] + [
             [
                 f"{p.nombre} {p.paterno or ''} {p.materno or ''}",
                 p.ci,
-                p.fecha_nacimiento.strftime('%Y-%m-%d'),
                 p.telefono or p.celular or "No especificado"
             ] for p in pacientes
         ]
@@ -1020,13 +1069,14 @@ def generar_informe_doctor(doctor_id):
         doc.build(elements)
         buffer.seek(0)
         flash('Informe generado exitosamente.', 'success')
-        return send_file(buffer, as_attachment=True, download_name=f'Informe_Dr_{doctor.nombre}_{año}_{mes}.pdf', mimetype='application/pdf')
+        return send_file(buffer, as_attachment=True, download_name=f'Informe_{tipo_informe}.pdf', mimetype='application/pdf')
 
     return render_template(
         'reportes/generar_informe.html',
         doctor=doctor,
-        datetime=datetime  # Pasar datetime al contexto
+        datetime=datetime
     )
+
     
 
 # Detalle formulario Medico
@@ -1050,6 +1100,8 @@ def listar_formulario(paciente_id):
 
     formularios = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).all()
     return render_template('formularios/listar_formulario.html', paciente=paciente, formularios=formularios,)
+
+from datetime import datetime
 
 # Exportar formulario médico a PDF - Nueva versión
 @main_bp.route('/paciente/<int:paciente_id>/formulario/<int:historial_id>/pdf', methods=['GET'])
@@ -1080,6 +1132,13 @@ def exportar_formulario_pdf2(paciente_id, historial_id):
     <b>Fecha de Nacimiento:</b> {paciente.fecha_nacimiento}
     """
     elements.append(Paragraph(paciente_info, styles['Normal']))
+
+    # Fecha de creación del formulario
+    fecha_creacion = formulario.fecha.strftime('%Y-%m-%d %H:%M:%S')
+    fecha_creacion_info = f"""
+    <b>Fecha de Creación del Formulario:</b> {fecha_creacion}
+    """
+    elements.append(Paragraph(fecha_creacion_info, styles['Normal']))
     elements.append(Spacer(1, 12))
 
     # Ordenar y estructurar datos del formulario
@@ -1132,7 +1191,15 @@ def exportar_formulario_pdf2(paciente_id, historial_id):
     doc.build(elements)
     buffer.seek(0)
 
-    return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}_Historial_{historial_id}.pdf', mimetype='application/pdf')
+    # Obtener la fecha actual en formato YYYY-MM-DD
+    fecha_actual = datetime.now().strftime('%Y-%m-%d')
+
+    # Formatear el nombre del archivo con la fecha de creación del formulario
+    nombre_archivo = f"Formulario_Medico_{paciente.nombre}_{paciente.paterno}_{fecha_actual}.pdf"
+
+    # Devolver el archivo con el nuevo nombre
+    return send_file(buffer, as_attachment=True, download_name=nombre_archivo, mimetype='application/pdf')
+
 
 # Controlador para eliminar el formulario médico
 @main_bp.route('/formulario/<int:historial_id>/eliminar', methods=['POST'])

@@ -97,3 +97,6 @@ CREATE TABLE formulario_medico (
         REFERENCES paciente(paciente_id)
         ON DELETE CASCADE
 );
+-- tabla de formulario medico fecha.
+ALTER TABLE formulario_medico
+ALTER COLUMN fecha TYPE TIMESTAMP WITH TIME ZONE;

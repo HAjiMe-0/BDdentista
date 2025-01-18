@@ -2,49 +2,188 @@
 {% block content %}
     <style>
         :root {
-    --color-white: #ffffff;
-    --color-light-mint: #cceae8;
-    --color-mint: #a8dcd9;
-    --color-teal: #68c3b7;
-    --color-dark-teal: #539091;
-}
+            --color-white: #ffffff;
+            --color-light-mint: #cceae8;
+            --color-mint: #a8dcd9;
+            --color-teal: #68c3b7;
+            --color-dark-teal: #539091;
+            --background-image: url("/static/img/fondo_dental7.jpg");
+        }
 
-body {
-    background-color: var(--color-light-mint);
-}
+        body {
+            background-color: var(--color-light-mint);
+            background-image: var(--background-image);
+        }
+
+        .detail-header {
+            background-color: var(--color-dark-teal);
+            color: var(--color-white);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .detail-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: var(--color-white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1rem;
+            justify-content: center;
+            align-items: start;
+        }
+
+        .info-section {
+            background-color: var(--color-light-mint);
+            padding: 1rem;
+            border-radius: 8px;
+            height: 100%;
+            min-width: 200px;
+        }
+
+        .info-title {
+            color: var(--color-dark-teal);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .info-content {
+            margin: 0.5rem 0;
+        }
+
+        .info-label {
+            color: var(--color-dark-teal);
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            background-color: var(--color-teal);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--color-light-mint);
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+            color: white;
+        }
+
+        .action-button:hover {
+            opacity: 0.9;
+        }
+
+        .button-primary {
+            background-color: var(--color-teal);
+            color: white;
+        }
+
+        .button-secondary {
+            background-color: var(--color-mint);
+            color: var(--color-dark-teal);
+        }
+
+        .button-danger {
+            background-color: #ff6b6b;
+            color: white;
+        }
+
+        .button-back {
+            background-color: var(--color-dark-teal);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                padding: 0.5rem;
+            }
+            
+            .detail-container {
+                margin: 1rem;
+            }
+        }
     </style>
-    <!-- templates/cita/detail_cita.html -->
-    <div class="container mt-5">
-        <h3 class="mb-4" style="color: #539091;">Detalle de la Cita</h3>
-        <div class="card" style="background-color: #ffffff; border: 1px solid #a8dcd9;">
-            <div class="card-body" style="background-color: #ffffff;">
-                <p><strong style="color: #539091;">Paciente:</strong> {{ cita.paciente.nombre }} {{ cita.paciente.paterno }}</p>
-                <p><strong style="color: #539091;">Doctor:</strong> {{ cita.doctor.nombre }}</p>
-                <p><strong style="color: #539091;">Fecha:</strong> {{ cita.fecha }}</p>
-                <p><strong style="color: #539091;">Motivo:</strong> {{ cita.motivo }}</p>
-                <p><strong style="color: #539091;">Estado:</strong> {{ cita.estado }}</p>
-                <div class="mt-4">
-                    <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="btn" style="background-color: #68c3b7; color: #ffffff; margin-right: 5px;">Editar Cita</a>
-                    <form method="POST" action="{{ url_for('main.eliminar_citaPC', cita_id=cita.cita_id) }}" style="display:inline;">
-                        <button type="submit" class="btn" style="background-color: #539091; color: #ffffff; margin-right: 5px;">Eliminar Cita</button>
-                    </form>
-                    <a href="{{ url_for('main.detalle_paciente', paciente_id=cita.paciente.paciente_id) }}" class="btn" style="background-color: #68c3b7; color: #ffffff;">Ver Paciente</a>
+
+    <div class="detail-container">
+        <h2 class="detail-header">Detalle de la Cita</h2>
+        <div class="info-grid">
+            <div class="info-section">
+                <div class="info-title">Información del Paciente</div>
+                <div class="info-content">
+                    <div class="info-label">Nombre:</div>
+                    <div class="info-value">{{ cita.paciente.nombre }} {{ cita.paciente.paterno }}</div>
                 </div>
-                <div class="mt-4">
-                    <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
-                        <input type="hidden" name="estado" value="Completado">
-                        <button type="submit" class="btn" style="background-color: #68c3b7; color: #ffffff; margin-right: 5px;">Marcar como Completado</button>
-                    </form>
-                    <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
-                        <input type="hidden" name="estado" value="Cancelado">
-                        <button type="submit" class="btn" style="background-color: #cceae8; color: #539091; margin-right: 5px;">Marcar como Cancelado</button>
-                    </form>
-                    <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
-                        <input type="hidden" name="estado" value="Pendiente">
-                        <button type="submit" class="btn" style="background-color: #a8dcd9; color: #539091; margin-right: 5px;">Marcar como Pendiente</button>
-                    </form>
+                <div class="info-content">
+                    <div class="info-label">Doctor:</div>
+                    <div class="info-value">{{ cita.doctor.nombre }}</div>
                 </div>
             </div>
+
+            <div class="info-section">
+                <div class="info-title">Fechas</div>
+                <div class="info-content">
+                    <div class="info-label">Fecha:</div>
+                    <div class="info-value">{{ cita.fecha }}</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">Estado y Ubicación</div>
+                <div class="info-content">
+                    <div class="info-label">Estado:</div>
+                    <div class="status-badge">{{ cita.estado }}</div>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Motivo:</div>
+                    <div class="info-value">{{ cita.motivo }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="action-button button-primary ;bi bi-pencil" > Editar</a>
+            <form method="POST" action="{{ url_for('main.eliminar_citaPC', cita_id=cita.cita_id) }}" style="display:inline;">
+                <button type="submit" class="action-button button-danger ;bi bi-trash"> Eliminar</button>
+            </form>
+            <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
+                <input type="hidden" name="estado" value="Completado">
+                <button type="submit" class="action-button button-primary ;bi bi-check-circle"> Finalizar</button>
+            </form>
+            <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
+                <input type="hidden" name="estado" value="Cancelado">
+                <button type="submit" class="action-button button-secondary ;bi bi-x-circle"> Cancelar</button>
+            </form>
+            <a href="{{ url_for('main.detalle_paciente', paciente_id=cita.paciente.paciente_id) }}" class="action-button button-back ;bi bi-arrow-left"> Volver</a>
         </div>
     </div>
 {% endblock %}

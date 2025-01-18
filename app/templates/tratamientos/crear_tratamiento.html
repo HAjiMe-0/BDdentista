@@ -3,16 +3,213 @@
 {% block title %}Crear Tratamiento{% endblock %}
 
 {% block content %}
+
+<style>
+    
+    :root {
+        --color-white: #ffffff;
+        --color-light-mint: #cceae8;
+        --color-mint: #a8dcd9;
+        --color-teal: #68c3b7;
+        --color-dark-teal: #539091;
+        --background-image: url("/static/img/fondo_dental7.jpg"); /* Ruta absoluta */
+    }
+
+    body {
+        background: var(--color-light-mint);
+        font-family: 'Segoe UI', sans-serif;
+        background-attachment: fixed;
+        background-size: cover;
+        background-image: var(--background-image); /* Se mantiene */
+    }
+
+    .edit-header {
+            background-color: #4c9b9b;
+            color: var(--color-white);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            font-size: 2rem;
+            margin-bottom: 0;
+            font-weight: 480; /* Negrita */
+        }
+    
+    .form-card {
+        background: var(--color-white);
+        border-radius: 24px;
+        padding: 0;
+        box-shadow: 0 8px 30px rgba(83, 144, 145, 0.15);
+        max-width: 1000px;
+        margin: 2rem auto;
+        overflow: hidden;
+    }
+
+    .form-header {
+        text-align: center;
+        padding: 1.5rem;
+        background: #4c9b9b;
+        color: var(--color-white);
+    }
+
+    .form-header h1 {
+        font-size: 1.75rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        margin: 0;
+    }
+
+    .subtitle {
+        color: var(--color-mint);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+
+    .treatment-form {
+        padding: 2rem;
+    }
+
+    .form-section {
+        background: var(--color-white);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--color-mint);
+    }
+
+    .section-title {
+        color: var(--color-dark-teal);
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-mint);
+    }
+
+    .custom-input {
+        border: 2px solid var(--color-mint);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        height: auto;
+    }
+
+    .custom-input:focus {
+        border-color: var(--color-teal);
+        box-shadow: 0 0 0 3px rgba(168, 220, 217, 0.25);
+    }
+
+    .form-floating > label {
+        color: var(--color-dark-teal);
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    
+    .form-floating >  {
+        color: var(--color-dark-teal);
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        background: white;
+        padding: 0 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 15px rgba(83, 144, 145, 0.2);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(83, 144, 145, 0.3);
+    }
+
+    .btn-crear {
+        background: var(--color-teal);
+        color: var(--color-white);
+    }
+
+    .btn-crear:hover {
+        color: var(--color-mint);
+    }
+
+    .btn-cancelar {
+        background: var(--color-dark-teal);
+        color: var(--color-white);
+    }
+
+    .btn-cancelar:hover {
+        color: var(--color-mint);
+    }
+
+    textarea.custom-input {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    @media (max-width: 768px) {
+        .form-card {
+            margin: 1rem;
+        }
+
+        .treatment-form {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    /* Estilos adicionales para el select */
+    select.custom-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23539091' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+    }
+
+    /* Estilo para los campos requeridos */
+    .form-floating input:required,
+    .form-floating textarea:required {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='3' fill='%23539091'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        padding-right: 2rem;
+    }
+</style>
+
 <div class="container py-5">
     <div class="form-card">
         <div class="form-header">
-            <h1>Crear Nuevo Tratamiento</h1>
+            <h2 class="edit-header">CREAR NUEVO TRATAMIENTO</h2>
+
             <p class="subtitle">Ingrese los detalles del nuevo tratamiento para el paciente</p>
         </div>
 
         <form method="POST" action="{{ url_for('main.crear_tratamiento', paciente_id=paciente.paciente_id) }}" class="treatment-form">
             <!-- Información Básica -->
-            <div class="form-section">
+            <div >
                 <h3 class="section-title">Información Básica</h3>
                 <div class="row g-4">
                     <div class="col-md-6">
@@ -43,7 +240,7 @@
             </div>
 
             <!-- Fechas y Detalles -->
-            <div class="form-section">
+            <div >
                 <h3 class="section-title">Fechas y Detalles</h3>
                 <div class="row g-4">
                     <div class="col-md-6">
@@ -53,7 +250,7 @@
                                 name="fecha_inicio" 
                                 class="form-control custom-input" 
                                 required>
-                            <label for="fecha_inicio">Fecha de Inicio</label>
+                            <label for="fecha_inicio" style="color: #539091;">Fecha de Inicio</label>
                         </div>
                     </div>
 
@@ -71,7 +268,7 @@
             </div>
 
             <!-- Información Clínica -->
-            <div class="form-section">
+            <div >
                 <h3 class="section-title">Información Clínica</h3>
                 <div class="row g-4">
                     <div class="col-md-12">
@@ -121,144 +318,4 @@
         </form>
     </div>
 </div>
-
-<style>
-    :root {
-        --color-white: #ffffff;
-        --color-light-mint: #cceae8;
-        --color-mint: #a8dcd9;
-        --color-teal: #68c3b7;
-        --color-dark-teal: #539091;
-    }
-
-    body {
-        background-color: var(--color-light-mint);
-    }
-    
-    .form-card {
-        background: var(--color-white);
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-
-    .form-header {
-        text-align: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid var(--color-light-mint);
-    }
-
-    .form-header h1 {
-        color: var(--color-dark-teal);
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .subtitle {
-        color: #666;
-        font-size: 1rem;
-    }
-
-    .form-section {
-        background: var(--color-light-mint);
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-        color: var(--color-dark-teal);
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-        font-weight: 600;
-    }
-
-    .custom-input {
-        border: 2px solid var(--color-mint);
-        border-radius: 8px;
-        padding: 0.75rem;
-        transition: all 0.3s ease;
-    }
-
-    .custom-input:focus {
-        border-color: var(--color-teal);
-        box-shadow: 0 0 0 0.2rem rgba(104, 195, 183, 0.25);
-    }
-
-    .form-floating > label {
-        color: var(--color-dark-teal);
-        padding: 1rem;
-    }
-
-    .form-floating > .form-control:focus ~ label,
-    .form-floating > .form-control:not(:placeholder-shown) ~ label {
-        color: var(--color-dark-teal);
-        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border: none;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    .btn-crear {
-        background-color: var(--color-teal);
-        color: white;
-    }
-
-    .btn-cancelar {
-        background-color: var(--color-mint);
-        color: var(--color-dark-teal);
-    }
-
-    textarea.custom-input {
-        min-height: 100px;
-        resize: vertical;
-    }
-
-    @media (max-width: 768px) {
-        .form-card {
-            padding: 1rem;
-        }
-
-        .form-section {
-            padding: 1rem;
-        }
-
-        .form-actions {
-            flex-direction: column;
-        }
-
-        .btn {
-            width: 100%;
-        }
-    }
-
-    /* Estilos adicionales para el select */
-    select.custom-input {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23539091' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        padding-right: 2.5rem;
-    }
-</style>
 {% endblock %}
