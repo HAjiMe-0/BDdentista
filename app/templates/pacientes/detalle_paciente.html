@@ -27,6 +27,83 @@ body {
     color: var(--color-white);
     text-decoration: none;
 }
+
+.btn-edit {
+    background: linear-gradient(45deg, var(--color-teal), var(--color-mint));
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 1.25rem;
+    color: var(--color-white);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 15px rgba(104, 195, 183, 0.2);
+}
+
+.btn-delete {
+    background: linear-gradient(45deg, #ff6b6b, #ff8585);
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 1.25rem;
+    color: var(--color-white);
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+}
+
+.accordion-button {
+    background-color: var(--color-mint);
+    color: var(--color-dark-teal);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--color-teal);
+    color: var(--color-white);
+}
+
+.accordion-button::after {
+    filter: invert(1);
+}
+
+.accordion-item {
+    border: 1px solid var(--color-teal);
+}
+
+
+.btn-view {
+    background: linear-gradient(45deg, var(--color-teal), var(--color-mint));
+    border-radius: 12px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(104, 195, 183, 0.2);
+    color: var(--color-white);
+    text-decoration: none;
+}
+.qa-columns {
+    column-count: 2;
+    column-gap: 2rem;
+    padding: 1rem;
+}
+
+.qa-item {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    background-color: var(--color-light-mint);
+    padding: 1rem;
+    border-radius: 6px;
+}
+.info-label {
+    color: var(--color-dark-teal);
+    font-weight: 500;
+}
+@media (max-width: 768px) {
+    .qa-columns {
+        column-count: 1;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
 /* Pagination styling */
 .pagination {
     margin-top: 2rem;
@@ -76,25 +153,36 @@ body {
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-0">
             <div class="row g-0">
-                <div class="col-auto p-4 border-end" style="background-color: var(--primary-color);">
+                <!-- Ícono del paciente -->
+                <div class="col-auto p-4 border-end" style="background-color: var(--color-teal);">
                     <div class="rounded-circle bg-white p-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                        <i class="fas fa-child fa-3x text-primary"></i>
+                        <i class="fas fa-user fa-3x" style="color: var(--color-teal);"></i>
                     </div>
                 </div>
                 
+                <!-- Información básica -->
                 <div class="col p-4">
                     <h1 class="h3 mb-2">{{ paciente.nombre }} {{ paciente.paterno }} {{ paciente.materno }}</h1>
                     <p class="text-muted mb-0">CI: {{ paciente.ci }}</p>
                 </div>
-                <div class="col-auto p-4 text-end">
-                    <span class="badge bg-success mb-2">Paciente Activo</span>
-                    <p class="small text-muted mb-0">Último control: 15/03/2024</p>
-                    <!-- Botón Editar -->
-                    <a href="{{ url_for('main.editar_paciente', paciente_id=paciente.paciente_id) }}" class="btn btn-warning mb-2">Editar</a>
-                    <!-- Botón Eliminar -->
-                    <form action="{{ url_for('main.eliminar_paciente', paciente_id=paciente.paciente_id) }}" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este paciente? Esta acción no se puede deshacer.')">
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                </form>
+
+                <!-- Botones de acción -->
+                <div class="col-auto p-4 d-flex flex-column align-items-end">
+                    <span class="badge bg-success mb-3">Paciente Activo</span>
+                    
+                    <a href="{{ url_for('main.editar_paciente', paciente_id=paciente.paciente_id) }}" 
+                       class="btn-edit mb-2">
+                        <i class="fas fa-edit me-2"></i>Editar
+                    </a>
+
+                    <form action="{{ url_for('main.eliminar_paciente', paciente_id=paciente.paciente_id) }}" 
+                          method="POST" 
+                          onsubmit="return confirm('¿Está seguro de que desea eliminar este paciente? Esta acción no se puede deshacer.');"
+                          style="width: 100%;">
+                        <button type="submit" class="btn-delete">
+                            <i class="fas fa-trash-alt me-2"></i>Eliminar
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -365,58 +453,86 @@ body {
         <!-- Formulario Médico (Acordeón) -->
         <div class="col-lg-12 mt-4">
             <div class="accordion" id="formularioMedicoAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingFormulario">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                data-bs-target="#collapseFormulario" aria-expanded="false" 
-                                aria-controls="collapseFormulario">
-                            Formulario Médico
-                        </button>
-                    </h2>
-                    
-                    <div id="collapseFormulario" class="accordion-collapse collapse" 
-                         aria-labelledby="headingFormulario" data-bs-parent="#formularioMedicoAccordion">
-                        <div class="accordion-body">
-                            {% if formulario_medico %}
-                            <div class="row g-3">
-                                {% for pregunta, respuesta in formulario_medico.pregunta_respuesta.items() %}
-                                <div class="col-md-6">
-                                    <div class="bg-light rounded p-3 h-100">
-                                        <small class="text-muted d-block mb-2">{{ pregunta }}</small>
-                                        <p class="mb-0">{{ respuesta or 'No especificado' }}</p>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            {% else %}
-                            <div class="text-center py-4">
-                                <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
-                                <p class="text
-                                <p class="text-muted mb-3">No hay formulario médico registrado</p>
-                                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                                   class="btn-view">
-                                    <i class="fas fa-plus-circle me-2"></i>Crear Formulario
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="btn-group">
-                            <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
-                                class="btn-view me-2">
-                                <i class="fas fa-download me-2"></i>Exportar PDF
-                            </a>
-                            
-                            <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
-                                class="btn-view me-2">
-                                <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
-                            </a>
-                            <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
-                                class="btn-view">
-                                Historial Formularios
-                            </a>
-                        </div>
-                    </div>
+            <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFormulario">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#collapseFormulario" aria-expanded="false" 
+                aria-controls="collapseFormulario">
+                Formulario Médico
+            </button>
+            </h2>
+            <div class="accordion-body">
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{{ url_for('main.exportar_formulario_pdf', paciente_id=paciente.paciente_id) }}" 
+                   class="btn-view me-2">
+                <i class="fas fa-download me-2"></i>Exportar PDF
+                </a>
+                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
+                   class="btn-view me-2">
+                <i class="fas fa-plus-circle me-2"></i>Nuevo Formulario
+                </a>
+                <a href="{{ url_for('main.listar_formulario', paciente_id=paciente.paciente_id) }}" 
+                   class="btn-view">
+                Historial Formularios
+                </a>
+            </div>
+            <div id="collapseFormulario" class="accordion-collapse collapse" 
+                 aria-labelledby="headingFormulario" data-bs-parent="#formularioMedicoAccordion">
+                <div class="accordion-body">
+                {% if formulario_medico %}
+                <div class="qa-columns">
+                {% for pregunta, key in [
+                ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
+                ("¿Ha tenido alguna de las siguientes enfermedades?", "enfermedades[]"),
+                ("¿A qué es alérgico?", "alergias"),
+                ("¿Siente dolor en el tórax después de hacer ejercicio?", "dolor_torax"),
+                ("¿Le falta aire después del ejercicio?", "falta_aire"),
+                ("¿Ha sangrado de forma anormal después de una extracción?", "sangrado_anormal"),
+                ("¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?", "problema_odontologico"),
+                ("¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?", "problema_no_odontologico"),
+                ("¿Está tomando algún tipo de medicamento o fármaco?", "medicamento"),
+                ("¿Ha tenido reacciones adversas a medicamentos?", "reacciones_medicamentos"),
+                ("¿Cuál?", "detalle_reacciones_medicamentos"),
+                ("Acostumbra:", "costumbres[]"),
+                ("¿Tiene algún problema con:", "problemas[]"),
+                ("¿Ud. ha tenido en los últimos 14 días:", "ultimos_14[]"),
+                ("Exclusivo para mujeres: ¿Está usted embarazada?", "embarazo"),
+                ("¿Cuántas semanas?", "semanas_embarazo"),
+                ("Observaciones:", "observaciones"),
+                ("Detalle Cardiopatía (opcional):", "detalle_cardiopatia"),
+                ("Detalle Enfermedades Respiratorias (opcional):", "detalle_respiratorias")
+                ] %}
+                <div class="qa-item">
+                <p class="info-label">{{ pregunta }}</p>
+                {% set respuesta = formulario_medico.pregunta_respuesta.get(key, "No especificado") %}
+                {% if respuesta is string %}
+                <p>{{ respuesta }}</p>
+                {% elif respuesta is iterable and not respuesta is string %}
+                <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 0;">
+                    {% for item in respuesta %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>{{ respuesta }}</p>
+                {% endif %}
                 </div>
+                {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                <p class="text-muted mb-3">No hay formulario médico registrado</p>
+                <a href="{{ url_for('main.crear_formulario_medico', paciente_id=paciente.paciente_id) }}" 
+                   class="btn-view">
+                <i class="fas fa-plus-circle me-2"></i>Crear Formulario
+                </a>
+                </div>
+                {% endif %}
+                </div>
+            </div>
+            </div>
+            </div>
             </div>
         </div>
     </div>
