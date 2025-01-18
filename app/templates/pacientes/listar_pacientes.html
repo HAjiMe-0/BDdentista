@@ -5,18 +5,23 @@
 {% block content %}
 <style>
 :root {
-            --color-white: #ffffff;
-            --color-light: #cceae8;
-            --color-medium: #a8dcd9;
-            --color-dark: #68c3b7;
-            --color-darker: #539091;
-        }
+    --color-white: #ffffff;
+    --color-mint: #a8dcd9;
+    --color-teal: #68c3b7;
+    --color-dark-teal: #539091;
+    --background-image: url("static/img/fondo_dental7.jpg"); 
+}
 
-        .main-container {
+.main-container {
             display: flex;
             gap: 2rem;
             margin-top: 2rem;
         }
+
+body {
+    background-image: var(--background-image);
+}
+
 
 .custom-container {
     background-color: var(--color-white);
@@ -223,7 +228,7 @@
                             <td>{{ paciente.telefono }}</td>
                             <td>
                                 <a href="{{ url_for('main.detalle_paciente', paciente_id=paciente.paciente_id) }}" 
-                                    class="btn btn-view btn-sm">
+                                   class="btn btn-view btn-sm">
                                     <i class="fas fa-eye me-1"></i> Ver
                                 </a>
                             </td>
@@ -282,7 +287,7 @@
             </div>
 
             <div class="text-center mt-4">
-                <a href="{{ url_for('main.crear_paciente') }}" class="btn btn-view btn-sm">
+                <a href="{{ url_for('main.crear_paciente') }}" class="btn btn-add">
                     <i class="fas fa-plus-circle me-2"></i>Agregar Nuevo Paciente
                 </a>
             </div>
