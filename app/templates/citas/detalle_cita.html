@@ -171,16 +171,16 @@
         </div>
 
         <div class="button-container">
-            <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="action-button button-primary ;bi bi-pencil" > Editar</a>
+            <a href="{{ url_for('main.editar_cita', cita_id=cita.cita_id) }}" class="action-button button-primary ;bi bi-pencil"> Editar</a>
             <form method="POST" action="{{ url_for('main.eliminar_citaPC', cita_id=cita.cita_id) }}" style="display:inline;">
                 <button type="submit" class="action-button button-danger ;bi bi-trash"> Eliminar</button>
             </form>
             <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
-                <input type="hidden" name="estado" value="Completado">
+                <input type="hidden" name="estado" value="Completada">
                 <button type="submit" class="action-button button-primary ;bi bi-check-circle"> Finalizar</button>
             </form>
             <form method="POST" action="{{ url_for('main.editar_estado_cita', cita_id=cita.cita_id) }}" style="display:inline;">
-                <input type="hidden" name="estado" value="Cancelado">
+                <input type="hidden" name="estado" value="Cancelada">
                 <button type="submit" class="action-button button-secondary ;bi bi-x-circle"> Cancelar</button>
             </form>
             <a href="{{ url_for('main.detalle_paciente', paciente_id=cita.paciente.paciente_id) }}" class="action-button button-back ;bi bi-arrow-left"> Volver</a>

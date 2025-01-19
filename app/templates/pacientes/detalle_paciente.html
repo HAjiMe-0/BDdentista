@@ -501,40 +501,37 @@ body {
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-calendar-alt me-2" style="color: var(--color-teal)"></i>
-                            <h2 class="h5 mb-0">Próximas Citas</h2>
+                            <h2 class="h5 mb-0">Proximas Citas</h2>
                         </div>
-                        <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
-                           class="btn-view btn-sm">
-                            <i class="fas fa-plus me-2"></i>Nueva Cita
-                        </a>
+                        <div>
+                            <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" class="btn-view btn-sm">
+                                <i class="fas fa-plus me-2"></i>Nueva Cita
+                            </a>
+                            <button class="btn-view btn-sm ms-2" id="toggleCitas">Ver Finalizadas</button>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    {% if citas %}
+                <!-- Citas Activas -->
+                <div class="card-body" id="citasActivas">
+                    {% if citas_activas %}
                     <div class="table-responsive">
                         <table class="table align-middle">
-                            <tbody>
-                                {% for cita in citas %}
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded-circle bg-light p-3 me-3">
-                                                <i class="fas fa-calendar-day" style="color: var(--color-teal)"></i>
-                                            </div>
-                                            <div>
-                                                <strong>{{ cita.motivo }}</strong>
-                                                <small class="text-muted d-block">{{ cita.fecha }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge {% if cita.estado == 'Completada' %}bg-success{% elif cita.estado == 'Pendiente' %}bg-warning{% else %}bg-secondary{% endif %}">
-                                            {{ cita.estado }}
-                                        </span>
-                                    </td>
+                                    <th>Motivo</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cita in citas_activas %}
+                                <tr>
+                                    <td><strong>{{ cita.motivo }}</strong></td>
+                                    <td><small class="text-muted">{{ cita.fecha }}</small></td>
+                                    <td><span class="badge bg-warning">{{ cita.estado }}</span></td>
                                     <td class="text-end">
-                                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" 
-                                           class="btn-view btn-sm">
+                                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" class="btn-view btn-sm">
                                             <i class="fas fa-eye me-1"></i>Ver
                                         </a>
                                     </td>
@@ -546,11 +543,44 @@ body {
                     {% else %}
                     <div class="empty-state">
                         <i class="fas fa-calendar-alt"></i>
-                        <p>No hay citas programadas</p>
-                        <a href="{{ url_for('main.crear_cita_para_paciente', paciente_id=paciente.paciente_id) }}" 
-                           class="btn-view btn-sm">
-                            <i class="fas fa-plus me-2"></i>Agendar Cita
-                        </a>
+                        <p>No hay citas activas</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Citas Finalizadas -->
+                <div class="card-body d-none" id="citasFinalizadas">
+                    {% if citas_finalizadas %}
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Motivo</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cita in citas_finalizadas %}
+                                <tr>
+                                    <td><strong>{{ cita.motivo }}</strong></td>
+                                    <td><small class="text-muted">{{ cita.fecha }}</small></td>
+                                    <td><span class="badge bg-success">Completada</span></td>
+                                    <td class="text-end">
+                                        <a href="{{ url_for('main.detalle_cita', cita_id=cita.cita_id) }}" class="btn-view btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>No hay citas finalizadas</p>
                     </div>
                     {% endif %}
                 </div>
@@ -666,5 +696,23 @@ body {
             this.textContent = 'Ver Activos';
         }
     });
+    document.getElementById('toggleCitas').addEventListener('click', function() { 
+        var activas = document.getElementById('citasActivas'); 
+        var finalizadas = document.getElementById('citasFinalizadas'); 
+        if (activas.classList.contains('d-none')) { 
+            activas.classList.remove('d-none'); 
+            finalizadas.classList.add('d-none'); 
+            this.textContent = 'Ver Finalizadas'; 
+        } else { 
+            activas.classList.add('d-none'); 
+            finalizadas.classList.remove('d-none'); 
+            this.textContent = 'Ver Activas'; 
+        } 
+    });
+    window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mostrar') === 'finalizadas') {
+        document.getElementById('toggleCitas').click();
+    }};
 </script>
 {% endblock %}

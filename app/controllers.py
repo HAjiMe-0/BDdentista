@@ -259,20 +259,24 @@ def detalle_paciente(paciente_id):
 
     tratamientos_activos_paginados = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='En Progreso').paginate(page=page_tratamientos, per_page=5)
     tratamientos_finalizados_paginados = Tratamiento.query.filter_by(paciente_id=paciente_id, estado='Finalizado').paginate(page=page_tratamientos, per_page=5)
-    citas_paginadas = Cita.query.filter_by(paciente_id=paciente_id, estado='Pendiente').order_by(Cita.fecha.desc()).paginate(page=page_citas, per_page=5)
+    citas_activas_paginadas = Cita.query.filter_by(paciente_id=paciente_id, estado='Pendiente').paginate(page=page_citas, per_page=5)
+    citas_finalizadas_paginadas = Cita.query.filter_by(paciente_id=paciente_id, estado='Completada').paginate(page=page_citas, per_page=5)
     formulario_medico = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
 
     return render_template(
-        'pacientes/detalle_paciente.html', 
-        paciente=paciente, 
-        tratamientos_activos=tratamientos_activos_paginados.items, 
-        tratamientos_finalizados=tratamientos_finalizados_paginados.items, 
-        citas=citas_paginadas.items, 
+        'pacientes/detalle_paciente.html',
+        paciente=paciente,
+        tratamientos_activos=tratamientos_activos_paginados.items,
+        tratamientos_finalizados=tratamientos_finalizados_paginados.items,
+        citas_activas=citas_activas_paginadas.items,
+        citas_finalizadas=citas_finalizadas_paginadas.items,
         formulario_medico=formulario_medico,
         pagination_tratamientos_activos=tratamientos_activos_paginados,
         pagination_tratamientos_finalizados=tratamientos_finalizados_paginados,
-        pagination_citas=citas_paginadas
+        pagination_citas_activas=citas_activas_paginadas,
+        pagination_citas_finalizadas=citas_finalizadas_paginadas
     )
+
 
 #Editar Paciente
 @main_bp.route('/paciente/<int:paciente_id>/editar', methods=['GET', 'POST'])
@@ -495,18 +499,17 @@ def editar_estado_cita(cita_id):
     try:
         cita = Cita.query.get_or_404(cita_id)
         if cita.doctor_id != session['doctor_id']:
-            flash('No tienes permiso para editar el estado de esta cita.', 'error')
+            flash('No tienes permiso para editar esta cita.', 'error')
             return redirect(url_for('main.listar_citas'))
 
         nuevo_estado = request.form['estado']
         cita.estado = nuevo_estado
         db.session.commit()
         flash('Estado de la cita actualizado exitosamente.', 'success')
-        return redirect(url_for('main.detalle_cita', cita_id=cita_id))
+        return redirect(url_for('main.detalle_paciente', paciente_id=cita.paciente_id, mostrar='finalizadas'))
     except Exception as e:
         flash(f'Error al actualizar el estado de la cita: {str(e)}', 'error')
         return redirect(url_for('main.listar_citas'))
-
 # Gestión de tratamientos
 # Crear tratamiento
 @main_bp.route('/tratamiento/<int:paciente_id>/crear', methods=['GET', 'POST'])
