@@ -213,11 +213,6 @@
         }
     </style>
 
-    <!-- Alerta de procesamiento -->
-    <div class="processing-alert">
-        <span><i class="fas fa-check"></i>Informe generado exitosamente.</span>
-        <button class="close-button">×</button>
-    </div>
 
     <!-- Contenedor principal -->
     <div class="dashboard-container">
@@ -256,6 +251,7 @@
             <button type="submit" class="btn-generate" id="generateButton">
                 Generar Informe
             </button>
+            
         </form>
     </div>
 
@@ -294,4 +290,5 @@
             mesSelector.style.display = this.value === 'anual' ? 'none' : 'block';
         });
     </script>
+    
 {% endblock %}

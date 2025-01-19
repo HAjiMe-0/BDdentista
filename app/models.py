@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+from sqlalchemy import String
 
 class Doctor(db.Model):
     doctor_id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +20,7 @@ class Doctor(db.Model):
 
 class Paciente(db.Model):
     paciente_id = db.Column(db.Integer, primary_key=True)
-    ci = db.Column(db.Integer, nullable=False)
+    ci = db.Column(String, nullable=False, unique=True)
     nombre = db.Column(db.String(100), nullable=False)
     paterno = db.Column(db.String(100))
     materno = db.Column(db.String(100))

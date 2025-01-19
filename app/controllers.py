@@ -233,6 +233,7 @@ def crear_paciente():
             'fecha_nacimiento': request.form.get('fecha_nacimiento'),
             'direccion': request.form.get('direccion'),
             'paterno': request.form.get('paterno'),
+            'telefono': request.form.get('telefono'),
             'celular': request.form.get('celular'),
             'estado_civil': request.form.get('estado_civil'),
             'ocupacion': request.form.get('ocupacion'),
@@ -298,6 +299,7 @@ def editar_paciente(paciente_id):
         paciente.fecha_nacimiento = request.form.get('fecha_nacimiento')
         paciente.direccion = request.form.get('direccion')
         paciente.paterno = request.form.get('paterno')
+        paciente.telefono = request.form.get('telefono')
         paciente.celular = request.form.get('celular')
         paciente.estado_civil = request.form.get('estado_civil')
         paciente.ocupacion = request.form.get('ocupacion')
@@ -960,126 +962,127 @@ def generar_informe_doctor(doctor_id):
 
     # Generar PDF
     if request.method == 'POST':
-        buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        elements = []
-        styles = getSampleStyleSheet()
+        try:
+            buffer = BytesIO()
+            doc = SimpleDocTemplate(buffer, pagesize=letter)
+            elements = []
+            styles = getSampleStyleSheet()
 
-        # Estilos personalizados
-        title_style = styles['Title']
-        title_style.fontSize = 20
-        title_style.leading = 24
-        title_style.textColor = colors.black
-        
-        heading_style = styles['Heading2']
-        heading_style.textColor = colors.black
-        heading_style.fontSize = 14
-        heading_style.leading = 18
+            # Estilos personalizados
+            title_style = styles['Title']
+            title_style.fontSize = 20
+            title_style.leading = 24
+            title_style.textColor = colors.black
+            
+            heading_style = styles['Heading2']
+            heading_style.textColor = colors.black
+            heading_style.fontSize = 14
+            heading_style.leading = 18
 
-        normal_style = styles['BodyText']
-        normal_style.fontSize = 10
-        normal_style.leading = 14
-        
-        table_style = [
-            ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-            ('GRID', (0, 0), (-1, -1), 1, colors.grey)
-        ]
+            normal_style = styles['BodyText']
+            normal_style.fontSize = 10
+            normal_style.leading = 14
+            
+            table_style = [
+                ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('GRID', (0, 0), (-1, -1), 1, colors.grey)
+            ]
 
-        # Encabezado
-        tipo_informe = f"{'Mensual' if periodo == 'mensual' else 'Anual'} {inicio.strftime('%B %Y') if periodo == 'mensual' else inicio.year}"
-        elements.append(Paragraph(f"Informe {tipo_informe}", title_style))
-        elements.append(Spacer(1, 12))
+            # Encabezado
+            tipo_informe = f"{'Mensual' if periodo == 'mensual' else 'Anual'} {inicio.strftime('%B %Y') if periodo == 'mensual' else inicio.year}"
+            elements.append(Paragraph(f"Informe {tipo_informe}", title_style))
+            elements.append(Spacer(1, 12))
 
-        # Información del doctor
-        doctor_info = [
-            ["Datos:"],
-            ["Nombre:", f"{doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}"],
-            ["Especialidad:", doctor.especialidad or "No especificada"],
-            ["CI:", doctor.ci],
-            ["Teléfono:", doctor.telefono or "No especificado"],
-            ["Email:", doctor.email],
-            ["Total de pacientes asignados:", len(pacientes)],
-            ["Ingresos totales generados:", f"${ingresos_facturados:.2f}"]
-        ]
-        doctor_info_table = Table(doctor_info, colWidths=[150, 350])
-        doctor_info_table.setStyle(table_style)
-        elements.append(doctor_info_table)
-        elements.append(Spacer(1, 12))
+            # Información del doctor
+            doctor_info = [
+                ["Datos:"],
+                ["Nombre:", f"{doctor.nombre} {doctor.paterno or ''} {doctor.materno or ''}"],
+                ["Especialidad:", doctor.especialidad or "No especificada"],
+                ["CI:", doctor.ci],
+                ["Teléfono:", doctor.telefono or "No especificado"],
+                ["Email:", doctor.email],
+                ["Total de pacientes asignados:", len(pacientes)],
+                ["Ingresos totales generados:", f"${ingresos_facturados:.2f}"]
+            ]
+            doctor_info_table = Table(doctor_info, colWidths=[150, 350])
+            doctor_info_table.setStyle(table_style)
+            elements.append(doctor_info_table)
+            elements.append(Spacer(1, 12))
 
-        # Lista de pacientes
-        elements.append(Paragraph("Lista de Pacientes", heading_style))
-        pacientes_data = [[
-            "Nombre Completo", "CI", "Teléfono/Celular"
-        ]] + [
-            [
-                f"{p.nombre} {p.paterno or ''} {p.materno or ''}",
-                p.ci,
-                p.telefono or p.celular or "No especificado"
-            ] for p in pacientes
-        ]
-        pacientes_table = Table(pacientes_data, colWidths=[200, 100, 150, 150])
-        pacientes_table.setStyle(table_style)
-        elements.append(pacientes_table)
-        elements.append(Spacer(1, 12))
+            # Lista de pacientes
+            elements.append(Paragraph("Lista de Pacientes", heading_style))
+            pacientes_data = [[
+                "Nombre Completo", "CI", "Teléfono/Celular"
+            ]] + [
+                [
+                    f"{p.nombre} {p.paterno or ''} {p.materno or ''}",
+                    p.ci,
+                    p.telefono or p.celular or "No especificado"
+                ] for p in pacientes
+            ]
+            pacientes_table = Table(pacientes_data, colWidths=[200, 100, 150, 150])
+            pacientes_table.setStyle(table_style)
+            elements.append(pacientes_table)
+            elements.append(Spacer(1, 12))
 
-        # Resumen de tratamientos
-        elements.append(Paragraph("Resumen de Tratamientos", heading_style))
-        tratamientos_info = [
-            ["Total Tratamientos:", nro_tratamientos],
-            ["En Progreso:", tratamientos_en_progreso],
-            ["Finalizados:", tratamientos_finalizados],
-            ["Cancelados:", tratamientos_cancelados],
-            ["Monto Facturado:", f"${ingresos_facturados:.2f}"],
-            ["Monto Pagado:", f"${ingresos_pagados:.2f}"],
-            ["Saldo Pendiente:", f"${saldo_pendiente:.2f}"]
-        ]
-        tratamientos_table = Table(tratamientos_info, colWidths=[200, 150])
-        tratamientos_table.setStyle(table_style)
-        elements.append(tratamientos_table)
-        elements.append(Spacer(1, 12))
+            # Resumen de tratamientos
+            elements.append(Paragraph("Resumen de Tratamientos", heading_style))
+            tratamientos_info = [
+                ["Total Tratamientos:", nro_tratamientos],
+                ["En Progreso:", tratamientos_en_progreso],
+                ["Finalizados:", tratamientos_finalizados],
+                ["Cancelados:", tratamientos_cancelados],
+                ["Monto Facturado:", f"${ingresos_facturados:.2f}"],
+                ["Monto Pagado:", f"${ingresos_pagados:.2f}"],
+                ["Saldo Pendiente:", f"${saldo_pendiente:.2f}"]
+            ]
+            tratamientos_table = Table(tratamientos_info, colWidths=[200, 150])
+            tratamientos_table.setStyle(table_style)
+            elements.append(tratamientos_table)
+            elements.append(Spacer(1, 12))
 
-        # Resumen de citas
-        elements.append(Paragraph("Resumen de Citas Médicas", heading_style))
-        citas_info = [
-            ["Total de Citas:", len(citas)],
-            ["Pendientes:", nro_citas_pendientes],
-            ["Completadas:", nro_citas_completadas],
-            ["Canceladas:", nro_citas_canceladas],
-        ]
-        citas_table = Table(citas_info, colWidths=[200, 150])
-        citas_table.setStyle(table_style)
-        elements.append(citas_table)
-        elements.append(Spacer(1, 12))
+            # Resumen de citas
+            elements.append(Paragraph("Resumen de Citas Médicas", heading_style))
+            citas_info = [
+                ["Total de Citas:", len(citas)],
+                ["Pendientes:", nro_citas_pendientes],
+                ["Completadas:", nro_citas_completadas],
+                ["Canceladas:", nro_citas_canceladas],
+            ]
+            citas_table = Table(citas_info, colWidths=[200, 150])
+            citas_table.setStyle(table_style)
+            elements.append(citas_table)
+            elements.append(Spacer(1, 12))
 
-        # Estadísticas generales
-        elements.append(Paragraph("Estadísticas Generales", heading_style))
-        estadisticas_info = [
-            ["Promedio de pacientes atendidos/mes:", f"{nro_pacientes:.2f}"],
-            ["Ingresos promedio por tratamiento:", f"${ingresos_facturados / nro_tratamientos:.2f}" if nro_tratamientos else "$0.00"]
-        ]
-        estadisticas_table = Table(estadisticas_info, colWidths=[250, 200])
-        estadisticas_table.setStyle(table_style)
-        elements.append(estadisticas_table)
-        elements.append(Spacer(1, 12))
+            # Estadísticas generales
+            elements.append(Paragraph("Estadísticas Generales", heading_style))
+            estadisticas_info = [
+                ["Promedio de pacientes atendidos/mes:", f"{nro_pacientes:.2f}"],
+                ["Ingresos promedio por tratamiento:", f"${ingresos_facturados / nro_tratamientos:.2f}" if nro_tratamientos else "$0.00"]
+            ]
+            estadisticas_table = Table(estadisticas_info, colWidths=[250, 200])
+            estadisticas_table.setStyle(table_style)
+            elements.append(estadisticas_table)
+            elements.append(Spacer(1, 12))
 
-        # Construcción del PDF
-        doc.build(elements)
-        buffer.seek(0)
-        flash('Informe generado exitosamente.', 'success')
-        return send_file(buffer, as_attachment=True, download_name=f'Informe_{tipo_informe}.pdf', mimetype='application/pdf')
+            # Construcción del PDF
+            doc.build(elements)
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name=f'Informe_{tipo_informe}.pdf', mimetype='application/pdf')
+        except Exception as e:
+            flash(f'Error al generar el PDF: {str(e)}', 'error')
+            return redirect(url_for('main.generar_informe_doctor', doctor_id=doctor_id))
     
     return render_template(
         'reportes/generar_informe.html',
         doctor=doctor,
         datetime=datetime
     )
-
-    
 
 # Detalle formulario Medico
 @main_bp.route('/formulario/<int:historial_id>', methods=['GET'])

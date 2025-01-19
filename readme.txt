@@ -1,96 +1,111 @@
-Requerimientos
+# BDdentista
 
-Pantalla Doctor:
-- LOGIN: Implementar autenticación segura, recuperación de contraseña.
-- EDITAR PERFIL: Permitir la actualización de información personal y profesional.
-- EDITAR INFORMACION: Añadir la capacidad de actualizar datos médicos y de contacto.
-- INFORMACION/CLIENTE: Mostrar historial de pacientes, citas y tratamientos.
+BDdentista es una aplicación web diseñada para la gestión de una clínica dental. Permite a los doctores administrar pacientes, citas, tratamientos y formularios médicos de manera eficiente.
 
-Gestion de clientes:
-- CRUD: Crear, leer, actualizar y eliminar información de clientes. Añadir búsqueda avanzada y filtros.
+## Funcionalidades Generales
 
-Gestion de citas:
-- Fecha, hora: Implementar un calendario interactivo, recordatorios automáticos y gestión de disponibilidad.
+### Autenticación y Registro
+- **Inicio de Sesión**: Los doctores pueden iniciar sesión con su correo electrónico y contraseña.
+- **Registro**: Los nuevos doctores pueden registrarse proporcionando su información personal y profesional.
 
-Historial medico:
-- Añadir la capacidad de adjuntar documentos e imágenes, notas de progreso y tratamientos anteriores.
+### Gestión de Doctores
+- **Perfil del Doctor**: Los doctores pueden ver y editar su perfil, incluyendo su información personal y profesional.
+- **Cerrar Sesión**: Los doctores pueden cerrar sesión de manera segura.
 
-Recibo/ficha dental:
-- Generar y enviar recibos electrónicos, historial de pagos y tratamientos realizados.
+### Dashboard
+- **Vista General**: El dashboard proporciona una vista general de las funcionalidades principales, incluyendo la gestión de pacientes, citas y reportes.
 
-Notificaciones:
-- Implementar notificaciones en tiempo real utilizando WebSockets para citas y recordatorios.
+### Gestión de Pacientes
+- **Listar Pacientes**: Los doctores pueden ver una lista de todos sus pacientes.
+- **Buscar Pacientes**: Los doctores pueden buscar pacientes por su cédula de identidad.
+- **Crear Paciente**: Los doctores pueden agregar nuevos pacientes proporcionando su información personal.
+- **Editar Paciente**: Los doctores pueden actualizar la información de los pacientes existentes.
+- **Eliminar Paciente**: Los doctores pueden eliminar pacientes de la base de datos.
+- **Detalle del Paciente**: Los doctores pueden ver la información detallada de un paciente, incluyendo sus tratamientos y citas.
 
-Configuracion:
-- Permitir la personalización de la aplicación, ajustes de notificaciones y preferencias de usuario.
+### Gestión de Citas
+- **Listar Citas**: Los doctores pueden ver una lista de todas las citas programadas.
+- **Crear Cita**: Los doctores pueden programar nuevas citas para sus pacientes.
+- **Editar Cita**: Los doctores pueden actualizar la información de las citas existentes.
+- **Eliminar Cita**: Los doctores pueden cancelar citas.
+- **Detalle de Cita**: Los doctores pueden ver la información detallada de una cita específica.
 
-Reportes:
-- Generar reportes detallados de citas, tratamientos, ingresos y estadísticas de pacientes.
+### Gestión de Tratamientos
+- **Crear Tratamiento**: Los doctores pueden agregar nuevos tratamientos para sus pacientes.
+- **Editar Tratamiento**: Los doctores pueden actualizar la información de los tratamientos existentes.
+- **Eliminar Tratamiento**: Los doctores pueden eliminar tratamientos de la base de datos.
+- **Agregar Pago**: Los doctores pueden registrar pagos realizados por los pacientes para sus tratamientos.
+- **Finalizar Tratamiento**: Los doctores pueden marcar tratamientos como finalizados.
+- **Cancelar Tratamiento**: Los doctores pueden cancelar tratamientos.
+- **Detalle de Tratamiento**: Los doctores pueden ver la información detallada de un tratamiento específico.
+- **Exportar Tratamiento a PDF**: Los doctores pueden generar un PDF con la información detallada de un tratamiento.
 
-Requerimientos adicionales:
+### Gestión de Formularios Médicos
+- **Crear Formulario Médico**: Los doctores pueden crear formularios médicos para sus pacientes.
+- **Editar Formulario Médico**: Los doctores pueden actualizar la información de los formularios médicos existentes.
+- **Eliminar Formulario Médico**: Los doctores pueden eliminar formularios médicos de la base de datos.
+- **Detalle de Formulario Médico**: Los doctores pueden ver la información detallada de un formulario médico específico.
+- **Listar Formularios Médicos**: Los doctores pueden ver una lista de todos los formularios médicos de un paciente.
+- **Exportar Formulario Médico a PDF**: Los doctores pueden generar un PDF con la información detallada de un formulario médico.
 
-Backup y Restauración:
-- Implementar un sistema de backup y restauración de datos para evitar pérdida de información.
+### Generación de Reportes
+- **Generar Informe del Doctor**: Los doctores pueden generar informes detallados sobre sus actividades, incluyendo citas, tratamientos y pacientes atendidos. Los informes pueden ser mensuales o anuales y se pueden exportar a PDF.
 
-Integración con Seguros:
-- Permitir la integración con sistemas de seguros para facilitar la gestión de reclamaciones y pagos.
+## Tecnologías Utilizadas
+- **Flask**: Framework web utilizado para desarrollar la aplicación.
+- **SQLAlchemy**: ORM utilizado para interactuar con la base de datos.
+- **Jinja2**: Motor de plantillas utilizado para renderizar las vistas.
+- **ReportLab**: Biblioteca utilizada para generar PDFs.
+- **Bootstrap**: Framework CSS utilizado para el diseño y la interfaz de usuario.
 
-Mejoras Propuestas
+## Instalación y Configuración
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/tu_usuario/BDdentista.git
+   cd BDdentista
+   ```
 
-Autenticación y Autorización:
-- Implementar autenticación segura utilizando JWT o OAuth.
-- Añadir roles y permisos para diferentes tipos de usuarios (administradores, doctores, pacientes).
+2. Crea un entorno virtual y activa:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # En Windows: venv\Scripts\activate
+   ```
 
-Validación de Formularios:
-- Asegurarse de que todos los formularios tengan validación tanto en el cliente como en el servidor para evitar datos incorrectos.
+3. Instala las dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Historial Médico:
-- Añadir la capacidad de adjuntar documentos e imágenes al historial médico de los pacientes.
+4. Configura la base de datos en `config.py`.
 
-Notificaciones:
-- Implementar notificaciones en tiempo real utilizando WebSockets para citas y recordatorios.
+5. Realiza las migraciones de la base de datos:
+   ```bash
+   flask db upgrade
+   ```
 
-Seguridad:
-- Asegurarse de que todas las entradas de usuario estén protegidas contra ataques de inyección SQL y XSS.
-- Utilizar HTTPS para todas las comunicaciones.
+6. Ejecuta la aplicación:
+   ```bash
+   flask run
+   ```
 
-Pruebas:
-- Añadir pruebas unitarias y de integración para asegurar la calidad del código.
-- Utilizar herramientas como pytest para las pruebas.
+## Estructura del Proyecto
 
-Documentación:
-- Mejorar la documentación del código y añadir ejemplos de uso.
-- Crear una guía de usuario para los doctores y pacientes.
-
-Optimización:
-- Optimizar las consultas a la base de datos para mejorar el rendimiento.
-- Utilizar caching para reducir la carga en el servidor.
-
-Despliegue:
-- Configurar un entorno de despliegue continuo (CI/CD) para facilitar las actualizaciones y el mantenimiento.
-
-Interfaz de Usuario:(que en cada iteracion se termina hasta ese punto )
-- Mejorar la interfaz de usuario utilizando un framework moderno como React o Vue.js.
-- Hacer que la aplicación sea responsive para que funcione bien en dispositivos móviles.
-
-Soporte Multilenguaje:
-- Implementar soporte para múltiples idiomas para atender a una audiencia más amplia.
-
-Chat en Vivo:
-- Añadir una funcionalidad de chat en vivo para que los pacientes puedan comunicarse con el personal de la clínica en tiempo real.
-
-estructura de la APP
-
+```plaintext
 project/
 ├── app/
 │   ├── __init__.py         # Configuración de la app Flask
-│   ├── models.py           # Definición de las tablas (Doctor y Paciente)
+│   ├── models.py           # Definición de las tablas (Doctor, Paciente, Cita, Tratamiento, FormularioMedico)
 │   ├── controllers.py      # Controladores para el CRUD
 │   ├── templates/          # Archivos HTML para la interfaz
 │   │   ├── base.html       # Base para extender otras plantillas
 │   │   ├── index.html      # Página principal
-│   │   ├── create_doctor.html  # Formulario para agregar un doctor
-│   │   └── create_paciente.html # Formulario para agregar un paciente
+│   │   ├── autenticacion/  # Plantillas para autenticación (iniciar sesión, registrarse)
+│   │   ├── doctor/         # Plantillas para gestión de doctores
+│   │   ├── pacientes/      # Plantillas para gestión de pacientes
+│   │   ├── citas/          # Plantillas para gestión de citas
+│   │   ├── tratamientos/   # Plantillas para gestión de tratamientos
+│   │   ├── formularios/    # Plantillas para gestión de formularios médicos
+│   │   └── reportes/       # Plantillas para generación de reportes
 │   ├── static/             # Archivos estáticos (CSS, JS)
 │   │   ├── css/
 │   │   │   └── styles.css  # Estilos personalizados
@@ -103,5 +118,12 @@ project/
 ├── requirements.txt        # Lista de dependencias del proyecto
 ├── run.py                  # Punto de entrada principal para la app Flask
 └── README.md               # Documentación del proyecto
+```
 
+
+## Contribuciones
+Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request para discutir cualquier cambio que desees realizar.
+
+## Licencia
+Esta aplicación está licenciada bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 

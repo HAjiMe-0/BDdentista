@@ -15,7 +15,7 @@ CREATE TABLE doctor (
 -- Tabla Paciente
 CREATE TABLE paciente (
     paciente_id SERIAL PRIMARY KEY,       -- ID único del paciente
-    ci INT NOT NULL,                      -- Cédula de identidad
+    ci VARCHAR (20)NOT NULL,                      -- Cédula de identidad
     nombre VARCHAR(100) NOT NULL,         -- Nombre del paciente
     paterno VARCHAR(100),                 -- Apellido paterno
     materno VARCHAR(100),                 -- Apellido materno
