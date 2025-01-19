@@ -47,7 +47,7 @@ def inicio():
         flash('Por favor, inicia sesión para continuar.', 'info')
         
         return redirect(url_for('main.iniciar_sesion'))
-    return redirect(url_for('main.dashboard'))
+    return redirect(url_for('main.iniciar_sesion'))
 
 # Pantalla de inicio de sesión
 @main_bp.route('/iniciar-sesion', methods=['GET', 'POST'])
