@@ -1,93 +1,95 @@
 # BDdentista
 
-BDdentista es una aplicación web diseñada para la gestión de una clínica dental. Permite a los doctores administrar pacientes, citas, tratamientos y formularios médicos de manera eficiente.
+![BDdentista](https://your-image-url.com/logo.png)  
 
-## Funcionalidades Generales
+**BDdentista** es una aplicación web diseñada para la gestión eficiente de clínicas dentales. Proporciona una plataforma centralizada para la administración de pacientes, citas, tratamientos y formularios médicos, optimizando el flujo de trabajo para los doctores.
 
-### Autenticación y Registro
-- **Inicio de Sesión**: Los doctores pueden iniciar sesión con su correo electrónico y contraseña.
-- **Registro**: Los nuevos doctores pueden registrarse proporcionando su información personal y profesional.
+---
 
-### Gestión de Doctores
-- **Perfil del Doctor**: Los doctores pueden ver y editar su perfil, incluyendo su información personal y profesional.
-- **Cerrar Sesión**: Los doctores pueden cerrar sesión de manera segura.
+## 🚀 Características Principales
 
-### Dashboard
-- **Vista General**: El dashboard proporciona una vista general de las funcionalidades principales, incluyendo la gestión de pacientes, citas y reportes.
+### 🔐 Autenticación y Seguridad
+- Inicio de sesión seguro para doctores.
+- Registro de nuevos usuarios con información profesional.
+- Cierre de sesión y manejo de sesiones seguras.
 
-### Gestión de Pacientes
-- **Listar Pacientes**: Los doctores pueden ver una lista de todos sus pacientes.
-- **Buscar Pacientes**: Los doctores pueden buscar pacientes por su cédula de identidad.
-- **Crear Paciente**: Los doctores pueden agregar nuevos pacientes proporcionando su información personal.
-- **Editar Paciente**: Los doctores pueden actualizar la información de los pacientes existentes.
-- **Eliminar Paciente**: Los doctores pueden eliminar pacientes de la base de datos.
-- **Detalle del Paciente**: Los doctores pueden ver la información detallada de un paciente, incluyendo sus tratamientos y citas.
+### 🏥 Gestión de Doctores
+- Creación y actualización del perfil profesional.
+- Acceso a informes personalizados.
 
-### Gestión de Citas
-- **Listar Citas**: Los doctores pueden ver una lista de todas las citas programadas.
-- **Crear Cita**: Los doctores pueden programar nuevas citas para sus pacientes.
-- **Editar Cita**: Los doctores pueden actualizar la información de las citas existentes.
-- **Eliminar Cita**: Los doctores pueden cancelar citas.
-- **Detalle de Cita**: Los doctores pueden ver la información detallada de una cita específica.
+### 👩‍⚕️ Gestión de Pacientes
+- Registro, edición y eliminación de pacientes.
+- Búsqueda rápida de pacientes por cédula de identidad.
+- Historial detallado con tratamientos y citas.
 
-### Gestión de Tratamientos
-- **Crear Tratamiento**: Los doctores pueden agregar nuevos tratamientos para sus pacientes.
-- **Editar Tratamiento**: Los doctores pueden actualizar la información de los tratamientos existentes.
-- **Eliminar Tratamiento**: Los doctores pueden eliminar tratamientos de la base de datos.
-- **Agregar Pago**: Los doctores pueden registrar pagos realizados por los pacientes para sus tratamientos.
-- **Finalizar Tratamiento**: Los doctores pueden marcar tratamientos como finalizados.
-- **Cancelar Tratamiento**: Los doctores pueden cancelar tratamientos.
-- **Detalle de Tratamiento**: Los doctores pueden ver la información detallada de un tratamiento específico.
-- **Exportar Tratamiento a PDF**: Los doctores pueden generar un PDF con la información detallada de un tratamiento.
+### 📆 Gestión de Citas
+- Programación, edición y cancelación de citas.
+- Visualización de citas programadas en un calendario.
 
-### Gestión de Formularios Médicos
-- **Crear Formulario Médico**: Los doctores pueden crear formularios médicos para sus pacientes.
-- **Editar Formulario Médico**: Los doctores pueden actualizar la información de los formularios médicos existentes.
-- **Eliminar Formulario Médico**: Los doctores pueden eliminar formularios médicos de la base de datos.
-- **Detalle de Formulario Médico**: Los doctores pueden ver la información detallada de un formulario médico específico.
-- **Listar Formularios Médicos**: Los doctores pueden ver una lista de todos los formularios médicos de un paciente.
-- **Exportar Formulario Médico a PDF**: Los doctores pueden generar un PDF con la información detallada de un formulario médico.
+### 💉 Gestión de Tratamientos
+- Creación y actualización de tratamientos médicos.
+- Registro de pagos y finalización de tratamientos.
+- Generación de informes en PDF.
 
-### Generación de Reportes
-- **Generar Informe del Doctor**: Los doctores pueden generar informes detallados sobre sus actividades, incluyendo citas, tratamientos y pacientes atendidos. Los informes pueden ser mensuales o anuales y se pueden exportar a PDF.
+### 📋 Formularios Médicos
+- Creación y almacenamiento de historiales médicos.
+- Exportación de formularios a PDF.
 
-## Tecnologías Utilizadas
-- **Flask**: Framework web utilizado para desarrollar la aplicación.
-- **SQLAlchemy**: ORM utilizado para interactuar con la base de datos.
-- **Jinja2**: Motor de plantillas utilizado para renderizar las vistas.
-- **ReportLab**: Biblioteca utilizada para generar PDFs.
-- **Bootstrap**: Framework CSS utilizado para el diseño y la interfaz de usuario.
+### 📊 Generación de Reportes
+- Informes detallados de actividades médicas.
+- Exportación de datos en diferentes formatos.
 
-## Instalación y Configuración
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/tu_usuario/BDdentista.git
-   cd BDdentista
-   ```
+---
 
-2. Crea un entorno virtual y activa:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # En Windows: venv\Scripts\activate
-   ```
+## 🛠 Tecnologías Utilizadas
 
-3. Instala las dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
+| Tecnología | Descripción |
+|------------|-------------|
+| Flask | Framework web para el backend |
+| SQLAlchemy | ORM para la gestión de base de datos |
+| Jinja2 | Motor de plantillas para las vistas |
+| ReportLab | Generación de documentos PDF |
+| Bootstrap | Diseño responsivo y UI moderna |
 
-4. Configura la base de datos en `config.py`.
+---
 
-5. Realiza las migraciones de la base de datos:
-   ```bash
-   flask db upgrade
-   ```
+## 📌 Instalación y Configuración
 
-6. Ejecuta la aplicación:
-   ```bash
-   flask run
-   ```
+### 🔧 Requisitos Previos
+- Python 3.8+ instalado.
+- PostgreSQL (o cualquier otro motor SQL compatible).
+- Git instalado.
 
+### 📥 Clonar el Proyecto
+```bash
+git clone https://github.com/tu_usuario/BDdentista.git
+cd BDdentista
+```
+
+### 🏗 Configurar el Entorno Virtual
+```bash
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+```
+
+### 📦 Instalar Dependencias
+```bash
+pip install -r requirements.txt
+```
+
+### 🗄 Configurar la Base de Datos
+Edita `config.py` para establecer las credenciales correctas de la base de datos.
+
+
+### 🚀 Ejecutar la Aplicación
+```bash
+flask run
+```
+La aplicación estará disponible en `http://127.0.0.1:5000/`.
+
+---
+
+## 📂 Estructura del Proyecto
 ## Estructura del Proyecto
 
 ```plaintext
@@ -119,11 +121,16 @@ project/
 ├── run.py                  # Punto de entrada principal para la app Flask
 └── README.md               # Documentación del proyecto
 ```
+---
+
+## 🤝 Contribuciones
+
+Agradecemos a los siguientes contribuidores por su apoyo y colaboración en el desarrollo de este proyecto:
+
+- [LESHE](https://github.com/cmrnda)
+- [ROLO_ZONE](https://github.com/rolandobryanmunozante)
+- [DAVITO](https://github.com/dmiguel04)
+- [HAJIME](https://github.com/HAjiMe-0)
 
 
-## Contribuciones
-Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request para discutir cualquier cambio que desees realizar.
-
-## Licencia
-Esta aplicación está licenciada bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
-
+---
