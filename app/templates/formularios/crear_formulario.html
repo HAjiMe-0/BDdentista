@@ -264,12 +264,6 @@ body {
             </div>
         </div>
 
-
-
-
-
-
-
         <!-- Antecedentes Médicos reorganizados -->
         <div class="accordion mb-4" id="antecedentesAccordion">
             <div class="accordion-item">
@@ -294,15 +288,15 @@ body {
                                     <label for="enfermedades" class="form-label">2. ¿Ha sido diagnosticado con alguna de las siguientes condiciones?</label>
                                     <!-- Enfermedades cardiovasculares -->
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Presión alta" id="presionAlta">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Presión alta" id="presionAlta">
                                         <label class="form-check-label" for="presionAlta">Presión alta</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Presión baja" id="presionBaja">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Presión baja" id="presionBaja">
                                         <label class="form-check-label" for="presionBaja">Presión baja</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Cardiopatía" id="cardiopatia">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Cardiopatía" id="cardiopatia">
                                         <label class="form-check-label" for="cardiopatia">Cardiopatía</label>
                                     </div>
                                     <div class="mb-3" id="detalleCardiopatiaDiv" style="display: none;">
@@ -310,13 +304,12 @@ body {
                                         <textarea class="form-control" id="detalle_cardiopatia" name="detalle_cardiopatia"></textarea>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Fiebre reumática" id="fiebreReumatica">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Fiebre reumática" id="fiebreReumatica">
                                         <label class="form-check-label" for="fiebreReumatica">Fiebre reumática</label>
                                     </div>
-
                                     <!-- Enfermedades respiratorias -->
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Enfermedades Respiratorias" id="enfermedadesRespiratorias">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades Respiratorias" id="enfermedadesRespiratorias">
                                         <label class="form-check-label" for="enfermedadesRespiratorias">Enfermedades respiratorias</label>
                                     </div>
                                     <div class="mb-3" id="detalleRespiratoriasDiv" style="display: none;">
@@ -324,53 +317,50 @@ body {
                                         <textarea class="form-control" id="detalle_respiratorias" name="detalle_respiratorias"></textarea>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Asma" id="asma">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Asma" id="asma">
                                         <label class="form-check-label" for="asma">Asma</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Sinusitis" id="sinusitis">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Sinusitis" id="sinusitis">
                                         <label class="form-check-label" for="sinusitis">Sinusitis</label>
                                     </div>
-
                                     <!-- Enfermedades sistémicas -->
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Diabetes" id="diabetes">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Diabetes" id="diabetes">
                                         <label class="form-check-label" for="diabetes">Diabetes</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Artritis" id="artritis">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Artritis" id="artritis">
                                         <label class="form-check-label" for="artritis">Artritis</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Enfermedades Renales" id="enfermedadesrenales">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades Renales" id="enfermedadesrenales">
                                         <label class="form-check-label" for="enfermedadesrenales">Enfermedades Renales</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Hepatitis" id="hepatitis">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Hepatitis" id="hepatitis">
                                         <label class="form-check-label" for="hepatitis">Hepatitis</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Úlcera gástrica" id="ulceraGastrica">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Úlcera gástrica" id="ulceraGastrica">
                                         <label class="form-check-label" for="ulceraGastrica">Úlcera gástrica</label>
                                     </div>
-
                                     <!-- Enfermedades infecciosas -->
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Tuberculosis" id="tuberculosis">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Tuberculosis" id="tuberculosis">
                                         <label class="form-check-label" for="tuberculosis">Tuberculosis</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Enfermedades venéreas" id="enfermedadesVeneras">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Enfermedades venéreas" id="enfermedadesVeneras">
                                         <label class="form-check-label" for="enfermedadesVeneras">Enfermedades venéreas</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="VIH(SIDA)" id="vihSida">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="VIH(SIDA)" id="vihSida">
                                         <label class="form-check-label" for="vihSida">VIH(SIDA)</label>
                                     </div>
-
                                     <!-- Otros síntomas -->
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="enfermedades[]" value="Mareos" id="mareos">
+                                        <input class="form-check-input" type="checkbox" name="enfermedades[]" value="Mareos" id="mareos">
                                         <label class="form-check-label" for="mareos">Mareos</label>
                                     </div>
                                 </div>
@@ -378,11 +368,11 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">3. ¿Tiene alergias?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="alergias_opcion" value="Sí" id="alergiasSi" onclick="mostrarEspecificarAlergias(true)">
+                                        <input class="form-check-input" type="checkbox" name="alergias_opcion" value="Sí" id="alergiasSi" onclick="mostrarEspecificarAlergias(true)">
                                         <label class="form-check-label" for="alergiasSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="alergias_opcion" value="No" id="alergiasNo" onclick="mostrarEspecificarAlergias(false)">
+                                        <input class="form-check-input" type="checkbox" name="alergias_opcion" value="No" id="alergiasNo" onclick="mostrarEspecificarAlergias(false)">
                                         <label class="form-check-label" for="alergiasNo">No</label>
                                     </div>
                                     <div id="campoEspecificarAlergias" style="display: none; margin-top: 10px;">
@@ -394,22 +384,22 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">4. ¿Siente dolor en el tórax después de hacer ejercicio?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="dolor_torax" value="Sí" id="dolorToraxSi">
+                                        <input class="form-check-input" type="checkbox" name="dolor_torax" value="Sí" id="dolorToraxSi">
                                         <label class="form-check-label" for="dolorToraxSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="dolor_torax" value="No" id="dolorToraxNo">
+                                        <input class="form-check-input" type="checkbox" name="dolor_torax" value="No" id="dolorToraxNo">
                                         <label class="form-check-label" for="dolorToraxNo">No</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">5. ¿Le falta aire después del ejercicio?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="falta_aire" value="Sí" id="faltaAireSi">
+                                        <input class="form-check-input" type="checkbox" name="falta_aire" value="Sí" id="faltaAireSi">
                                         <label class="form-check-label" for="faltaAireSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="falta_aire" value="No" id="faltaAireNo">
+                                        <input class="form-check-input" type="checkbox" name="falta_aire" value="No" id="faltaAireNo">
                                         <label class="form-check-label" for="faltaAireNo">No</label>
                                     </div>
                                 </div>
@@ -417,11 +407,11 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">6. ¿Ha sangrado de forma anormal después de una extracción?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sangrado_anormal" value="Sí" id="sangradoAnormalSi">
+                                        <input class="form-check-input" type="checkbox" name="sangrado_anormal" value="Sí" id="sangradoAnormalSi">
                                         <label class="form-check-label" for="sangradoAnormalSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sangrado_anormal" value="No" id="sangradoAnormalNo">
+                                        <input class="form-check-input" type="checkbox" name="sangrado_anormal" value="No" id="sangradoAnormalNo">
                                         <label class="form-check-label" for="sangradoAnormalNo">No</label>
                                     </div>
                                 </div>
@@ -429,27 +419,27 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">7. Hábitos:</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Fumar" id="costumbreFumar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Fumar" id="costumbreFumar">
                                         <label class="form-check-label" for="costumbreFumar">Fumar</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Beber" id="costumbreBeber">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Beber" id="costumbreBeber">
                                         <label class="form-check-label" for="costumbreBeber">Beber</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Rechinar los dientes" id="costumbreRechinar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Rechinar los dientes" id="costumbreRechinar">
                                         <label class="form-check-label" for="costumbreRechinar">Rechinar los dientes</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Roncar" id="costumbreRoncar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Roncar" id="costumbreRoncar">
                                         <label class="form-check-label" for="costumbreRoncar">Roncar</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Respirar por la boca" id="costumbreRespirar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Respirar por la boca" id="costumbreRespirar">
                                         <label class="form-check-label" for="costumbreRespirar">Respirar por la boca</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Morderse los labios o la lengua" id="costumbreMorderse">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Morderse los labios o la lengua" id="costumbreMorderse">
                                         <label class="form-check-label" for="costumbreMorderse">Morderse los labios o la
                                             lengua</label>
                                     </div>
@@ -461,33 +451,33 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">8. ¿Ha tenido alguna enfermedad, proceso o problema no relacionado con la odontología?</label>
                                     <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="problema_no_odontologico" value="Sí" id="problemaNoOdontologicoSi">
+                                    <input class="form-check-input" type="checkbox" name="problema_no_odontologico" value="Sí" id="problemaNoOdontologicoSi">
                                     <label class="form-check-label" for="problemaNoOdontologicoSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="problema_no_odontologico" value="No" id="problemaNoOdontologicoNo">
+                                    <input class="form-check-input" type="checkbox" name="problema_no_odontologico" value="No" id="problemaNoOdontologicoNo">
                                     <label class="form-check-label" for="problemaNoOdontologicoNo">No</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">9. ¿Está tomando algún tipo de medicamento o fármaco?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="medicamento" value="Sí" id="medicamentoSi">
+                                        <input class="form-check-input" type="checkbox" name="medicamento" value="Sí" id="medicamentoSi">
                                         <label class="form-check-label" for="medicamentoSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="medicamento" value="No" id="medicamentoNo">
+                                        <input class="form-check-input" type="checkbox" name="medicamento" value="No" id="medicamentoNo">
                                         <label class="form-check-label" for="medicamentoNo">No</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">10. ¿Ha tenido reacciones adversas a medicamentos?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="reacciones_medicamentos" value="Sí" id="reaccionesMedicamentosSi">
+                                        <input class="form-check-input" type="checkbox" name="reacciones_medicamentos" value="Sí" id="reaccionesMedicamentosSi">
                                         <label class="form-check-label" for="reaccionesMedicamentosSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="reacciones_medicamentos" value="No" id="reaccionesMedicamentosNo">
+                                        <input class="form-check-input" type="checkbox" name="reacciones_medicamentos" value="No" id="reaccionesMedicamentosNo">
                                         <label class="form-check-label" for="reaccionesMedicamentosNo">No</label>
                                     </div>
                                     <label for="detalleReaccionesMedicamentos" class="form-label mt-2">¿Cuál?</label>
@@ -496,77 +486,77 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">11. Acostumbra:</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Fumar" id="costumbreFumar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Fumar" id="costumbreFumar">
                                         <label class="form-check-label" for="costumbreFumar">Fumar</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Beber" id="costumbreBeber">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Beber" id="costumbreBeber">
                                         <label class="form-check-label" for="costumbreBeber">Beber</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Rechinar los dientes" id="costumbreRechinar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Rechinar los dientes" id="costumbreRechinar">
                                         <label class="form-check-label" for="costumbreRechinar">Rechinar los dientes</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Roncar" id="costumbreRoncar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Roncar" id="costumbreRoncar">
                                         <label class="form-check-label" for="costumbreRoncar">Roncar</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Respirar por la boca" id="costumbreRespirar">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Respirar por la boca" id="costumbreRespirar">
                                         <label class="form-check-label" for="costumbreRespirar">Respirar por la boca</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Morderse los labios o la lengua" id="costumbreMorderse">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Morderse los labios o la lengua" id="costumbreMorderse">
                                         <label class="form-check-label" for="costumbreMorderse">Morderse los labios o la lengua</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="costumbres[]" value="Chuparse el dedo" id="costumbreChuparse">
+                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Chuparse el dedo" id="costumbreChuparse">
                                         <label class="form-check-label" for="costumbreChuparse">Chuparse el dedo</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">12. ¿Tiene algún problema con:</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="problemas[]" value="Riñones" id="problemasRinones">
+                                        <input class="form-check-input" type="checkbox" name="problemas[]" value="Riñones" id="problemasRinones">
                                         <label class="form-check-label" for="problemasRinones">Riñones</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="problemas[]" value="Pulmones" id="problemasPulmones">
+                                        <input class="form-check-input" type="checkbox" name="problemas[]" value="Pulmones" id="problemasPulmones">
                                         <label class="form-check-label" for="problemasPulmones">Pulmones</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="problemas[]" value="Hígado" id="problemasHigado">
+                                        <input class="form-check-input" type="checkbox" name="problemas[]" value="Hígado" id="problemasHigado">
                                         <label class="form-check-label" for="problemasHigado">Hígado</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="problemas[]" value="Articulaciones" id="problemasArticulaciones">
+                                        <input class="form-check-input" type="checkbox" name="problemas[]" value="Articulaciones" id="problemasArticulaciones">
                                         <label class="form-check-label" for="problemasArticulaciones">Articulaciones</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="problemas[]" value="Otros" id="problemasOtros">
+                                        <input class="form-check-input" type="checkbox" name="problemas[]" value="Otros" id="problemasOtros">
                                         <label class="form-check-label" for="problemasOtros">Otros</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">13. ¿Ud. ha tenido en los últimos 14 días:</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="ultimos_14[]" value="Problemas respiratorios" id="ultimos14Respiratorios">
+                                        <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Problemas respiratorios" id="ultimos14Respiratorios">
                                         <label class="form-check-label" for="ultimos14Respiratorios">Problemas respiratorios</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="ultimos_14[]" value="Fiebre" id="ultimos14Fiebre">
+                                        <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Fiebre" id="ultimos14Fiebre">
                                         <label class="form-check-label" for="ultimos14Fiebre">Fiebre</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="ultimos_14[]" value="Dolor muscular" id="ultimos14Dolor">
+                                        <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Dolor muscular" id="ultimos14Dolor">
                                         <label class="form-check-label" for="ultimos14Dolor">Dolor muscular</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="ultimos_14[]" value="Contacto con pacientes COVID-19" id="ultimos14Contacto">
+                                        <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Contacto con pacientes COVID-19" id="ultimos14Contacto">
                                         <label class="form-check-label" for="ultimos14Contacto">Contacto con pacientes COVID-19</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="ultimos_14[]" value="Viajes a lugares de riesgo COVID-19" id="ultimos14Viajes">
+                                        <input class="form-check-input" type="checkbox" name="ultimos_14[]" value="Viajes a lugares de riesgo COVID-19" id="ultimos14Viajes">
                                         <label class="form-check-label" for="ultimos14Viajes">Viajes a lugares de riesgo COVID-19</label>
                                     </div>
                                 </div>  
@@ -593,11 +583,11 @@ body {
                                 <div class="mb-3">
                                     <label class="form-label">13. ¿Está usted embarazada?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="embarazo" value="Sí" id="embarazoSi">
+                                        <input class="form-check-input" type="checkbox" name="embarazo" value="Sí" id="embarazoSi">
                                         <label class="form-check-label" for="embarazoSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="embarazo" value="No" id="embarazoNo">
+                                        <input class="form-check-input" type="checkbox" name="embarazo" value="No" id="embarazoNo">
                                         <label class="form-check-label" for="embarazoNo">No</label>
                                     </div>
                                     <label for="semanasEmbarazo" class="form-label mt-2">¿Cuántas semanas?</label>
