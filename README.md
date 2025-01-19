@@ -1,6 +1,6 @@
 # BDdentista
 
-![BDdentista](static/img/logo.png)
+![BDdentista](static/img/logogg.jpg)
 
 **BDdentista** es una aplicación web diseñada para la gestión eficiente de clínicas dentales. Proporciona una plataforma centralizada para la administración de pacientes, citas, tratamientos y formularios médicos, optimizando el flujo de trabajo para los doctores.
 
