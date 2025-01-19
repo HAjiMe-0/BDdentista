@@ -65,8 +65,14 @@
             
                     <div class="col-md-6">
                         <label for="estado_civil" class="form-label" style="color: #539091; font-size: 0.9rem; margin-bottom: 0.5rem;">Estado Civil:</label>
-                        <input type="text" id="estado_civil" name="estado_civil" class="form-control" value="{{ paciente.estado_civil }}"
+                        <select id="estado_civil" name="estado_civil" class="form-select form-select-lg"
                         style="border: 1px solid #a8dcd9; border-radius: 4px; padding: 0.5rem; width: 100%;">
+                            <option value="" selected>Seleccione</option>
+                            <option value="Soltero/a">Soltero/a</option>
+                            <option value="Casado/a">Casado/a</option>
+                            <option value="Divorciado/a">Divorciado/a</option>
+                            <option value="Viudo/a">Viudo/a</option>
+                        </select>
                     </div>
             
                     <div class="col-md-6">

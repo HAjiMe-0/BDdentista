@@ -597,8 +597,19 @@ body {
                                 ] %}
                                 <div class="col-md-6 col-lg-4">
                                     <div class="qa-item">
-                                        <small class="text-muted d-block mb-2">{{ pregunta }}</small>
-                                        <p class="mb-0">{{ respuesta or 'No especificado' }}</p>
+                                        <p class="info-label">{{ pregunta }}</p>
+                                        {% set respuesta = formulario_medico.pregunta_respuesta.get(key, "No especificado") %}
+                                        {% if respuesta is string %}
+                                            <p>{{ respuesta }}</p>
+                                        {% elif respuesta is iterable and not respuesta is string %}
+                                            <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 0;">
+                                            {% for item in respuesta %}
+                                                <li>{{ item }}</li>
+                                            {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>{{ respuesta }}</p>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 {% endfor %}
