@@ -263,6 +263,9 @@ def detalle_paciente(paciente_id):
     citas_finalizadas_paginadas = Cita.query.filter_by(paciente_id=paciente_id, estado='Completada').paginate(page=page_citas, per_page=5)
     formulario_medico = FormularioMedico.query.filter_by(paciente_id=paciente_id).order_by(FormularioMedico.fecha.desc()).first()
 
+    if formulario_medico:
+        formulario_medico.pregunta_respuesta = json.loads(formulario_medico.pregunta_respuesta)  # Deserializar JSON
+
     return render_template(
         'pacientes/detalle_paciente.html',
         paciente=paciente,
@@ -796,38 +799,34 @@ def guardar_historial():
         paciente_id = data.get('paciente_id')
         pregunta_respuesta = data.get('pregunta_respuesta')
 
-        # Validaciones
         if not paciente_id:
-            flash('ID de paciente no recibido', 'error')
-            return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
+            return jsonify({'status': 'error', 'message': 'ID de paciente no recibido'}), 400
         if not pregunta_respuesta:
-            flash('No se recibieron respuestas', 'error')
-            return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
+            return jsonify({'status': 'error', 'message': 'No se recibieron respuestas'}), 400
 
         paciente = Paciente.query.get(paciente_id)
         if not paciente:
-            flash('Paciente no encontrado', 'error')
-            return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
+            return jsonify({'status': 'error', 'message': 'Paciente no encontrado'}), 404
 
-        # Obtener la fecha y hora actual con la zona horaria de Bolivia
+        # Obtener la fecha actual con zona horaria de Bolivia
         bolivia_tz = timezone('America/La_Paz')
         fecha_actual = datetime.now(bolivia_tz)
 
-        # Crear el historial médico
+        # Guardar en la base de datos
         nuevo_historial = FormularioMedico(
             paciente_id=paciente_id,
-            pregunta_respuesta=pregunta_respuesta,
-            fecha=fecha_actual  # Asegúrate de pasar la fecha ajustada
+            pregunta_respuesta=json.dumps(pregunta_respuesta),
+            fecha=fecha_actual
         )
         db.session.add(nuevo_historial)
         db.session.commit()
-        flash('Historial clínico guardado exitosamente', 'success')
-        return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
+
+        return jsonify({'status': 'success', 'message': 'Historial clínico guardado exitosamente'}), 200
+
     except Exception as e:
         db.session.rollback()
-        flash(f'Error al guardar: {str(e)}', 'error')
-        return redirect(url_for('main.listar_formulario', paciente_id=paciente_id))
-
+        print("❌ Error al guardar:", str(e))  # 🔹 Verificar en consola
+        return jsonify({'status': 'error', 'message': f'Error al guardar: {str(e)}'}), 500
 # Exportar formulario médico a PDF
 @main_bp.route('/paciente/<int:paciente_id>/formulario/pdf', methods=['GET'])
 @login_requerido
@@ -1088,6 +1087,7 @@ def generar_informe_doctor(doctor_id):
 def detalle_formulario(historial_id):
     formulario = FormularioMedico.query.get_or_404(historial_id)
     paciente = Paciente.query.get_or_404(formulario.paciente_id)  # Obtener el paciente relacionado
+    formulario.pregunta_respuesta = json.loads(formulario.pregunta_respuesta)  # Deserializar JSON
     return render_template('formularios/detalle_formulario.html', formulario=formulario, paciente=paciente, paciente_id=paciente.paciente_id)
 
 

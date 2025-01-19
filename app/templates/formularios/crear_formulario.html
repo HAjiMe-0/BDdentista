@@ -612,9 +612,9 @@ body {
 
 <script>
     async function guardarFormulario() {
-        const pacienteId = document.getElementById('paciente_id').value;
         const form = document.getElementById('formularioClinico');
         const formData = new FormData(form);
+        const pacienteId = document.getElementById('paciente_id').value;
 
         const preguntaRespuesta = {};
         formData.forEach((value, key) => {
@@ -639,14 +639,22 @@ body {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+
             const result = await response.json();
-            alert(result.message);
+
+            if (result.status === 'success') {
+                alert(result.message); // Mensaje de éxito
+                window.location.href = `/paciente/${pacienteId}`; // Redirigir a la pantalla detalle_paciente.html
+            } else {
+                alert(result.message); // Mensaje de error
+            }
         } catch (error) {
             console.error("Error al guardar el formulario:", error);
-            alert('Error al guardar el historial.');
+            alert('Ocurrió un error al guardar el historial.');
         }
     }
 </script>
+
 <script>
     // Mostrar detalles de Cardiopatía cuando el checkbox sea marcado
     document.getElementById("cardiopatia").addEventListener("change", function() {
