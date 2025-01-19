@@ -83,7 +83,7 @@ Edita `config.py` para establecer las credenciales correctas de la base de datos
 
 ### 🚀 Ejecutar la Aplicación
 ```bash
-flask run
+py run.py
 ```
 La aplicación estará disponible en `http://127.0.0.1:5000/`.
 
@@ -127,10 +127,10 @@ project/
 
 Agradecemos a los siguientes contribuidores por su apoyo y colaboración en el desarrollo de este proyecto:
 
-- ![LESHE](https://github.com/cmrnda.png?size=40) [LESHE](https://github.com/cmrnda)
-- ![ROLO_ZONE](https://github.com/rolandobryanmunozante.png?size=40) [ROLO_ZONE](https://github.com/rolandobryanmunozante)
-- ![DAVITO](https://github.com/dmiguel04.png?size=40) [DAVITO](https://github.com/dmiguel04)
-- ![HAJIME](https://github.com/HAjiMe-0.png?size=40) [HAJIME](https://github.com/HAjiMe-0)
+- ![Carlos Miranda](https://github.com/cmrnda.png?size=60) [Carlos Miranda](https://github.com/cmrnda)
+- ![Rolando Muñoz](https://github.com/rolandobryanmunozante.png?size=60) [Rolando Muñoz](https://github.com/rolandobryanmunozante)
+- ![David Machicado](https://github.com/dmiguel04.png?size=60) [David Machicado](https://github.com/dmiguel04)
+- ![Harold Quispe](https://github.com/HAjiMe-0.png?size=60) [Harold Quispe](https://github.com/HAjiMe-0)
 
 
 
