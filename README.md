@@ -127,10 +127,11 @@ project/
 
 Agradecemos a los siguientes contribuidores por su apoyo y colaboración en el desarrollo de este proyecto:
 
-- [LESHE](https://github.com/cmrnda.jpg)
-- [ROLO_ZONE](https://github.com/rolandobryanmunozante.jpg)
-- [DAVITO](https://github.com/dmiguel04.jpg)
-- [HAJIME](https://github.com/HAjiMe-0.jpg)
+- ![LESHE](https://github.com/cmrnda.png?size=40) [LESHE](https://github.com/cmrnda)
+- ![ROLO_ZONE](https://github.com/rolandobryanmunozante.png?size=40) [ROLO_ZONE](https://github.com/rolandobryanmunozante)
+- ![DAVITO](https://github.com/dmiguel04.png?size=40) [DAVITO](https://github.com/dmiguel04)
+- ![HAJIME](https://github.com/HAjiMe-0.png?size=40) [HAJIME](https://github.com/HAjiMe-0)
+
 
 
 ---

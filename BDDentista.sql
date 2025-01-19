@@ -100,3 +100,7 @@ CREATE TABLE formulario_medico (
 -- tabla de formulario medico fecha.
 ALTER TABLE formulario_medico
 ALTER COLUMN fecha TYPE TIMESTAMP WITH TIME ZONE;
+
+--Tabla de Paciente!!!
+ALTER TABLE paciente
+ALTER COLUMN ci TYPE VARCHAR(20)

@@ -8,3 +8,4 @@ datetime
 weasyprint
 reportlab
 pytz
+pg8000
