@@ -415,33 +415,19 @@ body {
                                         <label class="form-check-label" for="sangradoAnormalNo">No</label>
                                     </div>
                                 </div>
-                                <!-- Hábitos -->
                                 <div class="mb-3">
-                                    <label class="form-label">7. Hábitos:</label>
+                                    <label for="problema_odontologico" class="form-label">7. ¿Ha tenido algún problema grave asociado con algún tratamiento odontológico?</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Fumar" id="costumbreFumar">
-                                        <label class="form-check-label" for="costumbreFumar">Fumar</label>
+                                        <input class="form-check-input" type="checkbox" name="problema_opcion" value="Sí" id="problemaSi" onclick="mostrarEspecificarProblema(true)">
+                                        <label class="form-check-label" for="problemaSi">Sí</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Beber" id="costumbreBeber">
-                                        <label class="form-check-label" for="costumbreBeber">Beber</label>
+                                        <input class="form-check-input" type="checkbox" name="problema_opcion" value="No" id="problemaNo" onclick="mostrarEspecificarProblema(false)">
+                                        <label class="form-check-label" for="problemaNo">No</label>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Rechinar los dientes" id="costumbreRechinar">
-                                        <label class="form-check-label" for="costumbreRechinar">Rechinar los dientes</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Roncar" id="costumbreRoncar">
-                                        <label class="form-check-label" for="costumbreRoncar">Roncar</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Respirar por la boca" id="costumbreRespirar">
-                                        <label class="form-check-label" for="costumbreRespirar">Respirar por la boca</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="costumbres[]" value="Morderse los labios o la lengua" id="costumbreMorderse">
-                                        <label class="form-check-label" for="costumbreMorderse">Morderse los labios o la
-                                            lengua</label>
+                                    <div id="campoEspecificarProblema" style="display: none; margin-top: 10px;">
+                                        <label class="form-label">Especifique problema:</label>
+                                        <input class="form-control" type="text" name="problema_odontologico" id="problema_odontologico" placeholder="Especifique problema:">
                                     </div>
                                 </div>
                             </div>
@@ -690,6 +676,17 @@ body {
         } else {
             campo.style.display = 'none';
             document.getElementById('alergias').value = ''; // Limpiar el campo si se selecciona "No"
+        }
+    }
+</script>
+<script>
+    function mostrarEspecificarProblema(mostrar) {
+        const campo = document.getElementById('campoEspecificarProblema');
+        if (mostrar) {
+            campo.style.display = 'block';
+        } else {
+            campo.style.display = 'none';
+            document.getElementById('problema_odontologico').value = ''; // Limpiar el campo si se selecciona "No"
         }
     }
 </script>
