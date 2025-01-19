@@ -1117,6 +1117,9 @@ def exportar_formulario_pdf2(paciente_id, historial_id):
         flash('No se encontró un formulario médico para este paciente.', 'error')
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
+    # Deserializar JSON
+    formulario.pregunta_respuesta = json.loads(formulario.pregunta_respuesta)
+
     # Configurar buffer y documento
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
@@ -1233,7 +1236,7 @@ def editar_formulario(historial_id):
     
     if request.method == 'POST':
         # Aquí procesamos los datos enviados desde el formulario
-        formulario.pregunta_respuesta = request.form.to_dict()
+        formulario.pregunta_respuesta = json.dumps(request.form.to_dict())
         
         try:
             # Guardamos los cambios en la base de datos
@@ -1244,6 +1247,9 @@ def editar_formulario(historial_id):
             db.session.rollback()
             flash(f'Error al actualizar el formulario: {e}', 'error')
 
+    # Deserializar JSON para mostrar en el formulario de edición
+    formulario.pregunta_respuesta = json.loads(formulario.pregunta_respuesta)
+    
     # Renderizamos el formulario de edición
     return render_template('formularios/editar_formulario.html', formulario=formulario)
 
