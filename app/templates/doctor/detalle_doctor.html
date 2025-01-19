@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Bienvenido{% endblock %}
+{% block title %}Perfil del Doctor{% endblock %}
 
 {% block content %}
 <style>
@@ -38,22 +38,43 @@
     }
 
     .profile-avatar {
-    width: 60px;
-    height: 60px;
-    background-color: var(--color-teal);
-    border-radius: 50%;  /* Change this from 8px to 50% for a circle */
-    margin-right: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-white);
-    font-size: 1.5rem;
-}
+        width: 60px;
+        height: 60px;
+        background-color: var(--color-light-mint);
+        border-radius: 50%;
+        margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
 
-/* Add this new class for the user icon to make it slightly larger */
-.profile-avatar i {
-    font-size: 1.8rem;  /* Make the icon a bit larger */
-}
+    .profile-avatar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--color-mint);
+        opacity: 0.6;
+        border-radius: 50%;
+    }
+
+    .profile-avatar svg {
+        width: 28px;
+        height: 28px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-avatar circle,
+    .profile-avatar path {
+        stroke: var(--color-dark-teal);
+        stroke-width: 2;
+        fill: none;
+    }
 
     .profile-info {
         flex-grow: 1;
@@ -146,7 +167,10 @@
 <div class="profile-container">
     <div class="profile-header">
         <div class="profile-avatar">
-            <i class="fas fa-user"></i>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="5"/>
+                <path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2"/>
+            </svg>
         </div>
         <div class="profile-info">
             <h2 class="profile-name">{{ doctor.nombre }} {{ doctor.paterno or '' }} {{ doctor.materno or '' }}</h2>

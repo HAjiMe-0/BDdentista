@@ -4,12 +4,15 @@
 
 {% block content %}
     <style>
-    :root {
+        :root {
             --color-white: #ffffff;
             --color-light: #cceae8;
             --color-medium: #a8dcd9;
             --color-dark: #68c3b7;
             --color-darker: #539091;
+            --color-teal: #539091;        /* Añadida variable faltante */
+            --color-dark-teal: #3a6465;   /* Añadida variable faltante */
+            --color-mint: #a8dcd9;        /* Añadida variable faltante */
             --background-image: url("/static/img/fondo_dental7.jpg");
         }
         
@@ -87,7 +90,7 @@
         .btn-generate {
             width: 100%;
             padding: 0.75rem;
-            background: var(--color-teal);
+            background-color: var(--color-darker);  /* Cambiado a una variable existente */
             color: var(--color-white);
             border: none;
             border-radius: 6px;
@@ -95,10 +98,12 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            margin-top: 1rem;             /* Añadido margen superior */
+            display: block;               /* Asegurar que sea visible como bloque */
         }
 
         .btn-generate:hover {
-            background: var(--color-dark-teal);
+            background-color: var(--color-dark);
             transform: translateY(-1px);
         }
 
