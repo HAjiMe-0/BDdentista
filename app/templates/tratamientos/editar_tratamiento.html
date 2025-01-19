@@ -217,14 +217,73 @@ h5 {
     border-color: var(--color-mint) !important;
 }
 
-/* Custom focus states */
 .form-control:focus, .form-select:focus {
     background-color: var(--color-white);
 }
 
-/* Hover effects */
 .card:hover {
     box-shadow: 0 8px 24px rgba(83, 144, 145, 0.15) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .form-control-lg, .form-select-lg {
+        font-size: 1rem;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .card-header {
+        padding: 0.75rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 8px;
+    }
+
+    .card-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .d-flex.gap-3 {
+        gap: 0.5rem !important;
+    }
+
+    .px-5 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
 }
 </style>
 {% endblock %}

@@ -1072,7 +1072,7 @@ def generar_informe_doctor(doctor_id):
         buffer.seek(0)
         flash('Informe generado exitosamente.', 'success')
         return send_file(buffer, as_attachment=True, download_name=f'Informe_{tipo_informe}.pdf', mimetype='application/pdf')
-
+    
     return render_template(
         'reportes/generar_informe.html',
         doctor=doctor,

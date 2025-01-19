@@ -10,40 +10,40 @@
             --color-medium: #a8dcd9;
             --color-dark: #68c3b7;
             --color-darker: #539091;
-            --color-teal: #539091;        /* Añadida variable faltante */
-            --color-dark-teal: #3a6465;   /* Añadida variable faltante */
-            --color-mint: #a8dcd9;        /* Añadida variable faltante */
+            --color-teal: #539091;
+            --color-dark-teal: #3a6465;
+            --color-mint: #a8dcd9;
             --background-image: url("/static/img/fondo_dental7.jpg");
         }
-        
+
+        /* Estilos base */
         body {
             background-color: var(--color-light);
             background-image: var(--background-image);
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
 
-        .main-container {
-            display: flex;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
+        /* Contenedor principal */
         .dashboard-container {
             max-width: 800px;
             margin: 2rem auto;
-            padding: 0 1rem;
+            padding: 1rem;
         }
 
+        /* Estilos del título */
         .page-title {
             font-size: 1.5rem;
-            color:#ffffff;
+            color: #ffffff;
             margin-bottom: 1.5rem;
-            background:#539091;
+            background: #539091;
             padding: 1rem;
             border-radius: 8px 8px 0 0;
             text-align: center;
             border-bottom: 2px solid var(--color-teal);
         }
 
+        /* Estilos del formulario */
         .form-container {
             background: var(--color-white);
             padding: 2rem;
@@ -79,6 +79,7 @@
             box-shadow: 0 0 0 3px rgba(104, 195, 183, 0.2);
         }
 
+        /* Estilos del select */
         select.form-control {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23539091' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -87,10 +88,11 @@
             padding-right: 2.5rem;
         }
 
+        /* Estilos del botón */
         .btn-generate {
             width: 100%;
             padding: 0.75rem;
-            background-color: var(--color-darker);  /* Cambiado a una variable existente */
+            background-color: var(--color-darker);
             color: var(--color-white);
             border: none;
             border-radius: 6px;
@@ -98,8 +100,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 1rem;             /* Añadido margen superior */
-            display: block;               /* Asegurar que sea visible como bloque */
+            margin-top: 1rem;
         }
 
         .btn-generate:hover {
@@ -110,11 +111,118 @@
         .btn-generate:active {
             transform: translateY(1px);
         }
+
+        /* Estilos de la alerta de procesamiento */
+        .processing-alert {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgb(220, 252, 231);
+            color: rgb(22, 101, 52);
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            transition: opacity 0.3s ease-out;
+            opacity: 1;
+        }
+
+        .processing-alert i {
+            margin-right: 0.5rem;
+        }
+
+        .processing-alert .close-button {
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 16px;
+            border: none;
+            background: none;
+            font-size: 18px;
+            color: rgb(22, 101, 52);
+            opacity: 0.7;
+        }
+
+        .processing-alert .close-button:hover {
+            opacity: 1;
+        }
+
+        /* Animaciones */
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -20px);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        /* Media queries */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.2rem;
+                padding: 0.75rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .form-control {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+
+            .btn-generate {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1rem;
+                padding: 0.5rem;
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .form-control {
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+
+            .btn-generate {
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+        }
     </style>
 
+    <!-- Alerta de procesamiento -->
+    <div class="processing-alert">
+        <span><i class="fas fa-check"></i>Informe generado exitosamente.</span>
+        <button class="close-button">×</button>
+    </div>
+
+    <!-- Contenedor principal -->
     <div class="dashboard-container">
         <h2 class="page-title">Generar Informe para el Doctor {{ doctor.paterno }}</h2>
-        <form action="{{ url_for('main.generar_informe_doctor', doctor_id=doctor.doctor_id) }}" method="POST" class="form-container">
+        <form id="reportForm" action="{{ url_for('main.generar_informe_doctor', doctor_id=doctor.doctor_id) }}" method="POST" class="form-container">
             <div class="form-group">
                 <label class="form-label" for="periodo">Seleccionar Tipo de Informe</label>
                 <select name="periodo" id="periodo" class="form-control" required>
@@ -141,13 +249,46 @@
             </div>
             <div class="form-group">
                 <label class="form-label" for="año">Seleccionar Año</label>
-                <input type="number" name="año" id="año" class="form-control" min="2000" max="{{ datetime.utcnow().year }}" value="{{ datetime.utcnow().year }}" required>
+                <input type="number" name="año" id="año" class="form-control" 
+                       min="2000" max="{{ datetime.utcnow().year }}" 
+                       value="{{ datetime.utcnow().year }}" required>
             </div>
-            <button type="submit" class="btn-generate">Generar Informe</button>
+            <button type="submit" class="btn-generate" id="generateButton">
+                Generar Informe
+            </button>
         </form>
     </div>
 
     <script>
+        // Get reference to the alert element
+        const processingAlert = document.querySelector('.processing-alert');
+        const closeButton = document.querySelector('.processing-alert .close-button');
+
+        // Function to hide the alert
+        function hideAlert() {
+            processingAlert.style.opacity = '0';
+            setTimeout(() => {
+                processingAlert.style.display = 'none';
+                processingAlert.style.opacity = '1';
+            }, 300); // Wait for fade out animation
+        }
+
+        // Handle form submission
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            // Show the alert
+            processingAlert.style.display = 'flex';
+            
+            // Disable the generate button
+            document.getElementById('generateButton').disabled = true;
+            
+            // Automatically hide the alert after 1 second
+            setTimeout(hideAlert, 1000);
+        });
+
+        // Handle manual close button click
+        closeButton.addEventListener('click', hideAlert);
+
+        // Handle period selector
         document.getElementById('periodo').addEventListener('change', function() {
             const mesSelector = document.getElementById('mes-selector');
             mesSelector.style.display = this.value === 'anual' ? 'none' : 'block';

@@ -11,7 +11,6 @@
         --color-teal: #68c3b7;
         --color-dark-teal: #539091;
         --background-image: url("/static/img/fondo_dental7.jpg");
-
     }
     
     body {
@@ -147,6 +146,7 @@
         justify-content: center;
         gap: 1rem;
         margin-top: 1.5rem;
+        flex-wrap: wrap;
     }
 
     .btn {
@@ -157,10 +157,25 @@
         cursor: pointer;
         transition: opacity 0.2s;
         font-size: 0.875rem;
+        text-decoration: none;
+        min-width: 140px;
+        text-align: center;
     }
 
     .btn:hover {
         opacity: 0.9;
+    }
+
+    @media (max-width: 480px) {
+        .button-container {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            width: 100%;
+            min-width: unset;
+        }
     }
 </style>
 
@@ -177,7 +192,6 @@
             <p class="profile-id">CI: {{ doctor.ci }}</p>
         </div>
         <span class="status-badge">Doctor Activo</span>
-        
     </div>
 
     <div class="profile-details">
