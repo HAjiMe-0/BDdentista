@@ -861,6 +861,9 @@ def exportar_formulario_pdf(paciente_id):
         elements.append(Paragraph(paciente_info, styles['Normal']))
         elements.append(Spacer(1, 12))
 
+        # Convertir pregunta_respuesta a diccionario
+        formulario.pregunta_respuesta = json.loads(formulario.pregunta_respuesta)
+
         # Ordenar y estructurar datos del formulario
         orden_preguntas = [
             ("¿Ha tenido alguna operación o enfermedad grave?", "operaciones"),
