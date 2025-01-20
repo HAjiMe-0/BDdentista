@@ -1,6 +1,6 @@
 # BDdentista
 
-![BDdentista](static/img/logogg.jpg)
+![BDdentista](static/img/logogg.jpg)[static/img/logogg.jpg]
 
 **BDdentista** es una aplicación web diseñada para la gestión eficiente de clínicas dentales. Proporciona una plataforma centralizada para la administración de pacientes, citas, tratamientos y formularios médicos, optimizando el flujo de trabajo para los doctores.
 
@@ -126,15 +126,7 @@ project/
 ## 🤝 Contribuciones
 
 Agradecemos a los siguientes contribuidores por su apoyo y colaboración en el desarrollo de este proyecto:
-
-- ![Carlos Miranda](https://github.com/cmrnda.png?size=60) [Carlos Miranda](https://github.com/cmrnda)
-- ![Rolando Muñoz](https://github.com/rolandobryanmunozante.png?size=60) [Rolando Muñoz](https://github.com/rolandobryanmunozante)
-- ![David Machicado](https://github.com/dmiguel04.png?size=60) [David Machicado](https://github.com/dmiguel04)
-- ![Harold Quispe](https://github.com/HAjiMe-0.png?size=60) [Harold Quispe](https://github.com/HAjiMe-0)
-
-
-
----
-
-
-[static/img/logo.png]: static/img/logo.png
+- <img src="https://github.com/cmrnda.png?size=60" alt="Carlos Miranda" style="border-radius: 50%;"> [Carlos Miranda](https://github.com/cmrnda)
+- <img src="https://github.com/rolandobryanmunozante.png?size=60" alt="Rolando Muñoz" style="border-radius: 50%;"> [Rolando Muñoz](https://github.com/rolandobryanmunozante) 
+- <img src="https://github.com/dmiguel04.png?size=60" alt="David Machicado" style="border-radius: 50%;"> [David Machicado](https://github.com/dmiguel04)
+- <img src="https://github.com/HAjiMe-0.png?size=60" alt="Harold Quispe" style="border-radius: 50%;"> [Harold Quispe](https://github.com/HAjiMe-0)
