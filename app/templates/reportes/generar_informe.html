@@ -16,7 +16,6 @@
             --background-image: url("/static/img/fondo_dental7.jpg");
         }
 
-        /* Estilos base */
         body {
             background-color: var(--color-light);
             background-image: var(--background-image);
@@ -24,14 +23,12 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Contenedor principal */
         .dashboard-container {
             max-width: 800px;
             margin: 2rem auto;
             padding: 1rem;
         }
 
-        /* Estilos del título */
         .page-title {
             font-size: 1.5rem;
             color: #ffffff;
@@ -43,7 +40,6 @@
             border-bottom: 2px solid var(--color-teal);
         }
 
-        /* Estilos del formulario */
         .form-container {
             background: var(--color-white);
             padding: 2rem;
@@ -79,7 +75,6 @@
             box-shadow: 0 0 0 3px rgba(104, 195, 183, 0.2);
         }
 
-        /* Estilos del select */
         select.form-control {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23539091' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -88,7 +83,6 @@
             padding-right: 2.5rem;
         }
 
-        /* Estilos del botón */
         .btn-generate {
             width: 100%;
             padding: 0.75rem;
@@ -112,7 +106,6 @@
             transform: translateY(1px);
         }
 
-        /* Estilos de la alerta de procesamiento */
         .processing-alert {
             display: none;
             position: fixed;
@@ -134,6 +127,11 @@
             opacity: 1;
         }
 
+        .processing-alert.error {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+
         .processing-alert i {
             margin-right: 0.5rem;
         }
@@ -153,7 +151,6 @@
             opacity: 1;
         }
 
-        /* Animaciones */
         @keyframes slideDown {
             from {
                 transform: translate(-50%, -20px);
@@ -165,7 +162,6 @@
             }
         }
 
-        /* Media queries */
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 1rem;
@@ -213,6 +209,11 @@
         }
     </style>
 
+    <!-- Alerta de procesamiento -->
+    <div class="processing-alert" style="display: none;">
+        <span><i class="fas fa-check"></i>Informe generado exitosamente.</span>
+        <button class="close-button">×</button>
+    </div>
 
     <!-- Contenedor principal -->
     <div class="dashboard-container">
@@ -249,9 +250,8 @@
                        value="{{ datetime.utcnow().year }}" required>
             </div>
             <button type="submit" class="btn-generate" id="generateButton">
-                Generar Informe
+                Generar Informe <i class="fas fa-file-pdf"></i>
             </button>
-            
         </form>
     </div>
 
@@ -271,17 +271,75 @@
 
         // Handle form submission
         document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevenir el envío normal del formulario
+            
             // Show the alert
             processingAlert.style.display = 'flex';
             
             // Disable the generate button
-            document.getElementById('generateButton').disabled = true;
+            const generateButton = document.getElementById('generateButton');
+            generateButton.disabled = true;
             
-            // Automatically hide the alert after 1 second
-            setTimeout(hideAlert, 1000);
+            // Obtener los datos del formulario
+            const formData = new FormData(this);
+            
+            // Realizar la petición AJAX
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la generación del PDF');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Crear URL del blob
+                const url = window.URL.createObjectURL(blob);
+                
+                // Crear enlace de descarga
+                const a = document.createElement('a');
+                const mes = formData.get('mes');
+                const año = formData.get('año');
+                const periodo = formData.get('periodo');
+                const fileName = `informe_${periodo}_${mes}_${año}.pdf`;
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                
+                // Descargar el archivo
+                a.click();
+                
+                // Limpiar
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                // Mostrar mensaje de éxito
+                processingAlert.querySelector('span').innerHTML = '<i class="fas fa-check"></i>Informe generado exitosamente';
+                processingAlert.classList.remove('error');
+                processingAlert.style.backgroundColor = 'rgb(220, 252, 231)';
+                processingAlert.style.color = 'rgb(22, 101, 52)';
+                processingAlert.style.display = 'flex';
+                setTimeout(hideAlert, 1000);
+            })
+            .catch(error => {
+                // Mostrar mensaje de error
+                processingAlert.querySelector('span').innerHTML = '<i class="fas fa-times"></i>Error al generar el PDF';
+                processingAlert.classList.add('error');
+                processingAlert.style.display = 'flex';
+                setTimeout(hideAlert, 2000);
+            })
+            .finally(() => {
+                // Re-habilitar el botón
+                generateButton.disabled = false;
+            });
         });
 
-        // Handle manual close button click
+        // Handle close button click
         closeButton.addEventListener('click', hideAlert);
 
         // Handle period selector
@@ -290,5 +348,4 @@
             mesSelector.style.display = this.value === 'anual' ? 'none' : 'block';
         });
     </script>
-    
 {% endblock %}

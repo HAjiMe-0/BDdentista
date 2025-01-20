@@ -344,6 +344,32 @@
         .alert-warning i {
             color: #856404;
         }
+        /* Add new styles for password toggle */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        /* Adjust input padding to accommodate both icons */
+        .password-wrapper .form-control {
+            padding-right: 3rem;
+        }
     </style>
 </head>
 <body>
@@ -404,10 +430,13 @@
                     <i class="fas fa-envelope input-icon"></i>
                     <label class="floating-label">Correo electrónico</label>
                 </div>
-
-                <div class="input-wrapper form-grid-full">
+        
+                <div class="input-wrapper form-grid-full password-wrapper">
                     <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder=" " required>
                     <i class="fas fa-lock input-icon"></i>
+                    <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                        <i class="fas fa-eye" id="togglePassword"></i>
+                    </button>
                     <label class="floating-label">Contraseña</label>
                 </div>
 
@@ -429,8 +458,8 @@
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script>
-        // Form validation and animations
         document.addEventListener('DOMContentLoaded', function() {
+            // Previous form validation code
             const form = document.querySelector('form');
             const inputs = form.querySelectorAll('input');
             
@@ -450,6 +479,20 @@
                 const button = form.querySelector('.btn-login');
                 button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...';
                 button.disabled = true;
+            });
+
+            // Add password toggle functionality
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#contraseña');
+
+            togglePassword.addEventListener('click', function () {
+                // Toggle the password visibility
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                
+                // Toggle the eye icon
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
             });
         });
     </script>

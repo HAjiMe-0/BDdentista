@@ -31,10 +31,10 @@ body {
 
 .custom-container {
     max-width: 1000px;
-    margin: 2rem auto;
+    margin: 1rem auto;
     background-color: var(--color-white);
     border-radius: 20px;
-    padding: 0; /* Removemos el padding del contenedor */
+    padding: 0;
 }
 
 .page-title {
@@ -188,18 +188,141 @@ body {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .custom-container {
-        margin: 1rem;
+        margin: 0.5rem;
+        border-radius: 10px;
+    }
+
+    .page-title {
+        font-size: 1.4rem;
         padding: 1rem;
     }
-    
-    .page-title {
-        font-size: 1.5rem;
+
+    .card-body {
+        padding: 0.75rem;
     }
-    
-    .btn-custom-primary,
+
+    .two-column-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .row {
+        margin: 0;
+    }
+
+    .col-sm-4, .col-sm-8 {
+        padding: 0.25rem 0;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-check {
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .accordion-button {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .accordion-body {
+        padding: 1rem;
+    }
+
+    .btn-custom-primary, 
     .btn-secondary {
         width: 100%;
         margin-bottom: 0.5rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    /* Stack buttons vertically on mobile */
+    .d-flex.justify-content-end.gap-2 {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    /* Make basic info more readable on mobile */
+    .row.mb-3 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .col-form-label {
+        padding: 0.25rem 0;
+        font-size: 0.95rem;
+    }
+
+    /* Improve checkbox readability */
+    .form-check-label {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-left: 0.25rem;
+    }
+
+    .form-check-input {
+        margin-top: 0.3rem;
+    }
+
+    /* Adjust spacing for detail fields */
+    #detalleCardiopatiaDiv,
+    #detalleRespiratoriasDiv,
+    #campoEspecificarAlergias,
+    #campoEspecificarProblema {
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Improve textarea responsiveness */
+    textarea.form-control {
+        min-height: 80px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 576px) {
+    .custom-container {
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .page-title {
+        font-size: 1.2rem;
+        border-radius: 0;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    /* Adjust card styling for better mobile view */
+    .card {
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .card-header {
+        padding: 0.75rem;
+    }
+
+    /* Make alerts more compact */
+    .custom-alert {
+        margin: 0.5rem;
+        padding: 0.75rem;
+        font-size: 0.9rem;
     }
 }
 

@@ -915,6 +915,7 @@ def exportar_formulario_pdf(paciente_id):
         return send_file(buffer, as_attachment=True, download_name=f'Formulario_Paciente_{paciente_id}.pdf', mimetype='application/pdf')
     except Exception as e:
         flash(f'Error al generar el PDF: {str(e)}', 'error')
+        formulario.pregunta_respuesta = json.loads(formulario.pregunta_respuesta)
         return redirect(url_for('main.detalle_paciente', paciente_id=paciente_id))
 
 
@@ -1070,6 +1071,12 @@ def generar_informe_doctor(doctor_id):
             elements.append(estadisticas_table)
             elements.append(Spacer(1, 12))
 
+            # Construcción del PDF
+            doc.build(elements)
+            buffer.seek(0)
+            flash('Informe generado exitosamente.', 'success')
+            return send_file(buffer, as_attachment=True, download_name=f'Informe_{tipo_informe}.pdf', mimetype='application/pdf')
+    
             # Construcción del PDF
             doc.build(elements)
             buffer.seek(0)

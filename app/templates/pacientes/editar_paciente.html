@@ -67,11 +67,11 @@
                         <label for="estado_civil" class="form-label" style="color: #539091; font-size: 0.9rem; margin-bottom: 0.5rem;">Estado Civil:</label>
                         <select id="estado_civil" name="estado_civil" class="form-select form-select-lg"
                         style="border: 1px solid #a8dcd9; border-radius: 4px; padding: 0.5rem; width: 100%;">
-                            <option value="" selected>Seleccione</option>
-                            <option value="Soltero/a">Soltero/a</option>
-                            <option value="Casado/a">Casado/a</option>
-                            <option value="Divorciado/a">Divorciado/a</option>
-                            <option value="Viudo/a">Viudo/a</option>
+                            <option value="">Seleccione</option>
+                            <option value="Soltero/a" {% if paciente.estado_civil == 'Soltero/a' %}selected{% endif %}>Soltero/a</option>
+                            <option value="Casado/a" {% if paciente.estado_civil == 'Casado/a' %}selected{% endif %}>Casado/a</option>
+                            <option value="Divorciado/a" {% if paciente.estado_civil == 'Divorciado/a' %}selected{% endif %}>Divorciado/a</option>
+                            <option value="Viudo/a" {% if paciente.estado_civil == 'Viudo/a' %}selected{% endif %}>Viudo/a</option>
                         </select>
                     </div>
             
