@@ -75,6 +75,7 @@ def registrarse():
             'paterno': request.form.get('paterno'),
             'materno': request.form.get('materno'),
             'especialidad': request.form.get('especialidad'),
+            'telefono': request.form.get('telefono'),
             'paterno': request.form.get('paterno'),
             'fecha_nacimiento': request.form.get('fecha_nacimiento'),
             'email': request.form['email'],

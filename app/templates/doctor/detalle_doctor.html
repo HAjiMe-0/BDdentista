@@ -208,8 +208,12 @@
             </div>
             <div class="detail-item">
                 <span class="detail-label">Teléfono</span>
-                <span class="detail-value">{{ doctor.telefono or 'No especificado' }}</span>
+                <span class="detail-value">
+                    {{ doctor.telefono or 'No especificado' }}
+                </span>
             </div>
+            
+            
             <div class="detail-item">
                 <span class="detail-label">Email</span>
                 <span class="detail-value">{{ doctor.email }}</span>
